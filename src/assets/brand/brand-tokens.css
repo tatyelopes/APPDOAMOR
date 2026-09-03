@@ -1,0 +1,28 @@
+:root {
+  --brand-plum-950: #241123;
+  --brand-plum-900: #3d1f3d;
+  --brand-plum-700: #6b354d;
+  --brand-gold-600: #b88a2d;
+  --brand-gold-500: #d4a94e;
+  --brand-champagne-400: #e8c39e;
+  --brand-cream-100: #f7efe6;
+  --brand-white: #fffaf5;
+  --brand-ink: #2b2029;
+  --brand-muted: #6f5a6b;
+  --brand-lilac: #8f6f91;
+  --brand-sage: #a8c3a0;
+  --brand-rose: #b95269;
+  --brand-error: #b44355;
+  --brand-success: #53775a;
+
+  --color-brand-primary: var(--brand-plum-900);
+  --color-brand-accent: var(--brand-gold-500);
+  --color-bg: var(--brand-cream-100);
+  --color-surface: var(--brand-white);
+  --color-text: var(--brand-ink);
+  --color-text-muted: var(--brand-muted);
+
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', Arial, sans-serif;
+  --font-accent: 'Baloo 2', 'Arial Rounded MT Bold', sans-serif;
+}

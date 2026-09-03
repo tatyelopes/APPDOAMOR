@@ -1,5 +1,7 @@
 # Entre Nós
 
+> Consulte [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) para a arquitetura, as regras de dependência e o padrão de pastas do projeto.
+
 MVP mobile-first de um aplicativo de conexão para casais, criado a partir do PRD em `Projeto.docx`.
 
 ## O que já funciona

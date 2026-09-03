@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1160 360" role="img" aria-labelledby="title desc">
+  <title id="title">Conectadois</title>
+  <desc id="desc">Símbolo dourado do Conectadois ao lado do nome, com a palavra dois em dourado.</desc>
+  <rect width="1160" height="360" rx="36" fill="#3D1F3D"/>
+  <image href="logo-transparente.png" x="0" y="0" width="360" height="360" preserveAspectRatio="xMidYMid meet"/>
+  <text x="375" y="196" fill="#F7EFE6" font-family="Fraunces, Georgia, serif" font-size="118" font-weight="600">conecta<tspan fill="#D4A94E">dois</tspan></text>
+  <text x="384" y="250" fill="#E8C39E" font-family="Inter, Arial, sans-serif" font-size="24" font-weight="600" letter-spacing="2">DESCUBRAM MAIS. CONECTEM-SE MAIS.</text>
+</svg>

@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="title desc">
+  <title id="title">Símbolo monocromático Conectadois</title>
+  <desc id="desc">Coração com controles de jogo.</desc>
+  <circle cx="128" cy="128" r="116" fill="none" stroke="#000000" stroke-width="8"/>
+  <path d="M128 201C110 178 48 139 48 88C48 49 94 35 128 72C162 35 208 49 208 88C208 139 146 178 128 201Z" fill="none" stroke="#000000" stroke-width="15" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M128 177C119 165 94 148 94 126C94 108 116 101 128 117C140 101 162 108 162 126C162 148 137 165 128 177Z" fill="#000000"/>
+  <path d="M83 82V112M68 97H98" fill="none" stroke="#000000" stroke-width="10" stroke-linecap="round"/>
+  <circle cx="169" cy="85" r="7" fill="#000000"/><circle cx="185" cy="101" r="7" fill="#000000"/>
+  <circle cx="153" cy="101" r="7" fill="#000000"/><circle cx="169" cy="117" r="7" fill="#000000"/>
+</svg>
