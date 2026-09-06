@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900" role="img" aria-labelledby="title desc">
+  <title id="title">Fluxo de onboarding do Conectadois</title>
+  <desc id="desc">Diagrama com dois caminhos: descoberta direta em três telas e convite recebido com contexto e consentimento, convergindo em autenticação e próximo passo.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#321931"/><stop offset="1" stop-color="#1e0e1d"/></linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4a2847"/><stop offset="1" stop-color="#321a31"/></linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0l10 5-10 5z" fill="#d4a94e"/></marker>
+    <style>
+      .title{font:600 38px Georgia,serif;fill:#f7eddf}.sub{font:14px Arial,sans-serif;fill:#cdbdca}.lane{font:700 13px Arial,sans-serif;letter-spacing:2px;fill:#d4a94e}.box{fill:url(#card);stroke:#d4a94e;stroke-opacity:.42;stroke-width:1.5}.decision{fill:#6b354d;stroke:#e8c39e;stroke-width:1.5}.label{font:700 15px Arial,sans-serif;fill:#f7eddf}.copy{font:12px Arial,sans-serif;fill:#cdbdca}.small{font:11px Arial,sans-serif;fill:#e8c39e}.line{fill:none;stroke:#d4a94e;stroke-width:2;marker-end:url(#arrow)}.dash{fill:none;stroke:#9f879b;stroke-width:1.5;stroke-dasharray:6 5;marker-end:url(#arrow)}
+    </style>
+  </defs>
+  <rect width="1440" height="900" fill="url(#bg)"/>
+  <circle cx="130" cy="90" r="150" fill="#6b354d" opacity=".2"/><circle cx="1320" cy="780" r="190" fill="#7b573b" opacity=".14"/>
+  <text x="70" y="70" class="title">Onboarding Conectadois</text>
+  <text x="70" y="98" class="sub">Descoberta direta e convite recebido · versão funcional para prototipação</text>
+
+  <text x="70" y="155" class="lane">ENTRADA</text>
+  <rect class="decision" x="70" y="180" width="180" height="80" rx="22"/><text class="label" x="160" y="212" text-anchor="middle">Como chegou?</text><text class="copy" x="160" y="236" text-anchor="middle">direto ou por convite</text>
+
+  <text x="330" y="155" class="lane">DESCOBERTA DIRETA</text>
+  <rect class="box" x="330" y="180" width="210" height="80" rx="18"/><text class="label" x="435" y="210" text-anchor="middle">OB-01 · Benefício</text><text class="copy" x="435" y="234" text-anchor="middle">Mais presença. Mais vocês.</text>
+  <rect class="box" x="600" y="180" width="210" height="80" rx="18"/><text class="label" x="705" y="210" text-anchor="middle">OB-02 · Mecânica</text><text class="copy" x="705" y="234" text-anchor="middle">Escolher → participar → descobrir</text>
+  <rect class="box" x="870" y="180" width="210" height="80" rx="18"/><text class="label" x="975" y="210" text-anchor="middle">OB-03 · Segurança</text><text class="copy" x="975" y="234" text-anchor="middle">Conta individual, resposta selada</text>
+  <path class="line" d="M250 210H330"/><path class="line" d="M540 220H600"/><path class="line" d="M810 220H870"/>
+  <text class="small" x="280" y="198">direto</text>
+
+  <text x="330" y="350" class="lane">CONVITE RECEBIDO</text>
+  <rect class="decision" x="330" y="375" width="180" height="80" rx="22"/><text class="label" x="420" y="406" text-anchor="middle">Convite válido?</text><text class="copy" x="420" y="430" text-anchor="middle">verificar antes do cadastro</text>
+  <rect class="box" x="570" y="375" width="210" height="80" rx="18"/><text class="label" x="675" y="405" text-anchor="middle">IN-01 · Contexto</text><text class="copy" x="675" y="429" text-anchor="middle">quem convidou e o que acontece</text>
+  <rect class="box" x="840" y="375" width="210" height="80" rx="18"/><text class="label" x="945" y="405" text-anchor="middle">IN-02 · Controle</text><text class="copy" x="945" y="429" text-anchor="middle">aceitar, recusar ou sair</text>
+  <rect class="box" x="330" y="520" width="180" height="80" rx="18"/><text class="label" x="420" y="550" text-anchor="middle">Recuperação</text><text class="copy" x="420" y="574" text-anchor="middle">novo convite ou outro código</text>
+  <path class="line" d="M160 260V415H330"/><text class="small" x="178" y="401">convite</text><path class="line" d="M510 415H570"/><text class="small" x="530" y="402">sim</text><path class="line" d="M780 415H840"/>
+  <path class="line" d="M420 455V520"/><text class="small" x="430" y="493">não</text>
+
+  <text x="1160" y="155" class="lane">AUTENTICAÇÃO</text>
+  <rect class="decision" x="1160" y="180" width="210" height="80" rx="22"/><text class="label" x="1265" y="210" text-anchor="middle">Possui conta?</text><text class="copy" x="1265" y="234" text-anchor="middle">contexto sempre preservado</text>
+  <rect class="box" x="1160" y="325" width="210" height="70" rx="18"/><text class="label" x="1265" y="354" text-anchor="middle">Cadastro ou login</text><text class="copy" x="1265" y="376" text-anchor="middle">conta individual</text>
+  <path class="line" d="M1080 220H1160"/><path class="line" d="M1050 415H1110Q1140 415 1140 385V280Q1140 220 1160 220"/><path class="line" d="M1265 260V325"/>
+
+  <text x="570" y="690" class="lane">PRÓXIMO PASSO</text>
+  <rect class="decision" x="570" y="715" width="240" height="90" rx="24"/><text class="label" x="690" y="747" text-anchor="middle">Existe convite preservado?</text><text class="copy" x="690" y="773" text-anchor="middle">rotear pelo estado real da conta</text>
+  <rect class="box" x="885" y="715" width="210" height="90" rx="18"/><text class="label" x="990" y="746" text-anchor="middle">Confirmar vínculo</text><text class="copy" x="990" y="770" text-anchor="middle">e iniciar primeira experiência</text>
+  <rect class="box" x="285" y="715" width="210" height="90" rx="18"/><text class="label" x="390" y="746" text-anchor="middle">Escolher caminho</text><text class="copy" x="390" y="770" text-anchor="middle">criar espaço ou usar convite</text>
+  <path class="line" d="M1265 395V640Q1265 670 1235 670H720Q690 670 690 715"/><path class="line" d="M810 760H885"/><text class="small" x="835" y="747">sim</text><path class="line" d="M570 760H495"/><text class="small" x="520" y="747">não</text>
+  <path class="dash" d="M435 260V320H1160V250"/><text class="small" x="650" y="310">Pular / Já tenho uma conta</text>
+
+  <text x="70" y="860" class="sub">Regras transversais: até 3 telas · sem promessa clínica · recusa livre · acessibilidade AA · analytics sem conteúdo íntimo</text>
+</svg>

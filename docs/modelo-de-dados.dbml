@@ -1,0 +1,152 @@
+Project conectadois {
+  database_type: 'PostgreSQL'
+  Note: 'Modelo lógico da tarefa 34. Regras transacionais e índices parciais em MODELO-DE-DADOS.md. Não é migração executável.'
+}
+
+Table users {
+  id uuid [pk]
+  name text [not null]
+  email text [not null, unique]
+  password_hash text [not null]
+  email_verified_at timestamptz
+  created_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  deleted_at timestamptz
+}
+
+Table couples {
+  id uuid [pk]
+  status text [not null, note: 'waiting | active | closed']
+  anniversary date
+  timezone text [not null]
+  invite_token_hash text [unique]
+  invite_expires_at timestamptz
+  created_at timestamptz [not null]
+  paired_at timestamptz
+  closed_at timestamptz
+}
+
+Table couple_members {
+  id uuid [pk]
+  couple_id uuid [not null]
+  user_id uuid [not null]
+  slot smallint [not null, note: '1 ou 2; unicidade parcial de vagas e usuário vigente no documento']
+  joined_at timestamptz [not null]
+  left_at timestamptz
+  indexes {
+    (id, couple_id) [unique]
+    user_id
+    couple_id
+  }
+}
+
+Table auth_sessions {
+  id uuid [pk]
+  user_id uuid [not null]
+  token_hash text [not null, unique]
+  created_at timestamptz [not null]
+  expires_at timestamptz [not null]
+  last_seen_at timestamptz
+  revoked_at timestamptz
+  indexes {
+    (user_id, expires_at)
+  }
+}
+
+Table game_sessions {
+  id uuid [pk]
+  couple_id uuid [not null]
+  mode text [not null, note: 'questions | challenges | mixed']
+  status text [not null, note: 'ready | active | completed | abandoned']
+  timezone text [not null]
+  created_at timestamptz [not null]
+  started_at timestamptz
+  ended_at timestamptz
+  indexes {
+    (id, couple_id) [unique]
+    (couple_id, created_at)
+  }
+}
+
+Table session_participants {
+  session_id uuid [not null]
+  couple_id uuid [not null]
+  member_id uuid [not null]
+  joined_at timestamptz [not null]
+  indexes {
+    (session_id, member_id) [pk]
+    (member_id, couple_id)
+  }
+}
+
+Table session_rounds {
+  id uuid [pk]
+  session_id uuid [not null]
+  position integer [not null]
+  activity_key text [not null]
+  content_version text [not null]
+  theme_key text [not null]
+  kind text [not null, note: 'open_text | multiple_choice | challenge']
+  prompt_snapshot text [not null]
+  options_snapshot jsonb [note: 'Array de objetos com id e label, somente em multiple_choice']
+  status text [not null, note: 'pending | resolved | skipped']
+  revealed_at timestamptz
+  resolved_at timestamptz
+  indexes {
+    (id, session_id) [unique]
+    (session_id, position) [unique]
+  }
+}
+
+Table answers {
+  id uuid [pk]
+  session_id uuid [not null]
+  round_id uuid [not null]
+  member_id uuid [not null]
+  kind text [not null]
+  text_value text
+  option_key text
+  challenge_completed boolean
+  submitted_at timestamptz [not null]
+  updated_at timestamptz [not null]
+  indexes {
+    (round_id, member_id) [unique]
+    (session_id, member_id)
+  }
+}
+
+Table progress_events {
+  id uuid [pk]
+  couple_id uuid [not null]
+  session_id uuid [not null]
+  round_id uuid [not null, unique]
+  kind text [not null, note: 'mutual_answer | mutual_challenge']
+  occurred_at timestamptz [not null]
+  activity_date date [not null]
+  indexes {
+    (couple_id, activity_date)
+  }
+}
+
+Table couple_progress {
+  couple_id uuid [pk]
+  completed_rounds integer [not null, default: 0]
+  completed_challenges integer [not null, default: 0]
+  last_activity_date date
+  current_streak integer [not null, default: 0]
+  longest_streak integer [not null, default: 0]
+  updated_at timestamptz [not null]
+}
+
+Ref: couple_members.user_id > users.id [delete: restrict]
+Ref: couple_members.couple_id > couples.id [delete: restrict]
+Ref: auth_sessions.user_id > users.id [delete: restrict]
+Ref: game_sessions.couple_id > couples.id [delete: restrict]
+Ref: session_participants.(session_id, couple_id) > game_sessions.(id, couple_id) [delete: restrict]
+Ref: session_participants.(member_id, couple_id) > couple_members.(id, couple_id) [delete: restrict]
+Ref: session_rounds.session_id > game_sessions.id [delete: restrict]
+Ref: answers.(round_id, session_id) > session_rounds.(id, session_id) [delete: restrict]
+Ref: answers.(session_id, member_id) > session_participants.(session_id, member_id) [delete: restrict]
+Ref: progress_events.(session_id, couple_id) > game_sessions.(id, couple_id) [delete: restrict]
+Ref: progress_events.(round_id, session_id) > session_rounds.(id, session_id) [delete: restrict]
+Ref: couple_progress.couple_id - couples.id [delete: restrict]

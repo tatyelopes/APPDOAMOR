@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="980" viewBox="0 0 1440 980" role="img" aria-labelledby="title desc">
+  <title id="title">Fluxo de cadastro, login e recuperação do Conectadois</title>
+  <desc id="desc">Três caminhos de autenticação convergem no roteamento por estado da conta e contexto preservado.</desc>
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#321931"/><stop offset="1" stop-color="#1e0e1d"/></linearGradient>
+    <linearGradient id="card" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#4a2847"/><stop offset="1" stop-color="#321a31"/></linearGradient>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0l10 5-10 5z" fill="#d4a94e"/></marker>
+    <style>.title{font:600 36px Georgia,serif;fill:#f7eddf}.sub{font:14px Arial,sans-serif;fill:#cdbdca}.lane{font:700 13px Arial,sans-serif;letter-spacing:2px;fill:#d4a94e}.box{fill:url(#card);stroke:#d4a94e;stroke-opacity:.45;stroke-width:1.5}.decision{fill:#6b354d;stroke:#e8c39e;stroke-width:1.5}.success{fill:#34473c;stroke:#a8c3a0;stroke-width:1.5}.label{font:700 15px Arial,sans-serif;fill:#f7eddf}.copy{font:12px Arial,sans-serif;fill:#cdbdca}.small{font:11px Arial,sans-serif;fill:#e8c39e}.line{fill:none;stroke:#d4a94e;stroke-width:2;marker-end:url(#arrow)}.dash{fill:none;stroke:#9f879b;stroke-width:1.5;stroke-dasharray:6 5;marker-end:url(#arrow)}</style>
+  </defs>
+  <rect width="1440" height="980" fill="url(#bg)"/><circle cx="100" cy="100" r="180" fill="#6b354d" opacity=".18"/><circle cx="1340" cy="860" r="210" fill="#7b573b" opacity=".13"/>
+  <text x="60" y="65" class="title">Acesso individual · Conectadois</text><text x="60" y="92" class="sub">Cadastro, login e recuperação com convite e destino preservados</text>
+  <rect class="decision" x="60" y="145" width="200" height="82" rx="23"/><text class="label" x="160" y="176" text-anchor="middle">Intenção de acesso</text><text class="copy" x="160" y="201" text-anchor="middle">nova conta, entrar ou recuperar</text>
+
+  <text x="335" y="135" class="lane">CADASTRO</text>
+  <rect class="box" x="335" y="155" width="220" height="82" rx="18"/><text class="label" x="445" y="186" text-anchor="middle">CA-01 · Dados mínimos</text><text class="copy" x="445" y="211" text-anchor="middle">nome · e-mail · senha</text>
+  <rect class="decision" x="335" y="295" width="220" height="82" rx="22"/><text class="label" x="445" y="326" text-anchor="middle">Dados válidos?</text><text class="copy" x="445" y="351" text-anchor="middle">validar sem apagar valores</text>
+  <rect class="box" x="335" y="435" width="220" height="82" rx="18"/><text class="label" x="445" y="466" text-anchor="middle">CA-04 · Verificar e-mail</text><text class="copy" x="445" y="491" text-anchor="middle">reenviar ou corrigir endereço</text>
+  <path class="line" d="M260 175H335"/><text class="small" x="279" y="163">criar</text><path class="line" d="M445 237V295"/><path class="line" d="M445 377V435"/><text class="small" x="455" y="410">sim</text>
+  <path class="dash" d="M335 336H292Q275 336 275 306V196H335"/><text class="small" x="282" y="326">corrigir</text>
+
+  <text x="630" y="135" class="lane">LOGIN</text>
+  <rect class="box" x="630" y="155" width="220" height="82" rx="18"/><text class="label" x="740" y="186" text-anchor="middle">LG-01 · Entrar</text><text class="copy" x="740" y="211" text-anchor="middle">e-mail · senha</text>
+  <rect class="decision" x="630" y="295" width="220" height="82" rx="22"/><text class="label" x="740" y="326" text-anchor="middle">Credenciais válidas?</text><text class="copy" x="740" y="351" text-anchor="middle">mensagem neutra na falha</text>
+  <path class="line" d="M160 227V260Q160 270 180 270H600Q620 270 630 235"/><text class="small" x="520" y="258">entrar</text><path class="line" d="M740 237V295"/><path class="dash" d="M630 336H590Q575 336 575 306V196H630"/><text class="small" x="582" y="326">tentar</text>
+
+  <text x="925" y="135" class="lane">RECUPERAÇÃO</text>
+  <rect class="box" x="925" y="155" width="220" height="82" rx="18"/><text class="label" x="1035" y="186" text-anchor="middle">RC-01 · Informar e-mail</text><text class="copy" x="1035" y="211" text-anchor="middle">pedido sem confirmar cadastro</text>
+  <rect class="box" x="925" y="295" width="220" height="82" rx="18"/><text class="label" x="1035" y="326" text-anchor="middle">RC-02 · Confirmação</text><text class="copy" x="1035" y="351" text-anchor="middle">resposta pública neutra</text>
+  <rect class="decision" x="925" y="435" width="220" height="82" rx="22"/><text class="label" x="1035" y="466" text-anchor="middle">Token válido?</text><text class="copy" x="1035" y="491" text-anchor="middle">temporário e de uso único</text>
+  <rect class="box" x="925" y="575" width="220" height="82" rx="18"/><text class="label" x="1035" y="606" text-anchor="middle">RC-04 · Nova senha</text><text class="copy" x="1035" y="631" text-anchor="middle">revogar sessões e confirmar</text>
+  <path class="line" d="M160 227V118Q160 108 180 108H895Q915 108 925 155"/><text class="small" x="817" y="99">recuperar</text><path class="line" d="M1035 237V295"/><path class="line" d="M1035 377V435"/><path class="line" d="M1035 517V575"/><text class="small" x="1045" y="550">sim</text>
+  <path class="dash" d="M1145 476H1195Q1210 476 1210 446V196Q1210 180 1145 180"/><text class="small" x="1160" y="466">novo link</text>
+  <path class="dash" d="M850 196H925"/><text class="small" x="858" y="184">esqueci</text>
+
+  <text x="330" y="730" class="lane">CONVERGÊNCIA SEGURA</text>
+  <rect class="success" x="330" y="755" width="250" height="90" rx="22"/><text class="label" x="455" y="786" text-anchor="middle">Acesso confirmado</text><text class="copy" x="455" y="811" text-anchor="middle">conta individual autenticada</text>
+  <rect class="decision" x="650" y="755" width="250" height="90" rx="22"/><text class="label" x="775" y="786" text-anchor="middle">Estado + contexto</text><text class="copy" x="775" y="811" text-anchor="middle">convite, vínculo e destino</text>
+  <rect class="box" x="970" y="735" width="240" height="55" rx="16"/><text class="label" x="1090" y="768" text-anchor="middle">Confirmar convite</text>
+  <rect class="box" x="970" y="810" width="240" height="55" rx="16"/><text class="label" x="1090" y="843" text-anchor="middle">Criar espaço / aguardar</text>
+  <rect class="box" x="970" y="885" width="240" height="55" rx="16"/><text class="label" x="1090" y="918" text-anchor="middle">Início / destino original</text>
+  <path class="line" d="M445 517V700Q445 720 455 755"/><path class="line" d="M740 377V700Q740 720 520 755"/><path class="line" d="M1035 657V690Q1035 710 580 780"/>
+  <path class="line" d="M580 800H650"/><path class="line" d="M900 785L970 762"/><path class="line" d="M900 800H970"/><path class="line" d="M900 815L970 912"/>
+  <text x="60" y="950" class="sub">Regras transversais: dados preservados · sem enumeração pública · tokens temporários · acessibilidade AA · analytics sem credenciais</text>
+</svg>

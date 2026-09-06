@@ -1,4 +1,4 @@
-# Cronograma, marcos e cadência — Conectadois
+Definir responsáveis e matriz RACI# Cronograma, marcos e cadência — Conectadois
 
 **Versão:** 1.0 — 2 de setembro de 2026  
 **Início planejado:** 7 de setembro de 2026  

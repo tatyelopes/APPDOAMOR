@@ -1,0 +1,2442 @@
+{
+  "openapi": "3.1.0",
+  "jsonSchemaDialect": "https://json-schema.org/draft/2020-12/schema",
+  "info": {
+    "title": "Conectadois API",
+    "version": "0.1.0-draft",
+    "summary": "Contrato versionado do núcleo do MVP do Conectadois",
+    "description": "Contrato-alvo da API v1. As extensões x-implementation-status e x-legacy-path distinguem o comportamento atual do servidor JSON das operações planejadas. A versão permanece draft até a decisão de mecânicas da tarefa 112 e a validação de segurança."
+  },
+  "servers": [
+    {
+      "url": "/api/v1",
+      "description": "Mesmo host do frontend"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Auth",
+      "description": "Conta e sessão individual"
+    },
+    {
+      "name": "Users",
+      "description": "Conta autenticada e preferências"
+    },
+    {
+      "name": "Couples",
+      "description": "Espaço, convite e vínculo do casal"
+    },
+    {
+      "name": "Content",
+      "description": "Catálogo editorial publicado"
+    },
+    {
+      "name": "Games",
+      "description": "Partidas, rodadas e participação bilateral"
+    },
+    {
+      "name": "Progress",
+      "description": "Progresso confirmado pelo servidor"
+    },
+    {
+      "name": "Analytics",
+      "description": "Eventos permitidos do cliente"
+    },
+    {
+      "name": "Admin",
+      "description": "Agregados administrativos sem conteúdo íntimo"
+    }
+  ],
+  "security": [
+    {
+      "bearerAuth": []
+    }
+  ],
+  "paths": {
+    "/auth/registrations": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Criar conta individual",
+        "operationId": "registerUser",
+        "security": [],
+        "x-implementation-status": "partial",
+        "x-legacy-path": "POST /api/register",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RegisterRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/AuthenticatedUserCreated"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
+    "/auth/sessions": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Entrar e criar sessão",
+        "operationId": "createAuthSession",
+        "security": [],
+        "x-implementation-status": "partial",
+        "x-legacy-path": "POST /api/login",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/AuthenticatedUser"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
+    "/auth/sessions/current": {
+      "delete": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Revogar a sessão atual",
+        "operationId": "deleteCurrentAuthSession",
+        "x-implementation-status": "planned",
+        "responses": {
+          "204": {
+            "description": "Sessão revogada",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      }
+    },
+    "/auth/password-recovery": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Solicitar recuperação de senha",
+        "description": "Retorna sempre 202 para não permitir enumeração de e-mails.",
+        "operationId": "requestPasswordRecovery",
+        "security": [],
+        "x-implementation-status": "planned",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/EmailRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
+    "/auth/password-reset": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Trocar senha com token de uso único",
+        "operationId": "resetPassword",
+        "security": [],
+        "x-implementation-status": "planned",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PasswordResetRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "Senha alterada e sessões anteriores revogadas",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "410": {
+            "$ref": "#/components/responses/Gone"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/auth/email-verifications": {
+      "post": {
+        "tags": [
+          "Auth"
+        ],
+        "summary": "Confirmar endereço de e-mail",
+        "operationId": "verifyEmail",
+        "security": [],
+        "x-implementation-status": "planned",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TokenRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "204": {
+            "description": "E-mail confirmado",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/components/responses/BadRequest"
+          },
+          "410": {
+            "$ref": "#/components/responses/Gone"
+          }
+        }
+      }
+    },
+    "/users/me": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Obter conta, vínculo e estado atual",
+        "operationId": "getCurrentUser",
+        "x-implementation-status": "partial",
+        "x-legacy-path": "GET /api/me",
+        "responses": {
+          "200": {
+            "description": "Conta atual",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "patch": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Atualizar dados editáveis da conta",
+        "operationId": "updateCurrentUser",
+        "x-implementation-status": "planned",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/merge-patch+json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateUserRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Conta atualizada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/UserResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/users/me/preferences": {
+      "get": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Obter preferências pessoais",
+        "operationId": "getCurrentUserPreferences",
+        "x-implementation-status": "planned",
+        "responses": {
+          "200": {
+            "description": "Preferências",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreferencesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "Users"
+        ],
+        "summary": "Substituir preferências pessoais",
+        "operationId": "replaceCurrentUserPreferences",
+        "x-implementation-status": "planned",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserPreferences"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Preferências atualizadas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PreferencesResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/couples": {
+      "post": {
+        "tags": [
+          "Couples"
+        ],
+        "summary": "Criar espaço do casal e convite",
+        "operationId": "createCouple",
+        "x-implementation-status": "partial",
+        "x-legacy-path": "POST /api/couples/create",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateCoupleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Espaço e primeiro convite criados",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "X-Request-Id": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoupleResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/couples/join": {
+      "post": {
+        "tags": [
+          "Couples"
+        ],
+        "summary": "Aceitar convite e ocupar a segunda vaga",
+        "operationId": "joinCouple",
+        "x-implementation-status": "partial",
+        "x-legacy-path": "POST /api/couples/join",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/JoinCoupleRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Casal ativado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoupleResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "410": {
+            "$ref": "#/components/responses/Gone"
+          }
+        }
+      }
+    },
+    "/couples/me": {
+      "get": {
+        "tags": [
+          "Couples"
+        ],
+        "summary": "Obter o espaço do casal atual",
+        "operationId": "getCurrentCouple",
+        "x-implementation-status": "planned",
+        "responses": {
+          "200": {
+            "description": "Espaço atual",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CoupleResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Couples"
+        ],
+        "summary": "Encerrar o vínculo atual",
+        "description": "A pessoa autenticada pode sair sem autorização da outra. A política de retenção e histórico será aplicada pelo servidor.",
+        "operationId": "leaveCurrentCouple",
+        "x-implementation-status": "planned",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Vínculo encerrado",
+            "headers": {
+              "X-Request-Id": {
+                "$ref": "#/components/headers/RequestId"
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/couples/me/invitations": {
+      "post": {
+        "tags": [
+          "Couples"
+        ],
+        "summary": "Reemitir o convite do casal em espera",
+        "operationId": "createCoupleInvitation",
+        "x-implementation-status": "planned",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Novo convite criado e o anterior invalidado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/InvitationResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/content/activities": {
+      "get": {
+        "tags": [
+          "Content"
+        ],
+        "summary": "Listar atividades publicadas",
+        "operationId": "listActivities",
+        "x-implementation-status": "planned",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Cursor"
+          },
+          {
+            "$ref": "#/components/parameters/Limit"
+          },
+          {
+            "name": "kind",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/ActivityKind"
+            }
+          },
+          {
+            "name": "theme",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "maxLength": 50
+            }
+          },
+          {
+            "name": "depth",
+            "in": "query",
+            "schema": {
+              "$ref": "#/components/schemas/Depth"
+            }
+          },
+          {
+            "name": "maxDurationMinutes",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 120
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Página do catálogo; somente revisões publicadas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityListResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/game-sessions": {
+      "post": {
+        "tags": [
+          "Games"
+        ],
+        "summary": "Criar partida bilateral com conteúdo congelado",
+        "operationId": "createGameSession",
+        "x-implementation-status": "planned",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateGameSessionRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Partida e rodadas criadas atomicamente",
+            "headers": {
+              "Location": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameSessionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/game-sessions/{sessionId}": {
+      "get": {
+        "tags": [
+          "Games"
+        ],
+        "summary": "Retomar partida autorizada",
+        "operationId": "getGameSession",
+        "x-implementation-status": "planned",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Partida com rodadas visíveis para a conta atual",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GameSessionResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/game-sessions/{sessionId}/rounds/{roundId}": {
+      "get": {
+        "tags": [
+          "Games"
+        ],
+        "summary": "Obter uma rodada sem antecipar resposta alheia",
+        "operationId": "getGameRound",
+        "x-implementation-status": "planned",
+        "x-legacy-path": "GET /api/answers/{questionId} cobre apenas uma pergunta fixa",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          },
+          {
+            "$ref": "#/components/parameters/RoundId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Antes da resolução contém somente a própria resposta; depois contém revelation",
+            "headers": {
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoundResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/game-sessions/{sessionId}/rounds/{roundId}/answer": {
+      "put": {
+        "tags": [
+          "Games"
+        ],
+        "summary": "Criar ou corrigir a própria resposta",
+        "description": "A identidade vem da sessão. Correção é aceita somente antes da revelação. A segunda participação resolve a rodada e registra progresso na mesma transação.",
+        "operationId": "putGameRoundAnswer",
+        "x-implementation-status": "partial",
+        "x-legacy-path": "POST /api/answers/{questionId}",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          },
+          {
+            "$ref": "#/components/parameters/RoundId"
+          },
+          {
+            "$ref": "#/components/parameters/IfMatch"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnswerSubmission"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Resposta atualizada; a visão respeita a regra de revelação",
+            "headers": {
+              "ETag": {
+                "$ref": "#/components/headers/ETag"
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoundResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          },
+          "412": {
+            "$ref": "#/components/responses/PreconditionFailed"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          }
+        }
+      }
+    },
+    "/game-sessions/{sessionId}/rounds/{roundId}/skip": {
+      "post": {
+        "tags": [
+          "Games"
+        ],
+        "summary": "Pular rodada sem revelar nem gerar progresso",
+        "operationId": "skipGameRound",
+        "x-implementation-status": "planned",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SessionId"
+          },
+          {
+            "$ref": "#/components/parameters/RoundId"
+          },
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rodada pulada",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RoundResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          },
+          "409": {
+            "$ref": "#/components/responses/Conflict"
+          }
+        }
+      }
+    },
+    "/couples/me/progress": {
+      "get": {
+        "tags": [
+          "Progress"
+        ],
+        "summary": "Obter progresso mútuo confirmado",
+        "operationId": "getCurrentCoupleProgress",
+        "x-implementation-status": "planned",
+        "responses": {
+          "200": {
+            "description": "Projeção reconstruível dos eventos de progresso",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProgressResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFound"
+          }
+        }
+      }
+    },
+    "/analytics/events": {
+      "post": {
+        "tags": [
+          "Analytics"
+        ],
+        "summary": "Registrar evento permitido do cliente",
+        "description": "Não aceita texto de respostas, nome, e-mail ou IDs de outra pessoa. Eventos financeiros não podem ser fonte de verdade do cliente.",
+        "operationId": "createAnalyticsEvent",
+        "x-implementation-status": "partial",
+        "x-legacy-path": "POST /api/events",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/IdempotencyKey"
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AnalyticsEventRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "$ref": "#/components/responses/Accepted"
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "422": {
+            "$ref": "#/components/responses/ValidationError"
+          },
+          "429": {
+            "$ref": "#/components/responses/TooManyRequests"
+          }
+        }
+      }
+    },
+    "/admin/metrics": {
+      "get": {
+        "tags": [
+          "Admin"
+        ],
+        "summary": "Obter métricas agregadas do piloto",
+        "operationId": "getAdminMetrics",
+        "x-implementation-status": "partial",
+        "x-legacy-path": "GET /api/admin/metrics",
+        "responses": {
+          "200": {
+            "description": "Agregados; nunca inclui conteúdo de respostas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AdminMetricsResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/Forbidden"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "opaque",
+        "description": "Token opaco de sessão individual; nunca identifica o casal por parâmetro enviado pelo cliente."
+      }
+    },
+    "headers": {
+      "RequestId": {
+        "description": "Identificador de correlação sem dado pessoal",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "ETag": {
+        "description": "Versão forte da representação para atualização concorrente",
+        "schema": {
+          "type": "string",
+          "example": "\"round-3\""
+        }
+      },
+      "RetryAfter": {
+        "description": "Segundos até uma nova tentativa",
+        "schema": {
+          "type": "integer",
+          "minimum": 1
+        }
+      }
+    },
+    "parameters": {
+      "SessionId": {
+        "name": "sessionId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "RoundId": {
+        "name": "roundId",
+        "in": "path",
+        "required": true,
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "Cursor": {
+        "name": "cursor",
+        "in": "query",
+        "schema": {
+          "type": "string",
+          "maxLength": 500
+        }
+      },
+      "Limit": {
+        "name": "limit",
+        "in": "query",
+        "schema": {
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 100,
+          "default": 20
+        }
+      },
+      "IdempotencyKey": {
+        "name": "Idempotency-Key",
+        "in": "header",
+        "required": true,
+        "description": "UUID único por intenção; mesma chave e payload repetem a resposta original por 24 horas.",
+        "schema": {
+          "type": "string",
+          "format": "uuid"
+        }
+      },
+      "IfMatch": {
+        "name": "If-Match",
+        "in": "header",
+        "required": true,
+        "description": "ETag obtida na leitura da rodada; evita sobrescrever correção concorrente.",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "responses": {
+      "AuthenticatedUserCreated": {
+        "description": "Conta e sessão criadas",
+        "headers": {
+          "Location": {
+            "schema": {
+              "type": "string"
+            }
+          },
+          "X-Request-Id": {
+            "$ref": "#/components/headers/RequestId"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AuthenticatedUserResponse"
+            }
+          }
+        }
+      },
+      "AuthenticatedUser": {
+        "description": "Sessão criada",
+        "headers": {
+          "X-Request-Id": {
+            "$ref": "#/components/headers/RequestId"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AuthenticatedUserResponse"
+            }
+          }
+        }
+      },
+      "Accepted": {
+        "description": "Solicitação aceita",
+        "headers": {
+          "X-Request-Id": {
+            "$ref": "#/components/headers/RequestId"
+          }
+        }
+      },
+      "BadRequest": {
+        "$ref": "#/components/responses/Problem400"
+      },
+      "Unauthorized": {
+        "$ref": "#/components/responses/Problem401"
+      },
+      "Forbidden": {
+        "$ref": "#/components/responses/Problem403"
+      },
+      "NotFound": {
+        "$ref": "#/components/responses/Problem404"
+      },
+      "Conflict": {
+        "$ref": "#/components/responses/Problem409"
+      },
+      "Gone": {
+        "$ref": "#/components/responses/Problem410"
+      },
+      "PreconditionFailed": {
+        "$ref": "#/components/responses/Problem412"
+      },
+      "ValidationError": {
+        "$ref": "#/components/responses/Problem422"
+      },
+      "TooManyRequests": {
+        "description": "Limite de requisições excedido",
+        "headers": {
+          "Retry-After": {
+            "$ref": "#/components/headers/RetryAfter"
+          },
+          "X-Request-Id": {
+            "$ref": "#/components/headers/RequestId"
+          }
+        },
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Problem400": {
+        "description": "Requisição malformada",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Problem401": {
+        "description": "Sessão ausente, inválida, expirada ou revogada",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Problem403": {
+        "description": "Sessão válida sem autorização para o recurso",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Problem404": {
+        "description": "Recurso não encontrado ou ocultado por segurança",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Problem409": {
+        "description": "Estado atual impede a operação",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Problem410": {
+        "description": "Token ou convite expirado, consumido ou revogado",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Problem412": {
+        "description": "ETag não corresponde à versão atual",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      },
+      "Problem422": {
+        "description": "Campos semanticamente inválidos",
+        "content": {
+          "application/problem+json": {
+            "schema": {
+              "$ref": "#/components/schemas/Problem"
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "RegisterRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "email",
+          "password"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "password": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 128,
+            "writeOnly": true
+          }
+        }
+      },
+      "LoginRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "email",
+          "password"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          },
+          "password": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 128,
+            "writeOnly": true
+          }
+        }
+      },
+      "EmailRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "email"
+        ],
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "maxLength": 254
+          }
+        }
+      },
+      "TokenRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "token"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "minLength": 32,
+            "maxLength": 512,
+            "writeOnly": true
+          }
+        }
+      },
+      "PasswordResetRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "token",
+          "newPassword"
+        ],
+        "properties": {
+          "token": {
+            "type": "string",
+            "minLength": 32,
+            "maxLength": 512,
+            "writeOnly": true
+          },
+          "newPassword": {
+            "type": "string",
+            "minLength": 10,
+            "maxLength": 128,
+            "writeOnly": true
+          }
+        }
+      },
+      "AuthenticatedUserResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "accessToken",
+              "expiresAt",
+              "user"
+            ],
+            "properties": {
+              "accessToken": {
+                "type": "string"
+              },
+              "expiresAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "user": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        }
+      },
+      "UserResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "User": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "email",
+          "emailVerified",
+          "createdAt",
+          "couple"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          },
+          "email": {
+            "type": "string",
+            "format": "email"
+          },
+          "emailVerified": {
+            "type": "boolean"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "couple": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/CoupleSummary"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "roles": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "user",
+                "admin"
+              ]
+            },
+            "uniqueItems": true
+          }
+        }
+      },
+      "UpdateUserRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "minProperties": 1,
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        }
+      },
+      "UserPreferences": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "notificationsEnabled",
+          "avoidedThemes"
+        ],
+        "properties": {
+          "notificationsEnabled": {
+            "type": "boolean"
+          },
+          "avoidedThemes": {
+            "type": "array",
+            "maxItems": 50,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "maxLength": 50
+            }
+          }
+        }
+      },
+      "PreferencesResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/UserPreferences"
+          }
+        }
+      },
+      "CreateCoupleRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "timezone"
+        ],
+        "properties": {
+          "anniversary": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timezone": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100,
+            "example": "America/Sao_Paulo"
+          }
+        }
+      },
+      "JoinCoupleRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "invitationCode"
+        ],
+        "properties": {
+          "invitationCode": {
+            "type": "string",
+            "pattern": "^[A-Z0-9-]{8,32}$"
+          }
+        }
+      },
+      "Invitation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "code",
+          "expiresAt"
+        ],
+        "properties": {
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Z0-9-]{8,32}$"
+          },
+          "link": {
+            "type": "string",
+            "format": "uri"
+          },
+          "expiresAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "InvitationResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Invitation"
+          }
+        }
+      },
+      "CoupleSummary": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "status",
+          "anniversary",
+          "timezone",
+          "partner"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "waiting",
+              "active",
+              "closed"
+            ]
+          },
+          "anniversary": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "partner": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Partner"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "Couple": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "status",
+          "anniversary",
+          "timezone",
+          "partner",
+          "createdAt",
+          "pairedAt",
+          "invitation"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "waiting",
+              "active",
+              "closed"
+            ]
+          },
+          "anniversary": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "partner": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Partner"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "pairedAt": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "invitation": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Invitation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "CoupleResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Couple"
+          }
+        }
+      },
+      "Partner": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 100
+          }
+        }
+      },
+      "ActivityKind": {
+        "type": "string",
+        "enum": [
+          "open_text",
+          "multiple_choice",
+          "challenge"
+        ]
+      },
+      "Depth": {
+        "type": "string",
+        "enum": [
+          "light",
+          "medium",
+          "deep"
+        ]
+      },
+      "Activity": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "version",
+          "kind",
+          "theme",
+          "depth",
+          "durationMinutes",
+          "prompt",
+          "options"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 100
+          },
+          "version": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ActivityKind"
+          },
+          "theme": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "depth": {
+            "$ref": "#/components/schemas/Depth"
+          },
+          "durationMinutes": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 120
+          },
+          "prompt": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "options": {
+            "type": "array",
+            "maxItems": 20,
+            "items": {
+              "$ref": "#/components/schemas/ActivityOption"
+            }
+          },
+          "sensitive": {
+            "type": "boolean",
+            "default": false
+          }
+        }
+      },
+      "ActivityOption": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "key",
+          "label"
+        ],
+        "properties": {
+          "key": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 300
+          }
+        }
+      },
+      "ActivityListResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data",
+          "meta"
+        ],
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Activity"
+            }
+          },
+          "meta": {
+            "$ref": "#/components/schemas/CursorMeta"
+          }
+        }
+      },
+      "CursorMeta": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "nextCursor",
+          "hasMore"
+        ],
+        "properties": {
+          "nextCursor": {
+            "oneOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "hasMore": {
+            "type": "boolean"
+          }
+        }
+      },
+      "CreateGameSessionRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "mode",
+          "roundCount"
+        ],
+        "properties": {
+          "mode": {
+            "type": "string",
+            "enum": [
+              "questions",
+              "challenges",
+              "mixed"
+            ]
+          },
+          "roundCount": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 20
+          },
+          "themes": {
+            "type": "array",
+            "maxItems": 20,
+            "uniqueItems": true,
+            "items": {
+              "type": "string",
+              "maxLength": 50
+            }
+          },
+          "depths": {
+            "type": "array",
+            "maxItems": 3,
+            "uniqueItems": true,
+            "items": {
+              "$ref": "#/components/schemas/Depth"
+            }
+          }
+        }
+      },
+      "GameSession": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "mode",
+          "status",
+          "timezone",
+          "createdAt",
+          "rounds"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "mode": {
+            "type": "string",
+            "enum": [
+              "questions",
+              "challenges",
+              "mixed"
+            ]
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "ready",
+              "active",
+              "completed",
+              "abandoned"
+            ]
+          },
+          "timezone": {
+            "type": "string"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "startedAt": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "endedAt": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rounds": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/RoundView"
+            }
+          }
+        }
+      },
+      "GameSessionResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/GameSession"
+          }
+        }
+      },
+      "RoundResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/RoundView"
+          }
+        }
+      },
+      "RoundView": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "position",
+          "activityKey",
+          "contentVersion",
+          "kind",
+          "prompt",
+          "options",
+          "status",
+          "partnerState",
+          "myAnswer",
+          "revelation"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "position": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "activityKey": {
+            "type": "string"
+          },
+          "contentVersion": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ActivityKind"
+          },
+          "prompt": {
+            "type": "string"
+          },
+          "options": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ActivityOption"
+            }
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "resolved",
+              "skipped"
+            ]
+          },
+          "partnerState": {
+            "type": "string",
+            "enum": [
+              "not_submitted",
+              "submitted"
+            ]
+          },
+          "myAnswer": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Answer"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "revelation": {
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Revelation"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        }
+      },
+      "AnswerSubmission": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/OpenTextSubmission"
+          },
+          {
+            "$ref": "#/components/schemas/MultipleChoiceSubmission"
+          },
+          {
+            "$ref": "#/components/schemas/ChallengeSubmission"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "kind"
+        }
+      },
+      "OpenTextSubmission": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "text"
+        ],
+        "properties": {
+          "kind": {
+            "const": "open_text"
+          },
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 500
+          }
+        }
+      },
+      "MultipleChoiceSubmission": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "optionKey"
+        ],
+        "properties": {
+          "kind": {
+            "const": "multiple_choice"
+          },
+          "optionKey": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 50
+          }
+        }
+      },
+      "ChallengeSubmission": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "kind",
+          "completed"
+        ],
+        "properties": {
+          "kind": {
+            "const": "challenge"
+          },
+          "completed": {
+            "const": true
+          }
+        }
+      },
+      "Answer": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "memberId",
+          "kind",
+          "submittedAt",
+          "updatedAt"
+        ],
+        "properties": {
+          "memberId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "kind": {
+            "$ref": "#/components/schemas/ActivityKind"
+          },
+          "text": {
+            "type": "string",
+            "maxLength": 500
+          },
+          "optionKey": {
+            "type": "string",
+            "maxLength": 50
+          },
+          "completed": {
+            "type": "boolean"
+          },
+          "submittedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "Revelation": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "revealedAt",
+          "answers"
+        ],
+        "properties": {
+          "revealedAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "answers": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "$ref": "#/components/schemas/Answer"
+            }
+          }
+        }
+      },
+      "Progress": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "completedRounds",
+          "completedChallenges",
+          "currentStreak",
+          "longestStreak",
+          "lastActivityDate",
+          "updatedAt"
+        ],
+        "properties": {
+          "completedRounds": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "completedChallenges": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "currentStreak": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "longestStreak": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "lastActivityDate": {
+            "oneOf": [
+              {
+                "type": "string",
+                "format": "date"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "ProgressResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/Progress"
+          }
+        }
+      },
+      "AnalyticsEventRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "name",
+          "occurredAt",
+          "properties"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "enum": [
+              "home_viewed",
+              "question_session_started",
+              "question_session_completed",
+              "love_language_test_started",
+              "love_language_test_completed",
+              "temperament_test_started",
+              "temperament_test_completed",
+              "mutual_reveal_viewed",
+              "daily_gesture_completed",
+              "notification_muted",
+              "safety_help_opened"
+            ]
+          },
+          "occurredAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "properties": {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "source": {
+                "type": "string",
+                "maxLength": 50
+              },
+              "screen": {
+                "type": "string",
+                "maxLength": 50
+              },
+              "level": {
+                "type": "string",
+                "maxLength": 50
+              },
+              "activityKey": {
+                "type": "string",
+                "maxLength": 100
+              }
+            }
+          }
+        }
+      },
+      "AdminMetricsResponse": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "data"
+        ],
+        "properties": {
+          "data": {
+            "type": "object",
+            "description": "Árvore versionada de aquisição, ativação, engajamento, retenção, monetização e segurança. Campos financeiros são derivados de fontes confiáveis do servidor.",
+            "required": [
+              "generatedAt",
+              "northStar",
+              "acquisition",
+              "activation",
+              "engagement",
+              "retention",
+              "monetization",
+              "safety",
+              "trend"
+            ],
+            "properties": {
+              "generatedAt": {
+                "type": "string",
+                "format": "date-time"
+              },
+              "northStar": {
+                "type": "object"
+              },
+              "acquisition": {
+                "type": "object"
+              },
+              "activation": {
+                "type": "object"
+              },
+              "engagement": {
+                "type": "object"
+              },
+              "retention": {
+                "type": "object"
+              },
+              "monetization": {
+                "type": "object"
+              },
+              "safety": {
+                "type": "object"
+              },
+              "trend": {
+                "type": "array",
+                "items": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      },
+      "Problem": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "type",
+          "title",
+          "status",
+          "code",
+          "requestId"
+        ],
+        "properties": {
+          "type": {
+            "type": "string",
+            "format": "uri-reference"
+          },
+          "title": {
+            "type": "string"
+          },
+          "status": {
+            "type": "integer",
+            "minimum": 400,
+            "maximum": 599
+          },
+          "code": {
+            "type": "string",
+            "pattern": "^[A-Z0-9_]+$"
+          },
+          "detail": {
+            "type": "string"
+          },
+          "instance": {
+            "type": "string",
+            "format": "uri-reference"
+          },
+          "requestId": {
+            "type": "string",
+            "format": "uuid"
+          },
+          "errors": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "field",
+                "code"
+              ],
+              "properties": {
+                "field": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "string"
+                },
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

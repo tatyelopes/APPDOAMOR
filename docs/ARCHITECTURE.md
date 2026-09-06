@@ -63,3 +63,7 @@ Crie apenas as pastas necessárias. Arquivos e diretórios vazios não devem ser
 
 O `App.tsx` ainda reúne as telas do MVP para evitar uma reescrita arriscada. As próximas alterações devem extrair, uma a uma, as features `auth`, `couples`, `questions`, `love-languages` e `temperaments`, mantendo o comportamento coberto por testes antes de cada movimento.
 
+
+## Modelo de dados
+
+O [modelo lógico de dados](MODELO-DE-DADOS.md) e o [esquema DBML](modelo-de-dados.dbml) definem usuários, vínculos de casal, autenticação, partidas, rodadas, respostas e progresso para PostgreSQL. Incluem regras de acesso, integridade, concorrência e mapeamento do JSON atual. São a referência da tarefa 34 para contrato de API e futuras migrações; a persistência atual ainda usa JSON.

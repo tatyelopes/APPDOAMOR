@@ -1,3 +1,4 @@
+import { GamePage } from './features/game/GamePage'
 import { useEffect, useMemo, useState } from 'react'
 import { apiRequest as request } from './shared/api/http-client'
 import { readJson, storageKeys, writeJson } from './shared/storage/local-storage'
@@ -186,8 +187,6 @@ function Experience({ token, user, onUser, onLogout }: { token: string; user: Ap
   const [screen, setScreen] = useState<Screen>('home')
   const [member] = useState<Member>('owner')
   const [answerDraft, setAnswerDraft] = useState('')
-  const [questionIndex, setQuestionIndex] = useState(0)
-  const [level, setLevel] = useState(1)
   const [quizIndex, setQuizIndex] = useState(0)
   const [answers, setAnswers] = useState<Language[]>([])
   const [temperamentIndex, setTemperamentIndex] = useState(0)
@@ -205,7 +204,6 @@ function Experience({ token, user, onUser, onLogout }: { token: string; user: Ap
 
   const currentName = user.name
   const otherName = user.couple?.partner?.name || 'seu amor'
-  const filtered = questions.filter(question => question.level === level)
   const privateQuestion = questions[3]
   const responses = remote.complete ? { owner: remote.answers.find(a => a.name === currentName)?.text || remote.mine, partner: remote.answers.find(a => a.name !== currentName)?.text || '' } : { owner: remote.mine }
   const bothAnswered = remote.complete
@@ -269,7 +267,7 @@ function Experience({ token, user, onUser, onLogout }: { token: string; user: Ap
         <article className="daily-card"><div className="card-copy"><span className="pill light">RESPOSTA PRIVADA</span><h2>{privateQuestion.text}</h2><p>{bothAnswered ? 'As duas respostas estão prontas para serem descobertas.' : responses[member] ? `Sua resposta está guardada. Falta ${otherName} responder.` : 'Sua resposta fica em segredo até que os dois participem.'}</p><button onClick={openPrivate}>{bothAnswered ? 'Revelar respostas' : responses[member] ? 'Acompanhar resposta' : 'Responder em segredo'} <span>→</span></button></div><div className="orb">♡</div></article>
         <div className="section-title"><span>EXPLOREM JUNTOS</span><h2>Escolham o momento de hoje</h2></div>
         <div className="feature-grid">
-          <button className="feature warm" onClick={() => { track('question_session_started', { level: 'leve' }); setLevel(1); setQuestionIndex(0); setScreen('questions') }}><span className="feature-icon">?</span><div><small>CONVERSAS</small><h3>Perguntas que aproximam</h3><p>Leves, profundas e feitas para vocês.</p></div><b>→</b></button>
+          <button className="feature warm" onClick={() => { setScreen('questions') }}><span className="feature-icon">?</span><div><small>CONVERSAS</small><h3>Perguntas que aproximam</h3><p>Leves, profundas e feitas para vocês.</p></div><b>→</b></button>
           <button className="feature sage" onClick={() => { track('love_language_test_started'); setQuizIndex(0); setAnswers([]); setScreen('test') }}><span className="feature-icon">♡</span><div><small>DESCUBRAM-SE</small><h3>As linguagens do amor</h3><p>Entenda como cada um dá e recebe carinho.</p></div><b>→</b></button>
           <button className="feature gold" onClick={startTemperament}><span className="feature-icon">✦</span><div><small>PERSONALIDADE</small><h3>Os 4 temperamentos</h3><p>Descubra como você reage, sente e se conecta.</p></div><b>→</b></button>
           <button className="feature lilac" onClick={openPrivate}><span className="feature-icon">◉</span><div><small>ESPAÇO SEGURO</small><h3>Revelação mútua</h3><p>Cada um responde sem influenciar o outro.</p></div><b>→</b></button>
@@ -285,7 +283,7 @@ function Experience({ token, user, onUser, onLogout }: { token: string; user: Ap
           : <div className="reveal"><div className="result-mark">♡</div><div className="eyebrow">REVELAÇÃO MÚTUA</div><h1>Agora vocês podem se escutar.</h1><p className="lead">Leiam sem interromper. Depois conversem sobre o que mais tocou cada um.</p><div className="reveal-grid">{remote.answers.map(answer => <article key={answer.name}><small>{answer.name.toUpperCase()}</small><p>“{answer.text}”</p></article>)}</div><button className="primary" onClick={() => { track('mutual_reveal_viewed'); setStreak(value => value + 1); setScreen('home') }}>Concluir momento juntos →</button></div>}
       </section>}
 
-      {screen === 'questions' && <section className="page game fade-in"><button className="back" onClick={() => setScreen('home')}>← Voltar</button><div className="game-head"><div><div className="eyebrow">CONVERSAS QUE APROXIMAM</div><h1>Sem pressa. Só presença.</h1></div><span>{questionIndex + 1} / {filtered.length}</span></div><div className="level-switch"><button className={level === 1 ? 'active' : ''} onClick={() => { setLevel(1); setQuestionIndex(0) }}>Leve</button><button className={level === 2 ? 'active' : ''} onClick={() => { setLevel(2); setQuestionIndex(0) }}>Profundo</button></div><article className="question-card"><span className="pill">{filtered[questionIndex].category}</span><div className="quote">“</div><h2>{filtered[questionIndex].text}</h2><p>Olhem um para o outro. Uma pessoa responde por vez.</p></article><div className="game-actions"><button className="secondary" onClick={() => setQuestionIndex(value => (value - 1 + filtered.length) % filtered.length)}>← Anterior</button><button className="primary" onClick={() => questionIndex === filtered.length - 1 ? (track('question_session_completed', { level: String(level) }), setScreen('home')) : setQuestionIndex(value => value + 1)}>{questionIndex === filtered.length - 1 ? 'Concluir sessão' : 'Próxima pergunta →'}</button></div></section>}
+      {screen === 'questions' && <GamePage players={[currentName, otherName]} onBack={() => setScreen('home')} track={track} />}
 
       {screen === 'test' && <section className="page quiz fade-in"><button className="back" onClick={() => setScreen('home')}>← Sair do teste</button><div className="progress"><i style={{ width: `${((quizIndex + 1) / quiz.length) * 100}%` }} /></div><div className="quiz-intro"><div className="eyebrow">LINGUAGENS DO AMOR · {quizIndex + 1} DE {quiz.length}</div><h1>O que faria você se sentir<br/><em>mais amado(a)?</em></h1><p>Não existe resposta certa. Escolha a que mais toca você.</p></div><div className="choices"><button onClick={() => choose(quiz[quizIndex].a.language)}><span>A</span><p>{quiz[quizIndex].a.text}</p><i>○</i></button><div>OU</div><button onClick={() => choose(quiz[quizIndex].b.language)}><span>B</span><p>{quiz[quizIndex].b.text}</p><i>○</i></button></div></section>}
       {screen === 'temperament' && <section className="page temperament-test fade-in">

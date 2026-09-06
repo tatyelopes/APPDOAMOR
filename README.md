@@ -1,45 +1,71 @@
-# Entre Nós
+# Conectadois — App do Amor
 
-> Consulte [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) para a arquitetura, as regras de dependência e o padrão de pastas do projeto.
+Aplicativo de conexão para casais. O repositório reúne documentação de produto, protótipos e uma implementação parcial em React e Node.
 
-MVP mobile-first de um aplicativo de conexão para casais, criado a partir do PRD em `Projeto.docx`.
+## Estado atual
 
-## O que já funciona
+- Cadastro e login individuais, criação de espaço, código de convite e espera de pareamento.
+- Uma pergunta privada fixa com respostas no servidor e revelação após as duas contas participarem.
+- Jogo local no mesmo dispositivo com 11 temas, perguntas discursivas, desafios e modo misto. As participações desse jogo ficam em memória durante a sessão.
+- Testes de linguagens do amor e temperamentos implementados no frontend, com revisão de conteúdo e integração pendentes.
+- Home e painel administrativo iniciais. O contador local não representa progresso confirmado, e métricas ainda precisam das correções registradas no plano.
+- Persistência backend em JSON. O modelo PostgreSQL está documentado, mas não aplicado.
+- Banco editorial com 119 atividades candidatas, incluindo 22 desafios na aba Desafios. Quantidade produzida não significa aprovação para o piloto.
 
-- Onboarding e perfil básico do casal
-- Tela inicial com streak, pergunta e gesto do dia
-- Jogo de perguntas nos níveis leve e profundo
-- Teste das cinco linguagens do amor por escolha forçada
-- Resultado e dica prática conforme a linguagem predominante
-- Progresso persistido localmente no navegador
-- Layout responsivo para celular e desktop
-- Conta individual com e-mail, senha protegida por hash e sessão autenticada
-- Backend local com sincronização entre navegadores e código de convite
-- Respostas privadas armazenadas no servidor, bloqueadas até a participação de ambos
-- Tela de revelação mútua das respostas
+O projeto compila, mas ainda depende de integração bilateral completa, testes automatizados, validação com casais e preparação operacional antes do piloto externo.
 
-## Executar
+## Referências
 
-Requer Node.js 20 ou superior.
+- [Plano operacional em Excel](Plano%20de%20trabalho/acompanhamento-app-do-amor.xlsx)
+- [Revisão geral de 04/09/2026](docs/REVISAO-GERAL-2026-09-04.md)
+- [Escopo do MVP](docs/ESCOPO-MVP.md)
+- [Arquitetura](docs/ARCHITECTURE.md)
+- [Modelo de dados](docs/MODELO-DE-DADOS.md)
+- [Modelagem de ameaças](docs/MODELAGEM-DE-AMEACAS.md)
+- [Inventário de dados e bases legais LGPD](docs/INVENTARIO-DE-DADOS-E-BASES-LEGAIS-LGPD.md)
+- [Contrato e versionamento da API](docs/CONTRATO-E-VERSIONAMENTO-DA-API.md)
+- [Especificação OpenAPI v1](docs/openapi-v1.json)
+- [Desenho da home](docs/HOME-E-ROTINA-DIARIA.md)
+- [Protótipo da home](docs/prototipo-home-rotina.html)
+- [Desenho de testes e resultados](docs/TESTES-E-RESULTADOS.md)
+- [Protótipo de testes e resultados](docs/prototipo-testes-resultados.html)
 
-```powershell
+O protótipo HTML é uma demonstração local com dados fictícios. Ele não está integrado à home do app.
+
+## Executar e compilar
+
+Instale as dependências com a versão de Node compatível com o pacote instalado e execute:
+
+~~~powershell
 npm.cmd install --cache .npm-cache
 npm.cmd run dev
-```
+~~~
 
-Abra o endereço exibido no terminal. Para validar a versão de produção:
+Use os endereços informados no terminal. Para compilar:
 
-```powershell
+~~~powershell
 npm.cmd run build
-```
+~~~
 
-## Próximos ciclos
+Para validar os artefatos de arquitetura e privacidade:
 
-1. Questionário completo, pontuação separada para dar/receber amor e análise do casal
-2. Migrar a persistência JSON local para PostgreSQL antes da publicação
-3. Teste dos quatro temperamentos e matriz de compatibilidade
-4. Desafios, provas, assinatura, multiplayer, relatórios e IA
+~~~powershell
+npm.cmd run validate:openapi
+npm.cmd run validate:threat-model
+npm.cmd run validate:lgpd
+~~~
 
-## Observação de privacidade
+## Atualizar o acompanhamento
 
-Esta versão já separa as sessões e impede a revelação unilateral. Antes da publicação, o armazenamento local do servidor deve migrar para PostgreSQL, HTTPS e criptografia adequada para dados íntimos conforme o PRD.
+O gerador é a fonte das tarefas; o Excel é o acompanhamento operacional. Após alterar tarefas ou status:
+
+~~~powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-project-plan.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate-project-plan.ps1
+~~~
+
+A validação confere estrutura, IDs, dependências, ciclos, conteúdo, cabeçalhos e fórmulas. A planilha solicita recálculo ao abrir no Excel.
+
+## Próximo ciclo
+
+Reconciliar formatos e mecânicas do piloto, revisar o conteúdo candidato, implementar partidas persistidas e conectar a experiência das duas contas. O detalhamento, as prioridades e as pendências estão no plano, incluindo os itens 112–119. Não há decisão de acrescentar IA, diagnósticos, rankings ou cobrança ao piloto gratuito.

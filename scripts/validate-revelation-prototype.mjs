@@ -1,0 +1,70 @@
+import assert from 'node:assert/strict'
+import { readFileSync } from 'node:fs'
+import vm from 'node:vm'
+
+const source = readFileSync(new URL('../docs/prototipo-perguntas-revelacao.js', import.meta.url), 'utf8')
+const sandbox = vm.createContext({})
+vm.runInContext(source, sandbox)
+const { create, themes } = sandbox.RevelationPrototype
+assert.equal(themes.length, 11)
+const answer = (model, person, text) => { model.setViewer(person); assert.equal(model.draft(text), true); assert.equal(model.submit(), true) }
+
+for (const theme of themes) {
+  for (const mode of ['questions', 'challenges', 'mixed']) {
+    const model = create()
+    assert.ok(model.configure({ theme, mode })); assert.ok(model.start())
+    assert.equal(model.configure({ theme: 'Filhos' }), false)
+    while (model.view().page !== 'summary') {
+      const view = model.view()
+      if (view.round.kind === 'challenge') {
+        model.setViewer(0); assert.ok(model.submit()); assert.equal(model.reveal(), false)
+        model.setViewer(1); assert.equal(model.view().round.mine, null); assert.ok(model.submit())
+      } else { answer(model, 0, 'Exemplo Ana'); answer(model, 1, 'Exemplo Alex') }
+      assert.equal(model.view().round.answers.length, 0)
+      assert.ok(model.reveal()); assert.equal(model.view().round.answers.length, 2)
+      assert.equal(model.skip(), false); assert.equal(model.edit(), false); assert.equal(model.submit(), false)
+      assert.ok(model.advance())
+    }
+    assert.equal(model.view().completed, mode === 'mixed' ? 2 : 1)
+    assert.equal(model.view().skipped, 0)
+  }
+}
+const privateFlow = create(); privateFlow.start()
+privateFlow.draft('   '); assert.equal(privateFlow.submit(), false)
+answer(privateFlow, 0, '<script>segredo-A</script>')
+privateFlow.setViewer(1)
+assert.ok(!JSON.stringify(privateFlow.view()).includes('segredo-A'))
+assert.equal(privateFlow.reveal(), false)
+privateFlow.draft('rascunho-B'); privateFlow.pause()
+assert.ok(!JSON.stringify(privateFlow.view()).includes('rascunho-B'))
+privateFlow.resume(); assert.equal(privateFlow.view().round.draft, 'rascunho-B')
+privateFlow.setViewer(0); assert.ok(privateFlow.edit()); privateFlow.draft('Corrigida'); assert.ok(privateFlow.submit())
+privateFlow.setViewer(1); privateFlow.submit(); privateFlow.reveal()
+assert.equal(privateFlow.view().round.answers[0].text, 'Corrigida')
+privateFlow.setCondition('offline'); assert.equal(privateFlow.view().round.answers.length, 0)
+assert.equal(privateFlow.advance(), false)
+privateFlow.setCondition('expired'); assert.equal(privateFlow.view().page, 'locked'); assert.equal(privateFlow.view().round, undefined)
+privateFlow.setCondition('online'); privateFlow.reveal(); assert.equal(privateFlow.view().round.answers.length, 2)
+privateFlow.setCondition('unlinked'); assert.equal(privateFlow.view().round, undefined); assert.equal(privateFlow.setCondition('online'), false)
+
+const skipped = create(); skipped.start(); answer(skipped, 0, 'Nunca revelar')
+skipped.setViewer(1); assert.ok(skipped.skip()); assert.equal(skipped.reveal(), false)
+assert.ok(!JSON.stringify(skipped.view()).includes('Nunca revelar'))
+skipped.advance(); assert.equal(skipped.view().completed, 0); assert.equal(skipped.view().skipped, 1)
+
+const network = create(); network.start(); network.draft('Manter rascunho')
+network.setCondition('offline'); assert.equal(network.submit(), false); assert.equal(network.skip(), false)
+network.setCondition('fail'); assert.equal(network.submit(), false)
+assert.equal(network.view().round.draft, 'Manter rascunho'); assert.equal(network.view().round.mine, null)
+assert.ok(network.view().notice); assert.ok(network.submit()); assert.equal(network.submit(), false)
+
+const choice = create(); choice.configure({ kind: 'multiple_choice' }); choice.start()
+choice.draft('Opção inexistente'); assert.equal(choice.submit(), false)
+choice.draft(choice.view().round.options[0]); assert.equal(choice.view().round.mine, null); assert.ok(choice.submit())
+choice.setViewer(1); choice.draft(choice.view().round.options[1]); choice.submit(); choice.reveal()
+assert.notEqual(choice.view().round.answers[0].text, choice.view().round.answers[1].text)
+
+const mixed = create(); mixed.configure({ mode: 'mixed' }); mixed.start(); mixed.skip(); mixed.advance()
+mixed.setViewer(0); mixed.submit(); mixed.setViewer(1); mixed.submit(); mixed.advance()
+assert.equal(mixed.view().completed, 1); assert.equal(mixed.view().skipped, 1)
+console.log('Protótipo validado: 11 temas × 3 modos; projeções individuais, revelação, correção, escolha, desafios, pulo, pausa, falha, offline e bloqueio de acesso. Não substitui testes visuais ou de backend.')

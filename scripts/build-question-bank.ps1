@@ -1,0 +1,138 @@
+﻿param([string]$OutputPath = (Join-Path $PSScriptRoot '..\Conteúdo\banco-de-perguntas-conectadois.xlsx'))
+
+$ErrorActionPreference = 'Stop'
+Add-Type -AssemblyName System.IO.Compression
+$utf8 = [Text.UTF8Encoding]::new($false)
+
+$csv = @'
+ID;Tema;Intensidade;Pergunta;Opção A;Opção B;Opção C;Opção D;Modo;Revelação;Status de revisão;Observações
+FIL-001;Filhos;Leve;Qual programa em família mais combina com um fim de semana ideal?;Passeio ao ar livre;Filme e comida em casa;Visita a familiares;Atividade nova e surpresa;Resposta individual;Mostrar as duas escolhas após ambos responderem;Pendente;Aplicável a quem tem ou deseja ter filhos
+FIL-002;Filhos;Leve;Que qualidade você mais gostaria de incentivar em uma criança?;Gentileza;Autonomia;Curiosidade;Responsabilidade;Resposta individual;Comparar prioridades sem resposta certa;Pendente;
+FIL-003;Filhos;Leve;Em uma rotina com filhos, qual momento você mais gostaria de preservar para o casal?;Uma refeição juntos;Um encontro periódico;Alguns minutos antes de dormir;Uma viagem ou passeio a dois;Resposta individual;Revelar coincidências e diferenças;Pendente;
+FIL-004;Filhos;Média;Qual estilo de educação mais se aproxima do que você considera saudável?;Regras claras e consistentes;Diálogo e construção conjunta;Liberdade com acompanhamento;Equilíbrio entre os três;Resposta individual;Comparar e convidar para explicar;Pendente;Não apresentar perfis como diagnóstico
+FIL-005;Filhos;Média;Quando uma criança faz birra em público, qual seria sua primeira reação?;Acolher e ajudar a nomear o sentimento;Levar para um lugar calmo;Relembrar o limite combinado;Dividir a situação com a pessoa parceira;Resposta individual;Revelar e conversar sobre contexto;Pendente;
+FIL-006;Filhos;Média;Como você imagina a divisão dos cuidados com filhos?;Tarefas definidas para cada pessoa;Alternância conforme a rotina;Divisão igual sempre que possível;Acordos revistos com frequência;Resposta individual;Comparar expectativas;Pendente;
+FIL-007;Filhos;Média;Qual papel os avós e familiares deveriam ter na criação?;Participação frequente;Apoio quando solicitado;Convívio com limites bem definidos;Depende da fase e da relação;Resposta individual;Revelar com convite ao diálogo;Pendente;
+FIL-008;Filhos;Média;Se vocês discordassem sobre uma regra para os filhos, o melhor caminho seria:;Conversar em particular antes de decidir;Seguir quem conhece melhor o assunto;Testar uma opção por um período;Buscar orientação externa confiável;Resposta individual;Comparar estratégias;Pendente;
+FIL-009;Filhos;Profunda;Qual preocupação sobre ter ou criar filhos pesa mais para você?;Estabilidade financeira;Tempo e energia;Responsabilidade emocional;Mudanças na relação do casal;Resposta selada;Revelar apenas após ambos responderem;Pendente;Permitir pular e oferecer acolhimento
+FIL-010;Filhos;Profunda;O que mais influencia sua visão sobre maternidade ou paternidade?;Minha própria criação;Valores que construí na vida adulta;Exemplos de outras famílias;Conversas e planos do casal;Resposta selada;Comparar sem avaliar famílias;Pendente;
+FIL-011;Filhos;Profunda;Se um de vocês mudasse de ideia sobre ter filhos, qual primeiro passo faria mais sentido?;Ouvir sem tentar convencer;Dar tempo para processar;Buscar uma conversa orientada;Reavaliar os planos com honestidade;Resposta selada;Revelar com lembrete de respeito;Pendente;Revisão especializada obrigatória
+FIL-012;Filhos;Profunda;Diante de uma necessidade especial de um filho, o que você consideraria mais importante no casal?;Buscar informação de qualidade;Dividir cuidados de forma sustentável;Fortalecer a rede de apoio;Manter diálogo emocional constante;Resposta selada;Revelar e sugerir conversa;Pendente;Evitar capacitismo
+FIL-013;Filhos;Média;Como vocês deveriam decidir sobre telas e tecnologia para crianças?;Limites por idade;Horários e locais sem tela;Acompanhamento do conteúdo;Exemplo dado pelos adultos;Resposta individual;Comparar prioridades;Pendente;
+FIL-014;Filhos;Média;Qual aprendizado sobre dinheiro você mais gostaria de transmitir?;Planejamento;Generosidade;Autonomia;Consumo consciente;Resposta individual;Mostrar as escolhas;Pendente;
+FIL-015;Filhos;Profunda;Que legado afetivo você mais gostaria de deixar para seus filhos?;Sentirem-se sempre amados;Terem liberdade para ser quem são;Saberem conversar sobre sentimentos;Construírem relações respeitosas;Resposta selada;Revelar e abrir resposta opcional;Pendente;
+REL-001;Religioso;Leve;Que tipo de experiência espiritual mais traz paz para você?;Oração ou meditação;Celebração em comunidade;Contato com a natureza;Silêncio e reflexão pessoal;Resposta individual;Mostrar as duas escolhas;Pendente;Usar também para pessoas sem religião
+REL-002;Religioso;Leve;Em datas religiosas ou espirituais, o que você mais valoriza?;O significado da tradição;O encontro com a família;O ritual ou celebração;A oportunidade de reflexão;Resposta individual;Comparar significados;Pendente;
+REL-003;Religioso;Leve;Como você prefere aprender sobre crenças diferentes das suas?;Conversando com pessoas;Lendo e pesquisando;Visitando espaços e celebrações;Observando com respeito sem participar;Resposta individual;Revelar sem hierarquizar crenças;Pendente;
+REL-004;Religioso;Média;Qual espaço a espiritualidade deveria ocupar na rotina do casal?;Práticas frequentes em conjunto;Momentos individuais respeitados;Apenas ocasiões especiais;Nenhum papel específico;Resposta selada;Comparar com neutralidade;Pendente;
+REL-005;Religioso;Média;Se vocês tiverem crenças diferentes, qual acordo parece mais importante?;Não tentar converter a outra pessoa;Participar de alguns momentos por apoio;Manter práticas individuais livres;Conversar antes de decisões familiares;Resposta selada;Revelar após ambos responderem;Pendente;
+REL-006;Religioso;Média;Como você gostaria de lidar com tradições religiosas na casa de vocês?;Seguir uma tradição principal;Combinar tradições das duas pessoas;Criar rituais próprios;Não adotar tradição religiosa;Resposta selada;Comparar desejos;Pendente;
+REL-007;Religioso;Profunda;Quando sua fé ou convicção entra em conflito com uma escolha do casal, o que deve vir primeiro?;Escuta mútua;Coerência com a própria consciência;Busca de um acordo possível;Orientação de alguém de confiança;Resposta selada;Revelar com opção de pausar;Pendente;Revisão especializada e de inclusão
+REL-008;Religioso;Média;Qual atitude faz você se sentir respeitado em suas crenças?;Interesse sincero;Liberdade para praticar;Ausência de piadas ou julgamentos;Participação em momentos importantes;Resposta individual;Mostrar e convidar para explicar;Pendente;
+REL-009;Religioso;Profunda;Como valores religiosos ou filosóficos deveriam influenciar decisões financeiras?;Orientar generosidade e ajuda;Definir limites de consumo;Apoiar planejamento responsável;Ficar separados das finanças;Resposta selada;Comparar perspectivas;Pendente;
+REL-010;Religioso;Profunda;Se houver filhos, como você gostaria de apresentar religião ou espiritualidade?;Ensinar uma tradição definida;Apresentar diferentes crenças;Oferecer valores sem religião;Deixar a escolha para mais tarde;Resposta selada;Revelar com lembrete de escuta;Pendente;
+REL-011;Religioso;Média;Em uma fase difícil, onde você tende a buscar sentido primeiro?;Na fé ou espiritualidade;Na conversa com pessoas próximas;Na reflexão racional;Em ajuda profissional;Resposta individual;Mostrar sem sugerir superioridade;Pendente;Não substituir apoio profissional
+REL-012;Religioso;Leve;Qual ritual de gratidão combinaria mais com vocês?;Agradecer antes de dormir;Compartilhar algo bom do dia;Fazer uma ação solidária;Registrar boas lembranças;Resposta individual;Destacar escolhas em comum;Pendente;
+REL-013;Religioso;Profunda;Qual limite sobre religião no relacionamento é mais importante para você?;Não sofrer pressão para acreditar;Não ter minha prática desrespeitada;Decidir juntos sobre a família;Poder mudar de visão com liberdade;Resposta selada;Revelar apenas com consentimento;Pendente;
+REL-014;Religioso;Média;Como você se sentiria ao acompanhar seu amor em uma celebração diferente da sua crença?;Participaria com curiosidade;Participaria em ocasiões importantes;Preferiria não participar, mas apoiaria;Dependeria do tipo de celebração;Resposta individual;Comparar limites;Pendente;
+REL-015;Religioso;Profunda;Qual valor essencial mais orienta suas escolhas hoje?;Compaixão;Justiça;Fidelidade às convicções;Liberdade e responsabilidade;Resposta selada;Revelar e abrir conversa;Pendente;
+API-001;Apimentado;Leve;Qual clima mais ajuda você a entrar no modo romance?;Luz baixa e música;Conversa e elogios;Surpresa preparada;Tempo sem pressa;Resposta selada;Mostrar apenas após ambos responderem;Pendente;Somente para adultos e com opt-in
+API-002;Apimentado;Leve;Qual tipo de flerte durante o dia mais combina com você?;Mensagem carinhosa;Elogio mais ousado;Olhar ou gesto discreto;Convite surpresa para mais tarde;Resposta selada;Revelar coincidências;Pendente;Somente para adultos
+API-003;Apimentado;Leve;Para um encontro mais íntimo, o que mais faz diferença?;Privacidade;Espontaneidade;Planejamento;Sentir conexão emocional;Resposta selada;Comparar preferências;Pendente;Somente para adultos
+API-004;Apimentado;Média;Como você prefere demonstrar que está com vontade de mais proximidade?;Falando diretamente;Com carinho e toque;Criando um clima especial;Esperando um sinal da outra pessoa;Resposta selada;Revelar com lembrete de consentimento;Pendente;Somente para adultos
+API-005;Apimentado;Média;O que torna uma novidade íntima confortável para você?;Conversar antes;Começar devagar;Poder mudar de ideia;Ter confiança e privacidade;Resposta selada;Revelar após ambos responderem;Pendente;Consentimento pode ser retirado a qualquer momento
+API-006;Apimentado;Média;Qual ritmo de iniciativa parece mais gostoso para o casal?;Alternar quem inicia;Deixar acontecer espontaneamente;Combinar um momento;Quem estiver com vontade sinaliza;Resposta selada;Comparar sem cobrança;Pendente;Somente para adultos
+API-007;Apimentado;Média;Que tipo de elogio aumenta mais sua confiança em momentos íntimos?;Sobre minha aparência;Sobre meu jeito;Sobre como faço a pessoa se sentir;Sobre nossa sintonia;Resposta selada;Mostrar escolhas;Pendente;Somente para adultos
+API-008;Apimentado;Média;Qual cenário de encontro em casa parece mais atraente?;Jantar e música;Banho relaxante e massagem;Filme com clima romântico;Jogo de perguntas e surpresas;Resposta selada;Destacar escolha em comum;Pendente;Somente para adultos
+API-009;Apimentado;Profunda;Quando você não está no clima, como prefere comunicar isso?;Falando de forma direta;Pedindo carinho sem avançar;Explicando que precisa de tempo;Combinando outro momento, se quiser;Resposta selada;Revelar com reforço de que não exige justificativa;Pendente;Revisão especializada obrigatória
+API-010;Apimentado;Profunda;O que mais ajuda você a se sentir seguro para falar de desejos?;Não ser julgado;Ter certeza de que posso dizer não;Conversar fora do momento íntimo;Perceber curiosidade e respeito;Resposta selada;Revelar com opção de pausar;Pendente;Somente para adultos
+API-011;Apimentado;Média;Qual forma de criar expectativa parece mais divertida?;Uma mensagem durante o dia;Uma pista ou bilhete;Escolher juntos uma surpresa;Não planejar e deixar acontecer;Resposta selada;Comparar preferências;Pendente;Somente para adultos
+API-012;Apimentado;Profunda;Como vocês deveriam reagir quando um limite muda?;Parar e acolher sem questionar;Confirmar o novo limite com calma;Conversar depois, fora do momento;Todas as anteriores;Resposta selada;Revelar e reforçar consentimento;Pendente;Resposta D é prática recomendada
+API-013;Apimentado;Leve;Qual detalhe deixa um beijo ainda mais especial para você?;O momento inesperado;A proximidade demorada;O olhar antes;A sensação de reconciliação ou saudade;Resposta selada;Mostrar escolhas após ambos;Pendente;Somente para adultos
+API-014;Apimentado;Média;Se vocês fossem experimentar algo novo, como preferiria escolher?;Cada pessoa sugere opções e revelam coincidências;Uma pessoa prepara e a outra aprova;Conversam e decidem juntos;Começam por algo simples e avaliam depois;Resposta selada;Revelar apenas escolhas em comum;Pendente;Somente para adultos
+API-015;Apimentado;Profunda;O que você mais deseja proteger na intimidade de vocês?;Consentimento e liberdade;Confiança e confidencialidade;Carinho e conexão;Leveza para conversar e rir;Resposta selada;Revelar e convidar para acordo;Pendente;Somente para adultos
+DES-001;Descontraído;Leve;Se vocês ganhassem uma tarde livre agora, qual plano venceria?;Explorar um lugar novo;Maratonar algo no sofá;Comer em um lugar favorito;Improvisar sem decidir antes;Resposta individual;Destacar coincidências;Pendente;
+DES-002;Descontraído;Leve;Em uma dupla de filme, qual papel mais combina com você?;Quem cria o plano;Quem faz todo mundo rir;Quem resolve o imprevisto;Quem leva os lanches;Resposta individual;Mostrar as escolhas;Pendente;
+DES-003;Descontraído;Leve;Qual competição boba você teria mais chance de ganhar?;Escolher a melhor música;Montar algo sem manual;Encontrar o melhor lanche;Contar a pior piada;Resposta individual;Revelar e brincar;Pendente;
+DES-004;Descontraído;Leve;Se o relacionamento de vocês fosse uma comida, qual seria?;Pizza para compartilhar;Brigadeiro reconfortante;Prato apimentado;Receita inventada na hora;Resposta individual;Mostrar e pedir justificativa opcional;Pendente;
+DES-005;Descontraído;Leve;Qual viagem improvisada parece mais divertida?;Praia;Montanha;Cidade histórica;Destino escolhido na sorte;Resposta individual;Destacar escolha em comum;Pendente;
+DES-006;Descontraído;Leve;Que talento inútil seria mais engraçado dominar juntos?;Imitar vozes;Dançar uma coreografia;Fazer truques de mágica;Reconhecer músicas em um segundo;Resposta individual;Mostrar escolhas;Pendente;
+DES-007;Descontraído;Leve;Qual noite temática vocês deveriam fazer primeiro?;Comida de outro país;Karaokê em casa;Jogos e desafios;Fantasia e filme;Resposta individual;Transformar coincidência em sugestão;Pendente;
+DES-008;Descontraído;Leve;Se pudessem trocar de rotina por um dia, qual opção escolheriam?;Vida de celebridade;Vida no campo;Vida de aventura;Vida sem celular;Resposta individual;Revelar após ambos;Pendente;
+DES-009;Descontraído;Leve;Qual pequeno luxo melhora instantaneamente um dia comum?;Dormir até mais tarde;Pedir a comida favorita;Tomar um banho demorado;Cancelar todos os planos;Resposta individual;Mostrar escolhas;Pendente;
+DES-010;Descontraído;Leve;Quem vocês seriam em uma missão secreta?;A mente estrategista;A pessoa dos disfarces;Quem conversa e consegue informações;Quem improvisa a fuga;Resposta individual;Revelar e sugerir apelidos;Pendente;
+DES-011;Descontraído;Leve;Qual regra divertida valeria por 24 horas?;Só vale falar cantando;Toda refeição vira piquenique;Celulares ficam guardados;Cada decisão é no cara ou coroa;Resposta individual;Destacar acordo;Pendente;
+DES-012;Descontraído;Leve;Qual lembrança costuma render mais risadas?;Um encontro que deu errado;Uma viagem com imprevisto;Uma vergonha compartilhada;Uma piada que só vocês entendem;Resposta individual;Abrir conversa opcional;Pendente;
+DES-013;Descontraído;Leve;Se adotassem um mascote imaginário, qual seria?;Uma capivara tranquila;Um cachorro aventureiro;Um gato dramático;Um pinguim romântico;Resposta individual;Mostrar escolhas;Pendente;
+DES-014;Descontraído;Leve;Qual desafio de cinco minutos vocês topariam agora?;Inventar uma dança;Desenhar um ao outro;Criar um sanduíche diferente;Fazer elogios usando letras sorteadas;Resposta individual;Se houver coincidência sugerir ação;Pendente;
+DES-015;Descontraído;Leve;Que título teria a comédia sobre a história de vocês?;Dois planos e nenhum roteiro;Amor, risadas e boletos;Foi sem querer querendo;Melhor juntos do que organizados;Resposta individual;Revelar e permitir título próprio;Pendente;
+SER-001;Papo sério;Média;Quando surge um problema, do que você mais precisa primeiro?;Ser ouvido sem solução imediata;Pensar em ações práticas;Ter um tempo sozinho;Receber carinho e segurança;Resposta selada;Revelar após ambos responderem;Pendente;
+SER-002;Papo sério;Média;Qual aspecto da vida a dois mais merece planejamento hoje?;Finanças;Tempo de qualidade;Casa e responsabilidades;Planos de longo prazo;Resposta selada;Comparar prioridades;Pendente;
+SER-003;Papo sério;Média;Em uma discussão, qual atitude ajuda mais a retomar a conexão?;Reconhecer o impacto causado;Fazer uma pausa combinada;Escutar sem interromper;Propor um próximo passo;Resposta selada;Revelar sem eleger vencedor;Pendente;
+SER-004;Papo sério;Profunda;Qual medo sobre o futuro do casal é mais difícil de dizer em voz alta?;Nos afastarmos com a rotina;Não realizarmos planos importantes;Perdermos confiança;Mudarmos em direções diferentes;Resposta selada;Revelar com opção de pausar;Pendente;Revisão especializada obrigatória
+SER-005;Papo sério;Média;Como você prefere tomar uma decisão importante a dois?;Depois de pesquisar bastante;Conversando até chegar a consenso;Cada pessoa cede em uma parte;Definindo prazo e testando uma opção;Resposta selada;Comparar processos;Pendente;
+SER-006;Papo sério;Profunda;O que mais faz você se sentir emocionalmente seguro no relacionamento?;Coerência entre fala e ação;Liberdade para dizer o que sente;Respeito aos limites;Presença nos momentos difíceis;Resposta selada;Revelar e convidar para exemplo;Pendente;
+SER-007;Papo sério;Média;Quando o trabalho invade o tempo do casal, qual ajuste parece mais útil?;Definir horários sem trabalho;Planejar encontros;Dividir melhor as tarefas;Rever expectativas da fase;Resposta selada;Destacar possíveis acordos;Pendente;
+SER-008;Papo sério;Profunda;Qual conversa financeira vocês mais precisam ter?;Metas e prioridades;Dívidas e compromissos;Divisão de despesas;Hábitos de consumo e economia;Resposta selada;Revelar com neutralidade;Pendente;Revisão especializada recomendada
+SER-009;Papo sério;Média;Como você percebe que um pedido virou cobrança?;Pelo tom de voz;Pela repetição;Por não haver espaço para dizer não;Quando vem acompanhado de comparação;Resposta selada;Comparar sinais;Pendente;
+SER-010;Papo sério;Profunda;Se a confiança fosse abalada, qual condição seria essencial para reconstruí-la?;Transparência consistente;Tempo e paciência;Mudança concreta de comportamento;Ajuda profissional;Resposta selada;Revelar com recurso de ajuda;Pendente;Não prometer reparação
+SER-011;Papo sério;Média;Qual limite entre vida do casal e família de origem é mais importante?;Privacidade das decisões;Tempo reservado ao casal;Limites para opiniões externas;Acordo sobre ajuda e presença;Resposta selada;Revelar e conversar;Pendente;
+SER-012;Papo sério;Profunda;Em uma grande mudança de vida, o que você mais espera da parceria?;Apoio emocional;Planejamento conjunto;Flexibilidade para rever papéis;Coragem para decidir;Resposta selada;Comparar expectativas;Pendente;
+SER-013;Papo sério;Média;Qual sinal indicaria que vocês precisam diminuir o ritmo e se reconectar?;Conversas apenas sobre tarefas;Menos carinho e curiosidade;Irritação frequente;Falta de momentos juntos;Resposta selada;Revelar sem diagnóstico;Pendente;Não inferir saúde da relação
+SER-014;Papo sério;Profunda;Sobre quais planos pessoais é mais importante manter autonomia?;Carreira e estudos;Amizades e tempo individual;Dinheiro pessoal;Cuidados com corpo e saúde;Resposta selada;Revelar com respeito a limites;Pendente;
+SER-015;Papo sério;Profunda;Qual compromisso ajuda o amor a continuar sendo uma escolha?;Conversar com honestidade;Cuidar dos pequenos gestos;Revisar acordos quando a vida muda;Dar espaço para cada pessoa crescer;Resposta selada;Revelar e abrir compromisso opcional;Pendente;
+'@
+
+$items = $csv | ConvertFrom-Csv -Delimiter ';'
+$activities = Get-Content -Raw -Encoding UTF8 (Join-Path $PSScriptRoot '../src/features/game/activities.json') | ConvertFrom-Json
+$extraItems = foreach($activity in $activities) {
+  foreach($kind in @('questions','challenges')) {
+    $index = 0
+    foreach($text in $activity.$kind) {
+      $index++
+      [pscustomobject]@{
+        ID = "$($activity.theme)-$kind-$index"; Tema = $activity.theme; Intensidade = 'Variada'; Pergunta = $text
+        'Opção A' = ''; 'Opção B' = ''; 'Opção C' = ''; 'Opção D' = ''
+        Modo = $(if($kind -eq 'questions'){'Resposta discursiva'}else{'Desafio'})
+        Revelação = 'Após participação dos dois no mesmo dispositivo'; 'Status de revisão' = 'Pendente'
+        Observações = 'Selecionar formato no início. Permitir pular. Revisar antes de publicação.'
+      }
+    }
+  }
+}
+$items = @($items) + @($extraItems)
+$headers = @('ID','Tema','Intensidade','Pergunta','Opção A','Opção B','Opção C','Opção D','Modo','Revelação','Status de revisão','Observações')
+$themes = @($items | Select-Object -ExpandProperty Tema -Unique)
+
+function Escape([object]$value) { if($null -eq $value){return ''}; [Security.SecurityElement]::Escape([string]$value) }
+function Col([int]$number) { $name=''; while($number -gt 0){$number--; $name=[char](65+($number%26))+$name; $number=[math]::Floor($number/26)}; $name }
+function Cell([int]$row,[int]$column,[object]$value,[int]$style=0) { $ref="$(Col $column)$row"; "<c r=`"$ref`" s=`"$style`" t=`"inlineStr`"><is><t>$(Escape $value)</t></is></c>" }
+function Sheet([array]$data) {
+  $rows = ,$headers + $data
+  $xml='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols><col min="1" max="1" width="12" customWidth="1"/><col min="2" max="3" width="15" customWidth="1"/><col min="4" max="4" width="52" customWidth="1"/><col min="5" max="8" width="31" customWidth="1"/><col min="9" max="9" width="20" customWidth="1"/><col min="10" max="10" width="39" customWidth="1"/><col min="11" max="11" width="19" customWidth="1"/><col min="12" max="12" width="36" customWidth="1"/></cols><sheetData>'
+  for($r=0;$r-lt $rows.Count;$r++){ $xml+="<row r=`"$($r+1)`">"; for($c=0;$c-lt $headers.Count;$c++){ $xml+=Cell ($r+1) ($c+1) $rows[$r][$c] $(if($r-eq 0){1}else{0}) }; $xml+='</row>' }
+  $xml+="</sheetData><autoFilter ref=`"A1:L$($rows.Count)`"/><pageMargins left=`"0.3`" right=`"0.3`" top=`"0.5`" bottom=`"0.5`" header=`"0.2`" footer=`"0.2`"/></worksheet>"; $xml
+}
+function ItemRow($item) { ,@($item.ID,$item.Tema,$item.Intensidade,$item.Pergunta,$item.($headers[4]),$item.($headers[5]),$item.($headers[6]),$item.($headers[7]),$item.Modo,$item.($headers[9]),$item.($headers[10]),$item.($headers[11])) }
+
+$sheetData = @(@{Name='Todas'; Rows=@($items | ForEach-Object { ItemRow $_ })})
+foreach($theme in $themes){ $sheetData += @{Name=$theme; Rows=@($items | Where-Object { $_.Tema -eq $theme -and $_.Modo -ne 'Desafio' } | ForEach-Object { ItemRow $_ })} }
+$sheetData += @{Name='Desafios'; Rows=@($items | Where-Object Modo -eq 'Desafio' | ForEach-Object { ItemRow $_ })}
+$sheetData += @{Name='Instruções'; Rows=@(
+  ,@('REV-001','Instruções','','Revise clareza, relevância, inclusão e conforto de cada pergunta.','','','','','','','Referência','Altere o status para Ajustar ou Aprovada')
+  ,@('REV-002','Instruções','','Perguntas de Filhos, Religioso, Apimentado e Papo sério exigem revisão especializada antes de publicação.','','','','','','','Referência','O arquivo é um banco candidato, não conteúdo publicado')
+  ,@('REV-003','Instruções','','No app, cada pessoa responde em segredo e a revelação ocorre somente após ambas participarem.','','','','','','','Referência','Sempre permitir pular ou sair')
+)}
+
+$sheetsXml=''; $relsXml=''; $typesXml=''; $parts=@{}; for($i=0;$i-lt $sheetData.Count;$i++){ $id=$i+1; $name=Escape $sheetData[$i].Name; $sheetsXml+="<sheet name=`"$name`" sheetId=`"$id`" r:id=`"rId$id`"/>"; $relsXml+="<Relationship Id=`"rId$id`" Type=`"http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet`" Target=`"worksheets/sheet$id.xml`"/>"; $typesXml+="<Override PartName=`"/xl/worksheets/sheet$id.xml`" ContentType=`"application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml`"/>"; $parts["xl/worksheets/sheet$id.xml"]=Sheet $sheetData[$i].Rows }
+$styleId=$sheetData.Count+1
+$workbook="<?xml version=`"1.0`" encoding=`"UTF-8`" standalone=`"yes`"?><workbook xmlns=`"http://schemas.openxmlformats.org/spreadsheetml/2006/main`" xmlns:r=`"http://schemas.openxmlformats.org/officeDocument/2006/relationships`"><sheets>$sheetsXml</sheets></workbook>"
+$rels="<?xml version=`"1.0`" encoding=`"UTF-8`" standalone=`"yes`"?><Relationships xmlns=`"http://schemas.openxmlformats.org/package/2006/relationships`">$relsXml<Relationship Id=`"rId$styleId`" Type=`"http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles`" Target=`"styles.xml`"/></Relationships>"
+$types="<?xml version=`"1.0`" encoding=`"UTF-8`" standalone=`"yes`"?><Types xmlns=`"http://schemas.openxmlformats.org/package/2006/content-types`"><Default Extension=`"rels`" ContentType=`"application/vnd.openxmlformats-package.relationships+xml`"/><Default Extension=`"xml`" ContentType=`"application/xml`"/><Override PartName=`"/xl/workbook.xml`" ContentType=`"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml`"/><Override PartName=`"/xl/styles.xml`" ContentType=`"application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml`"/>$typesXml</Types>"
+$styles='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="10"/><name val="Aptos"/></font><font><b/><color rgb="FFFFFFFF"/><sz val="10"/><name val="Aptos"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FF3D1F3D"/></patternFill></fill></fills><borders count="2"><border/><border><bottom style="thin"><color rgb="FFD8C8B4"/></bottom></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="1" xfId="0" applyAlignment="1"><alignment vertical="top" wrapText="1"/></xf><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyAlignment="1"><alignment vertical="center" wrapText="1"/></xf></cellXfs></styleSheet>'
+$parts['[Content_Types].xml']=$types; $parts['_rels/.rels']='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'; $parts['xl/workbook.xml']=$workbook; $parts['xl/_rels/workbook.xml.rels']=$rels; $parts['xl/styles.xml']=$styles
+
+$full=[IO.Path]::GetFullPath($OutputPath); [IO.Directory]::CreateDirectory([IO.Path]::GetDirectoryName($full))|Out-Null; $temp="$full.tmp"; if(Test-Path $temp){Remove-Item -LiteralPath $temp}; $stream=[IO.File]::Open($temp,[IO.FileMode]::CreateNew); $zip=[IO.Compression.ZipArchive]::new($stream,[IO.Compression.ZipArchiveMode]::Create)
+try{foreach($name in $parts.Keys){$entry=$zip.CreateEntry($name,[IO.Compression.CompressionLevel]::Optimal);$writer=[IO.StreamWriter]::new($entry.Open(),$utf8);try{$writer.Write($parts[$name])}finally{$writer.Dispose()}}}finally{$zip.Dispose();$stream.Dispose()}
+Move-Item -LiteralPath $temp -Destination $full -Force
+Write-Output "Banco criado: $full ($($items.Count) perguntas)"
