@@ -2,4 +2,8 @@ node_modules/
 dist/
 .npm-cache/
 *.tsbuildinfo
-server/data/database.json
+server/data/**
+!server/data/.gitkeep
+.env
+.env.*
+!.env.*.example

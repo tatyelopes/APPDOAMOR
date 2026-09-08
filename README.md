@@ -20,6 +20,7 @@ O projeto compila, mas ainda depende de integração bilateral completa, testes 
 - [Revisão geral de 04/09/2026](docs/REVISAO-GERAL-2026-09-04.md)
 - [Escopo do MVP](docs/ESCOPO-MVP.md)
 - [Arquitetura](docs/ARCHITECTURE.md)
+- [Ambientes local, homologação e produção](docs/AMBIENTES.md)
 - [Modelo de dados](docs/MODELO-DE-DADOS.md)
 - [Modelagem de ameaças](docs/MODELAGEM-DE-AMEACAS.md)
 - [Inventário de dados e bases legais LGPD](docs/INVENTARIO-DE-DADOS-E-BASES-LEGAIS-LGPD.md)
@@ -33,6 +34,8 @@ O projeto compila, mas ainda depende de integração bilateral completa, testes 
 O protótipo HTML é uma demonstração local com dados fictícios. Ele não está integrado à home do app.
 
 ## Executar e compilar
+
+Para execução restrita à máquina e configuração explícita da API, siga o [guia de ambientes](docs/AMBIENTES.md#executar-localmente-hoje) e use `.env.local.example`. O comando rápido abaixo usa interfaces abertas e não carrega `.env.local` na API. Homologação e produção estão definidas no guia, com provisionamento pendente.
 
 Instale as dependências com a versão de Node compatível com o pacote instalado e execute:
 

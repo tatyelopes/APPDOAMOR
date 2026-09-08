@@ -66,4 +66,6 @@ O `App.tsx` ainda reúne as telas do MVP para evitar uma reescrita arriscada. As
 
 ## Modelo de dados
 
+A [estratégia de ambientes](AMBIENTES.md) define execução local, homologação e produção, isolamento de recursos, configuração e promoção de versões. O provisionamento remoto permanece pendente; o guia distingue variáveis implementadas do contrato futuro.
+
 O [modelo lógico de dados](MODELO-DE-DADOS.md) e o [esquema DBML](modelo-de-dados.dbml) definem usuários, vínculos de casal, autenticação, partidas, rodadas, respostas e progresso para PostgreSQL. Incluem regras de acesso, integridade, concorrência e mapeamento do JSON atual. São a referência da tarefa 34 para contrato de API e futuras migrações; a persistência atual ainda usa JSON.
