@@ -7,6 +7,7 @@ services:
     runtime: node
     region: virginia
     plan: 0.5c-512mb
+    repo: https://github.com/tatyelopes/APPDOAMOR
     branch: main
     autoDeployTrigger: commit
     buildCommand: npm ci --cache .npm-cache && npm run build
