@@ -27,9 +27,9 @@ export async function apiRequest<T>(
     if (error instanceof TypeError) {
       throw new Error(
         'Não foi possível conectar ao servidor. Inicie o aplicativo com “npm.cmd run dev” e tente novamente.',
+        { cause: error },
       )
     }
     throw error
   }
 }
-

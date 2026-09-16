@@ -20,7 +20,7 @@ function start(command, args, env = {}) {
     windowsHide: true,
   })
   processes.push(child)
-  child.stderr.on('data', chunk => {
+  child.stderr.on('data', (chunk) => {
     const message = String(chunk)
     if (!message.includes('ExperimentalWarning')) consoleIssues.push(message.trim())
   })
@@ -32,8 +32,10 @@ async function waitFor(url, attempts = 80) {
     try {
       const response = await fetch(url)
       if (response.status > 0) return response
-    } catch {}
-    await new Promise(resolveWait => setTimeout(resolveWait, 250))
+    } catch {
+      // The service may still be starting; retry until the configured timeout.
+    }
+    await new Promise((resolveWait) => setTimeout(resolveWait, 250))
   }
   throw new Error(`Tempo esgotado aguardando ${url}`)
 }
@@ -42,7 +44,7 @@ function cdpClient(socketUrl) {
   const socket = new WebSocket(socketUrl)
   let nextId = 0
   const pending = new Map()
-  socket.addEventListener('message', event => {
+  socket.addEventListener('message', (event) => {
     const message = JSON.parse(event.data)
     if (message.id && pending.has(message.id)) {
       const { resolve: resolveCall, reject } = pending.get(message.id)
@@ -84,7 +86,14 @@ try {
     HOST: '127.0.0.1',
     DATABASE_FILE: join(temporaryRoot, 'database.json'),
   })
-  start(process.execPath, ['node_modules/vite/bin/vite.js', '--host', '127.0.0.1', '--port', String(appPort), '--strictPort'])
+  start(process.execPath, [
+    'node_modules/vite/bin/vite.js',
+    '--host',
+    '127.0.0.1',
+    '--port',
+    String(appPort),
+    '--strictPort',
+  ])
   start(edgePath, [
     '--headless=new',
     `--remote-debugging-port=${debugPort}`,
@@ -102,7 +111,7 @@ try {
   ])
 
   const targets = await (await fetch(`http://127.0.0.1:${debugPort}/json/list`)).json()
-  cdp = cdpClient(targets.find(target => target.type === 'page').webSocketDebuggerUrl)
+  cdp = cdpClient(targets.find((target) => target.type === 'page').webSocketDebuggerUrl)
   await cdp.ready
   await Promise.all([
     cdp.send('Page.enable'),
@@ -122,27 +131,36 @@ try {
   })
 
   async function evaluate(expression) {
-    const result = await cdp.send('Runtime.evaluate', { expression, awaitPromise: true, returnByValue: true })
-    if (result.exceptionDetails) throw new Error(result.exceptionDetails.exception?.description || 'Falha ao avaliar a página')
+    const result = await cdp.send('Runtime.evaluate', {
+      expression,
+      awaitPromise: true,
+      returnByValue: true,
+    })
+    if (result.exceptionDetails)
+      throw new Error(result.exceptionDetails.exception?.description || 'Falha ao avaliar a página')
     return result.result.value
   }
   async function waitForExpression(expression, attempts = 80) {
     for (let attempt = 0; attempt < attempts; attempt += 1) {
       if (await evaluate(expression)) return
-      await new Promise(resolveWait => setTimeout(resolveWait, 125))
+      await new Promise((resolveWait) => setTimeout(resolveWait, 125))
     }
     throw new Error(`Tempo esgotado aguardando: ${expression}`)
   }
   async function clickText(text) {
     const encoded = JSON.stringify(text)
-    const clicked = await evaluate(`(() => { const element = [...document.querySelectorAll('button')].find(item => item.textContent.includes(${encoded})); if (!element) return false; element.click(); return true })()`)
+    const clicked = await evaluate(
+      `(() => { const element = [...document.querySelectorAll('button')].find(item => item.textContent.includes(${encoded})); if (!element) return false; element.click(); return true })()`,
+    )
     if (!clicked) throw new Error(`Botão não encontrado: ${text}`)
-    await new Promise(resolveWait => setTimeout(resolveWait, 180))
+    await new Promise((resolveWait) => setTimeout(resolveWait, 180))
   }
   async function type(selector, value) {
     const encodedSelector = JSON.stringify(selector)
     const encodedValue = JSON.stringify(value)
-    const changed = await evaluate(`(() => { const element = document.querySelector(${encodedSelector}); if (!element) return false; const prototype = element instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype; const setter = Object.getOwnPropertyDescriptor(prototype, 'value').set; setter.call(element, ${encodedValue}); element.dispatchEvent(new Event('input', { bubbles: true })); return true })()`)
+    const changed = await evaluate(
+      `(() => { const element = document.querySelector(${encodedSelector}); if (!element) return false; const prototype = element instanceof HTMLTextAreaElement ? HTMLTextAreaElement.prototype : HTMLInputElement.prototype; const setter = Object.getOwnPropertyDescriptor(prototype, 'value').set; setter.call(element, ${encodedValue}); element.dispatchEvent(new Event('input', { bubbles: true })); return true })()`,
+    )
     if (!changed) throw new Error(`Campo não encontrado: ${selector}`)
   }
   async function pageSnapshot(label) {
@@ -154,11 +172,18 @@ try {
     })()`)
   }
 
-  await cdp.send('Emulation.setDeviceMetricsOverride', { width: 390, height: 844, deviceScaleFactor: 1, mobile: true })
+  await cdp.send('Emulation.setDeviceMetricsOverride', {
+    width: 390,
+    height: 844,
+    deviceScaleFactor: 1,
+    mobile: true,
+  })
   await cdp.send('Page.navigate', { url: `http://127.0.0.1:${appPort}` })
   await waitForExpression(`document.querySelector('.onboarding-shell') !== null`)
   const snapshots = [await pageSnapshot('Onboarding mobile')]
-  const firstFocus = await evaluate(`(() => { document.querySelector('button')?.focus(); return document.activeElement?.textContent.trim() })()`)
+  const firstFocus = await evaluate(
+    `(() => { document.querySelector('button')?.focus(); return document.activeElement?.textContent.trim() })()`,
+  )
   await clickText('Continuar')
   await clickText('Continuar')
   await clickText('Criar minha conta')
@@ -177,8 +202,19 @@ try {
 
   const code = await evaluate(`document.querySelector('.pairing-code strong').textContent.trim()`)
   const ownerToken = await evaluate(`localStorage.getItem('entrenos-token')`)
-  const partner = await jsonRequest('/register', { method: 'POST', body: JSON.stringify({ name: 'Pessoa B', email: 'usabilidade.b@example.test', password: 'teste123' }) })
-  await jsonRequest('/couples/join', { method: 'POST', headers: { Authorization: `Bearer ${partner.token}` }, body: JSON.stringify({ code }) })
+  const partner = await jsonRequest('/register', {
+    method: 'POST',
+    body: JSON.stringify({
+      name: 'Pessoa B',
+      email: 'usabilidade.b@example.test',
+      password: 'teste123',
+    }),
+  })
+  await jsonRequest('/couples/join', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${partner.token}` },
+    body: JSON.stringify({ code }),
+  })
   await clickText('Já usaram o código')
   await waitForExpression(`document.querySelector('.daily-card') !== null`)
   snapshots.push(await pageSnapshot('Home pareada mobile'))
@@ -190,7 +226,11 @@ try {
   await evaluate(`document.querySelector('.answer-form').requestSubmit()`)
   await waitForExpression(`document.querySelector('.waiting-card') !== null`)
   snapshots.push(await pageSnapshot('Espera da resposta mobile'))
-  await jsonRequest('/answers/question-3', { method: 'POST', headers: { Authorization: `Bearer ${partner.token}` }, body: JSON.stringify({ text: 'Viajar e criar novas memórias lado a lado.' }) })
+  await jsonRequest('/answers/question-3', {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${partner.token}` },
+    body: JSON.stringify({ text: 'Viajar e criar novas memórias lado a lado.' }),
+  })
   await clickText('Atualizar status')
   await waitForExpression(`document.querySelector('.reveal-grid') !== null`)
   snapshots.push(await pageSnapshot('Revelação bilateral mobile'))
@@ -209,23 +249,49 @@ try {
   await waitForExpression(`document.querySelector('.temperament-chart') !== null`)
   snapshots.push(await pageSnapshot('Resultado temperamentos mobile'))
 
-  await cdp.send('Emulation.setDeviceMetricsOverride', { width: 1440, height: 900, deviceScaleFactor: 1, mobile: false })
+  await cdp.send('Emulation.setDeviceMetricsOverride', {
+    width: 1440,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+  })
   await cdp.send('Page.navigate', { url: `http://127.0.0.1:${appPort}` })
   await waitForExpression(`document.querySelector('.daily-card') !== null`)
   snapshots.push(await pageSnapshot('Home desktop'))
 
-  const responsePrivacy = await jsonRequest('/answers/question-3', { headers: { Authorization: `Bearer ${ownerToken}` } })
-  console.log(JSON.stringify({
-    status: 'aprovado_com_ressalvas',
-    journeys: { onboarding: true, registration: true, pairing: true, privateAnswer: true, mutualReveal: true, loveLanguage: true, temperament: true },
-    firstKeyboardFocus: firstFocus,
-    privacy: { bothAnswersRequired: responsePrivacy.complete, returnedAnswers: responsePrivacy.answers.length },
-    snapshots,
-    browserConsoleOrProcessIssues: consoleIssues.filter(Boolean),
-  }, null, 2))
+  const responsePrivacy = await jsonRequest('/answers/question-3', {
+    headers: { Authorization: `Bearer ${ownerToken}` },
+  })
+  console.log(
+    JSON.stringify(
+      {
+        status: 'aprovado_com_ressalvas',
+        journeys: {
+          onboarding: true,
+          registration: true,
+          pairing: true,
+          privateAnswer: true,
+          mutualReveal: true,
+          loveLanguage: true,
+          temperament: true,
+        },
+        firstKeyboardFocus: firstFocus,
+        privacy: {
+          bothAnswersRequired: responsePrivacy.complete,
+          returnedAnswers: responsePrivacy.answers.length,
+        },
+        snapshots,
+        browserConsoleOrProcessIssues: consoleIssues.filter(Boolean),
+      },
+      null,
+      2,
+    ),
+  )
 } finally {
   cdp?.close()
   for (const child of processes.reverse()) child.kill()
-  await new Promise(resolveWait => setTimeout(resolveWait, 500))
-  await rm(temporaryRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }).catch(() => undefined)
+  await new Promise((resolveWait) => setTimeout(resolveWait, 500))
+  await rm(temporaryRoot, { recursive: true, force: true, maxRetries: 5, retryDelay: 200 }).catch(
+    () => undefined,
+  )
 }

@@ -1,0 +1,17 @@
+.npm-cache/
+AGENTS.md
+Conteúdo/
+dist/
+docs/
+Identidade visual/
+node_modules/
+Plano de trabalho/
+server/data/
+
+*.docx
+*.jpg
+*.ogg
+*.png
+*.tsbuildinfo
+*.xlsx
+package-lock.json

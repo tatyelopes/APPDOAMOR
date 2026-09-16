@@ -2,16 +2,23 @@
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression.FileSystem
 $source = [IO.File]::ReadAllText((Join-Path $PSScriptRoot 'build-project-plan.ps1'))
-$match = [regex]::Match($source, "(?s)@'\r?\n(.*?)\r?\n'@")
-if(-not $match.Success){throw 'Fonte CSV ausente'}
-$csv = $match.Groups[1].Value
+$appMatch = [regex]::Match($source, '(?s)\$appPlanTasksCsv = @''\r?\n(.*?)\r?\n''@')
+$mpvMatch = [regex]::Match($source, '(?s)\$mpvTasksCsv = @''\r?\n(.*?)\r?\n''@')
+if(-not $appMatch.Success -or -not $mpvMatch.Success){throw 'Fontes CSV do aplicativo ou do MPV ausentes'}
+$appCsv = $appMatch.Groups[1].Value
+$mpvCsv = $mpvMatch.Groups[1].Value
+$csv = $appCsv.TrimEnd() + [Environment]::NewLine + (($mpvCsv -split '\r?\n' | Select-Object -Skip 1) -join [Environment]::NewLine)
 foreach($line in $csv -split '\r?\n'){if(($line -split ';').Count -ne 13){throw "CSV deve ter 13 campos: $line"}}
 $tasks = @($csv | ConvertFrom-Csv -Delimiter ';')
+if($tasks.Count -ne 137){throw "O plano combinado deve ter 137 tarefas; encontrado: $($tasks.Count)"}
+$mpvTasks = @($tasks | Where-Object Fase -eq 'MPV de teste')
+if($mpvTasks.Count -ne 14){throw "A trilha do MPV deve ter exatamente 14 tarefas; encontrado: $($mpvTasks.Count)"}
 $ids = @{}; $deps = @{}
 foreach($task in $tasks){
   $id = [int]$task.ID
   if($id -le 0 -or $ids.ContainsKey($id)){throw "ID inválido ou duplicado: $id"}
   if($task.Status -notin @('Concluído','Em andamento','Não iniciado','Cancelado')){throw "Status inválido: $id"}
+  if($task.Fase -eq 'MPV de teste' -and $task.Área -eq 'Pesquisa'){throw "Pesquisa não deve constar na trilha do MPV: $id"}
   $ids[$id] = $task
 }
 foreach($task in $tasks){
@@ -61,7 +68,9 @@ try{
   }
   if($plan.worksheet.autoFilter.ref -ne "A1:N$last"){throw 'Filtro divergente'}
   $formulaNodes=@($dash.SelectNodes("//*[local-name()='f']"))
-  if($formulaNodes.Count -ne 32){throw 'Quantidade de fórmulas divergente'}
+  $phaseCount = @($tasks | Select-Object -ExpandProperty Fase -Unique).Count
+  $expectedFormulaCount = 6 + (2 * $phaseCount)
+  if($formulaNodes.Count -ne $expectedFormulaCount){throw "Quantidade de fórmulas divergente: esperado $expectedFormulaCount"}
   $formulaTexts=@($formulaNodes|ForEach-Object{$_.InnerText})
   foreach($formula in $formulaTexts){
     if($formula -notmatch '^(COUNTA|COUNTIF|COUNTIFS|AVERAGE|SUM)\('){throw "Função inesperada: $formula"}
@@ -70,5 +79,5 @@ try{
     foreach($range in $ranges){if([int]$range.Groups[1].Value -ne $last){throw "Intervalo divergente: $formula"}}
   }
   if($formulaTexts -notcontains "COUNTA('Plano Mestre'!A2:A$last)" -or $formulaTexts -notcontains "AVERAGE('Plano Mestre'!M2:M$last)" -or $formulaTexts -notcontains "SUM('Plano Mestre'!J2:J$last)"){throw 'Fórmulas principais divergentes'}
-  Write-Output "Plano validado: $($tasks.Count) tarefas únicas, dependências existentes sem ciclos, 14 cabeçalhos, conteúdo e percentuais equivalentes à fonte, 32 fórmulas até a linha $last."
+  Write-Output "Plano combinado validado: 123 tarefas do aplicativo e $($mpvTasks.Count) tarefas do MPV sem área de pesquisa, $($tasks.Count) tarefas únicas no total, dependências existentes sem ciclos, 14 cabeçalhos, conteúdo e percentuais equivalentes à fonte, $expectedFormulaCount fórmulas até a linha $last."
 }finally{$zip.Dispose()}

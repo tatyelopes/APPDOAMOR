@@ -10,6 +10,6 @@ export const config = {
   sessionTtlMs: 30 * 86_400_000,
   adminEmails: String(process.env.ADMIN_EMAILS || '')
     .split(',')
-    .map(email => email.trim().toLowerCase())
+    .map((email) => email.trim().toLowerCase())
     .filter(Boolean),
 }

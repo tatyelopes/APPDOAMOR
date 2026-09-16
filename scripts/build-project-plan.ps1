@@ -3,11 +3,12 @@
 $ErrorActionPreference = 'Stop'
 Add-Type -AssemblyName System.IO.Compression
 $utf8 = [System.Text.UTF8Encoding]::new($false)
-$tasksCsv = @'
+# Plano completo do aplicativo, preservado como linha de base operacional.
+$appPlanTasksCsv = @'
 ID;Fase;Área;Tarefa;Entregável;Prioridade;Dependência;Responsável;Status;Estimativa (h);Início planejado;Fim planejado;Observações
 1;Descoberta;Produto;Definir visão e proposta de valor;Documento de visão;Crítica;;;Concluído;4;;;Visão revisada com foco em conexão descoberta intimidade diversão e fortalecimento do relacionamento em docs/VISAO-E-PROPOSTA-DE-VALOR.md
 2;Descoberta;Produto;Definir público-alvo e personas;Personas validadas;Alta;1;;Em andamento;8;;;Público e personas provisórias definidos em docs/PUBLICO-ALVO-E-PERSONAS.md, validação depende das entrevistas da tarefa 3
-3;Descoberta;Pesquisa;Entrevistar casais do público-alvo;Relatório de entrevistas;Alta;2;;Em andamento;20;;;Protocolo e ficha disponíveis em Markdown e Word na pasta docs, pendentes recrutamento campo e síntese
+3;Descoberta;Pesquisa;Entrevistar casais do público-alvo;Relatório de entrevistas;Alta;2;;Em andamento;20;;;Protocolo e ficha disponíveis em Markdown e Word na pasta docs — formulário nomeado como Jogo para Casais — Pesquisa de Experiência, texto introdutório informal e imagem de fundo sem marca disponíveis — pendentes montagem final do Forms, recrutamento, campo e síntese
 4;Descoberta;Pesquisa;Mapear dores necessidades e hábitos;Mapa de oportunidades;Alta;3;;Em andamento;8;;;Pesquisa secundária consolidada em docs/PESQUISA-CASAIS-BRASILEIROS.md - síntese das entrevistas e validação das oportunidades dependem da tarefa 3
 5;Descoberta;Mercado;Analisar concorrentes diretos e indiretos;Análise competitiva;Média;1;;Concluído;8;;;Mapeamento consolidado em docs/ANALISE-CONCORRENTES.md com benchmark incluindo Lovify posicionamento e oportunidades
 6;Descoberta;Negócio;Definir modelo de negócio e monetização;Modelo de receita;Alta;4,5;;Concluído;8;;;Freemium B2C e assinatura por casal definidos em docs/MODELO-DE-NEGOCIO-E-MONETIZACAO.md com preços unit economics e experimentos
@@ -43,7 +44,7 @@ ID;Fase;Área;Tarefa;Entregável;Prioridade;Dependência;Responsável;Status;Est
 36;Arquitetura;Segurança;Realizar modelagem de ameaças;Threat model;Crítica;34,35;;Concluído;12;;;Baseline STRIDE e OWASP em docs/MODELAGEM-DE-AMEACAS.md com diagrama ativos fronteiras 22 ameaças 29 controles 20 testes gates de piloto e riscos residuais - 13 ameaças críticas 8 altas e 1 média - estado atual não apto para piloto externo - revalidar após tarefas 112-114 PostgreSQL provedores e antes da release candidate
 37;Arquitetura;Privacidade;Mapear dados pessoais e base legal LGPD;Inventário de dados;Crítica;34;Privacidade/Jurídico;Concluído;12;05/09/2026;05/09/2026;Inventário v1 em docs/INVENTARIO-DE-DADOS-E-BASES-LEGAIS-LGPD.md - 17 grupos e 20 operações com finalidade necessidade bases dos artigos 7 e 11 acesso compartilhamento retenção direitos incidentes e gates - enquadramento sujeito a aprovação jurídica
 38;Infraestrutura;DevOps;Definir ambientes local homologação produção;Estratégia de ambientes;Alta;32;DevOps/Plataforma;Concluído;6;;;Estratégia em docs/AMBIENTES.md com matriz local staging production isolamento configuração atual e futura promoção recuperação e gates - modelo .env.local.example e regras Git - definição concluída em 08/09/2026 sem provisionamento ou deploy remoto
-39;Infraestrutura;DevOps;Configurar lint formatação e hooks;Qualidade automatizada;Alta;33;;Não iniciado;6;;;
+39;Infraestrutura;DevOps;Configurar lint formatação e hooks;Qualidade automatizada;Alta;33;DevOps/Plataforma;Concluído;6;08/09/2026;08/09/2026;ESLint flat configurado para JavaScript TypeScript e React, Prettier e EditorConfig aplicados, hook pre-commit com Husky e lint-staged ativo e comandos de qualidade documentados no README
 40;Infraestrutura;DevOps;Configurar pipeline de CI;Pipeline funcional;Alta;39;;Não iniciado;10;;;
 41;Infraestrutura;DevOps;Provisionar banco PostgreSQL;Banco por ambiente;Crítica;34,38;;Não iniciado;10;;;Provisionar PostgreSQL local staging e production com identidades distintas mesma versão principal e migrações conforme docs/AMBIENTES.md - implementar DATABASE_URL validar conexão integridade e concorrência - JSON atual sem transações fica restrito ao protótipo local
 42;Infraestrutura;DevOps;Configurar gestão segura de segredos;Cofre de segredos;Crítica;38;;Não iniciado;6;;;Cofre identidades e chaves exclusivos por ambiente conforme docs/AMBIENTES.md - injeção em runtime privilégio mínimo inventário rotação e auditoria - modelos e gitignore não substituem esses controles
@@ -130,6 +131,25 @@ ID;Fase;Área;Tarefa;Entregável;Prioridade;Dependência;Responsável;Status;Est
 123;Infraestrutura;DevOps;Provisionar homologação e validar configuração por ambiente;Homologação isolada com evidências;Alta;16,38,40,41,42,43,122;DevOps/Plataforma;Não iniciado;16;;;Implementar docs/AMBIENTES.md com HTTPS acesso restrito dados sintéticos API na mesma origem e isolamento de produção - validar APP_ENV APP_ORIGIN PORT e rejeitar JSON remoto - testar publicação e registrar provedor região custo e configuração sem segredos - estimativa preliminar
 '@
 
+$mpvTasksCsv = @'
+ID;Fase;Área;Tarefa;Entregável;Prioridade;Dependência;Responsável;Status;Estimativa (h);Início planejado;Fim planejado;Observações
+124;MPV de teste;Produto;Definir hipótese e critérios de decisão do MPV;Hipótese e métricas do MPV;Crítica;;Product Owner — Tatyele Lopes;Concluído;3;12/09/2026;12/09/2026;Trilha adicional ao plano completo — validar se casais entendem e desejam repetir jogos curtos de conexão no mesmo celular — critérios em docs/ESCOPO-MPV.md
+125;MPV de teste;Produto;Congelar o escopo em dois jogos passa-e-joga;Backlog mínimo aprovado;Crítica;124;Product Owner — Tatyele Lopes;Concluído;3;12/09/2026;12/09/2026;Somente Descoberta a Dois e Adivinhe de Mim — sem pesquisa prévia cadastro pareamento remoto backend ou testes de personalidade neste teste
+126;MPV de teste;UX;Simplificar a jornada para entrada escolha jogo rodada e feedback;Fluxo do MPV;Crítica;125;Product Designer;Concluído;4;13/09/2026;14/09/2026;Fluxo aprovado em docs/FLUXO-MPV.md com seis estados entrada direta dois jogos de três rodadas feedback de três sinais exceções e critérios de aceite — concluído antecipadamente em 12/09/2026
+127;MPV de teste;Editorial;Selecionar doze cartas leves para os dois jogos;Lote mínimo de conteúdo;Alta;125;Conteúdo;Concluído;4;13/09/2026;14/09/2026;Lote aprovado em docs/CONTEUDO-MPV.md e src/features/game/mpv-cards.json — seis cartas por jogo com IDs únicos origem rastreável e quatro alternativas por carta de adivinhação — concluído antecipadamente em 12/09/2026
+128;MPV de teste;Frontend;Criar entrada direta e seleção entre os dois jogos;Tela inicial funcional;Crítica;126;Engenharia Frontend;Concluído;5;15/09/2026;15/09/2026;Entrada direta responsiva com seleção e instruções dos dois jogos implementada sem cadastro ou pareamento, com apresentação neutra sem o nome do aplicativo em título metadados cabeçalho ou rodapé e com o aplicativo completo preservado em src/App.tsx — atualizado em 14/09/2026
+129;MPV de teste;Jogo 1;Implementar Descoberta a Dois;Jogo 1 funcional;Crítica;127,128;Engenharia Frontend;Concluído;8;16/09/2026;17/09/2026;Fluxo responsivo implementado com três perguntas únicas sorteadas, orientação para respostas em voz alta, avanço, opção de pular, progresso e encerramento sem armazenar respostas — concluído antecipadamente em 12/09/2026
+130;MPV de teste;Jogo 2;Implementar Adivinhe de Mim;Jogo 2 funcional;Crítica;127,128;Engenharia Frontend;Concluído;10;16/09/2026;18/09/2026;Fluxo responsivo implementado com três cartas únicas, escolha secreta, passagem protegida do aparelho, palpite, revelação, contagem de acertos e alternância automática de papéis sem armazenar respostas — concluído antecipadamente em 12/09/2026
+131;MPV de teste;Feedback;Adicionar fechamento e feedback de três sinais;Feedback funcional;Alta;129,130;Engenharia Frontend;Concluído;4;19/09/2026;19/09/2026;Feedback binário compartilhado implementado nos dois jogos com registro local somente do jogo concluído, clareza, descoberta ou conexão e intenção de jogar novamente, sem conteúdo das rodadas — concluído antecipadamente em 12/09/2026
+132;MPV de teste;Compatibilidade;Validar fluxo crítico em celulares;Checklist mobile aprovado;Crítica;128-131;Qualidade;Em andamento;5;20/09/2026;20/09/2026;Matriz Chromium revalidada em 14/09/2026 com cinco viewports e 95 estados em docs/VALIDACAO-MOBILE-MPV-2026-09-14.md — MOB-01 a MOB-03 resolvidos, sem overflow ou exposição do nome do aplicativo e com toque pulo confirmação rotação fluxos completos e reinício aprovados — pendente somente passagem física em Chrome Android e Safari iOS
+133;MPV de teste;Acessibilidade;Corrigir barreiras críticas de uso;Checklist de acessibilidade;Alta;128-131;Qualidade;Em andamento;4;20/09/2026;21/09/2026;MOB-03 resolvido em 14/09/2026 com todos os alvos visíveis em pelo menos 44 px e nomes acessíveis aprovados na matriz móvel — pendentes validações formais de foco contraste e redução de movimento
+134;MPV de teste;Qualidade;Executar QA do caminho feliz e falhas básicas;MPV candidato à validação;Crítica;132,133;Qualidade;Não iniciado;5;21/09/2026;21/09/2026;Validador móvel já cobre caminhos felizes pulo limpeza de escolha reinício e cancelamento de saída — iniciar aceite formal após concluir 132 e 133 e confirmar troca entre jogos sem estado residual
+135;MPV de teste;Operação;Disponibilizar demonstração controlada;Link de demonstração;Crítica;134;Engenharia Frontend;Não iniciado;4;22/09/2026;22/09/2026;Publicação temporária sem cadastro dados pessoais analytics de terceiros ou indexação pública
+136;MPV de teste;Validação;Validar o formato com cinco casais;Placar dos critérios de decisão;Crítica;135;Product Owner — Tatyele Lopes;Não iniciado;8;23/09/2026;27/09/2026;Cada casal joga sem mediação e envia apenas os três sinais do produto — não há entrevistas nem etapa de pesquisa dentro do MPV
+137;MPV de teste;Produto;Incorporar aprendizados ao plano inicial do aplicativo;Decisão e recomendações registradas;Crítica;136;Product Owner — Tatyele Lopes;Não iniciado;3;28/09/2026;28/09/2026;Registrar continuar ajustar ou encerrar o formato e quais evidências devem orientar a futura revisão do plano completo sem alterá-lo automaticamente
+'@
+
+$tasksCsv = $appPlanTasksCsv.TrimEnd() + [Environment]::NewLine + (($mpvTasksCsv -split '\r?\n' | Select-Object -Skip 1) -join [Environment]::NewLine)
 $tasks = $tasksCsv | ConvertFrom-Csv -Delimiter ';'
 $lastPlanRow = $tasks.Count + 1
 $phaseOwners = @{
@@ -137,6 +157,7 @@ $phaseOwners = @{
   'Arquitetura'='Liderança Técnica'; 'Infraestrutura'='DevOps/Plataforma'; 'Backend'='Engenharia Backend'
   'Frontend'='Engenharia Frontend'; 'Conteúdo'='Pesquisa e Conteúdo'; 'Qualidade'='Qualidade'
   'Jurídico'='Privacidade/Jurídico'; 'Lançamento'='Growth e Operações'; 'Pós-lançamento'='Product Owner'
+  'MPV de teste'='Product Owner'
 }
 foreach($task in $tasks) {
   if(-not $task.Responsável) { $task.Responsável = $phaseOwners[$task.Fase] }
@@ -149,34 +170,43 @@ foreach($task in $tasks) {
   elseif($task.Fase -eq 'Pós-lançamento' -and $task.Área -eq 'Operação') { $task.Responsável = 'Growth e Operações' }
   elseif($task.Fase -eq 'Pós-lançamento' -and $task.Área -eq 'Engenharia') { $task.Responsável = 'Liderança Técnica' }
 }
-$phases = @('Descoberta','Planejamento','Marca','UX/UI','Arquitetura','Infraestrutura','Backend','Frontend','Conteúdo','Qualidade','Jurídico','Lançamento','Pós-lançamento')
+$phases = @('Descoberta','Planejamento','Marca','UX/UI','Arquitetura','Infraestrutura','Backend','Frontend','Conteúdo','Qualidade','Jurídico','Lançamento','Pós-lançamento','MPV de teste')
 $milestones = @(
-  @('MC1','Baseline aprovada','13','Em andamento','PRD, escopo, MoSCoW, papéis e pesquisa aprovados','18/09/2026'),
+  @('MPV1','Escopo e fluxo do teste aprovados','126','Concluído','Dois jogos um aparelho critérios de decisão e fluxo documentados','12/09/2026'),
+  @('MPV2','Dois jogos jogáveis','131','Não iniciado','Jornadas completas com lote mínimo e feedback no produto','19/09/2026'),
+  @('MPV3','Demonstração do teste pronta','135','Não iniciado','QA crítico aprovado e link controlado disponível','22/09/2026'),
+  @('MPV4','Aprendizados incorporados','137','Não iniciado','Sinais de cinco casais registrados como insumo para revisão futura do plano completo','28/09/2026'),
+  @('MC1','Baseline aprovada','13','Em andamento','PRD escopo MoSCoW papéis e pesquisa aprovados','18/09/2026'),
   @('MC2','Personas e oportunidades validadas','4','Em andamento','24 entrevistas analisadas e personas revisadas','02/10/2026'),
   @('MC3','Mecânicas e padrão editorial aprovados','31','Não iniciado','Três protótipos testados e primeiro lote revisado','16/10/2026'),
-  @('MC4','Fundação técnica pronta','123','Em andamento','PostgreSQL, CI, segredos, observabilidade, recuperação 118 e homologação operacional 123 conforme estratégia 38','23/10/2026'),
-  @('MC5','MVP feature-complete','75','Em andamento','Jornada bilateral validada incluindo 111 e 116 e m?tricas 106-107 - 113-114 conforme decis?o 112','20/11/2026'),
-  @('MC6','Conteúdo do piloto aprovado','77','Não iniciado','60 atividades aprovadas com origem nível teste e revisão - tarefas 77,108,110,115','27/11/2026'),
-  @('MC7','Release candidate','96','Não iniciado','QA segurança acessibilidade privacidade UAT e restauração 118 sem bloqueador - PWA 119 validada','18/12/2026'),
-  @('MC8','Go/no-go do piloto','98','Não iniciado','Coorte, suporte, métricas e release confirmados','08/01/2027'),
-  @('MC9','Piloto concluído','102','Não iniciado','Seis semanas de uso, dados íntegros e entrevistas agendadas','19/02/2027'),
+  @('MC4','Fundação técnica pronta','123','Em andamento','PostgreSQL CI segredos observabilidade recuperação 118 e homologação operacional 123 conforme estratégia 38','23/10/2026'),
+  @('MC5','MVP feature-complete','75','Em andamento','Jornada bilateral validada incluindo 111 e 116 e métricas 106-107 — 113-114 conforme decisão 112','20/11/2026'),
+  @('MC6','Conteúdo do piloto aprovado','77','Não iniciado','60 atividades aprovadas com origem nível teste e revisão — tarefas 77 108 110 e 115','27/11/2026'),
+  @('MC7','Release candidate','96','Não iniciado','QA segurança acessibilidade privacidade UAT e restauração 118 sem bloqueador — PWA 119 validada','18/12/2026'),
+  @('MC8','Go/no-go do piloto','98','Não iniciado','Coorte suporte métricas e release confirmados','08/01/2027'),
+  @('MC9','Piloto concluído','102','Não iniciado','Seis semanas de uso dados íntegros e entrevistas agendadas','19/02/2027'),
   @('MC10','Decisão do MVP comercial','103','Não iniciado','Relatório do piloto e recomendação aprovados','05/03/2027')
 )
 $risks = @(
-  @('R01','Privacidade de respostas íntimas','Segurança','Alta','Crítico','Criptografia, autorização por casal e testes de isolamento','','Aberto'),
-  @('R02','Baixa adesão do parceiro','Produto','Alta','Alto','Simplificar convite, lembretes e medir conversão do pareamento','','Aberto'),
+  @('R01','Privacidade de respostas íntimas','Segurança','Alta','Crítico','Criptografia autorização por casal e testes de isolamento','','Aberto'),
+  @('R02','Baixa adesão do parceiro','Produto','Alta','Alto','Simplificar convite lembretes e medir conversão do pareamento','','Aberto'),
   @('R03','Conteúdo percebido como diagnóstico','Conteúdo','Média','Alto','Revisão por especialista e avisos claros de caráter educativo','','Aberto'),
-  @('R04','Vazamento de credenciais ou sessões','Segurança','Média','Crítico','Hash forte, expiração, rotação e gestão de segredos','','Aberto'),
-  @('R05','Atraso por escopo excessivo','Gestão','Alta','Alto','Proteger MVP, controlar mudanças e revisar prioridades semanalmente','','Aberto'),
+  @('R04','Vazamento de credenciais ou sessões','Segurança','Média','Crítico','Hash forte expiração rotação e gestão de segredos','','Aberto'),
+  @('R05','Atraso por escopo excessivo','Gestão','Alta','Alto','Proteger MVP controlar mudanças e revisar prioridades semanalmente','','Aberto'),
   @('R06','Dependência do armazenamento JSON','Tecnologia','Alta','Alto','Migrar para PostgreSQL antes da publicação','','Aberto'),
-  @('R07','Não conformidade com LGPD','Jurídico','Média','Crítico','Inventário v1 concluído - resolver DEC-01 a DEC-11 implementar consentimentos e direitos aprovar RIPD LIAs operadores e revisão jurídica','Privacidade/Jurídico','Aberto'),
-  @('R08','Problemas de desempenho em mobile','Tecnologia','Média','Médio','Orçamento de performance, imagens otimizadas e testes em aparelhos reais','','Aberto'),
-  @('R09','Capacidade da equipe abaixo da premissa','Gestão','Alta','Alto','Confirmar responsáveis e horas, recalcular datas ou reduzir amplitude antes do ciclo','','Aberto'),
-  @('R10','Recesso e recrutamento atrasam o piloto','Gestão','Média','Alto','Antecipar UAT, congelar escopo em dezembro e manter recrutamento contínuo','','Aberto'),
+  @('R07','Não conformidade com LGPD','Jurídico','Média','Crítico','Inventário v1 concluído — resolver DEC-01 a DEC-11 implementar consentimentos e direitos aprovar RIPD LIAs operadores e revisão jurídica','Privacidade/Jurídico','Aberto'),
+  @('R08','Problemas de desempenho em mobile','Tecnologia','Média','Médio','Orçamento de performance imagens otimizadas e testes em aparelhos reais','','Aberto'),
+  @('R09','Capacidade da equipe abaixo da premissa','Gestão','Alta','Alto','Confirmar responsáveis e horas recalcular datas ou reduzir amplitude antes do ciclo','','Aberto'),
+  @('R10','Recesso e recrutamento atrasam o piloto','Gestão','Média','Alto','Antecipar UAT congelar escopo em dezembro e manter recrutamento contínuo','','Aberto'),
   @('R11','Autorização quebrada expõe dados entre casais','Segurança','Alta','Crítico','Autorização por sujeito ação e recurso DTOs mínimos e testes negativos ST-01 a ST-05','Liderança Técnica','Aberto'),
   @('R12','Convite curto permite sequestro da segunda vaga','Segurança','Alta','Crítico','Pelo menos 128 bits hash expiração uso único rate limit e testes ST-06 a ST-08','Liderança Técnica','Aberto'),
   @('R13','Eventos do cliente adulteram métricas do piloto','Dados','Alta','Alto','Derivar métricas críticas no servidor rejeitar eventos financeiros e testar replay','Engenharia Backend','Aberto'),
-  @('R14','Cache ou notificação expõe conteúdo íntimo','Privacidade','Média','Crítico','No-store service worker sem S3 ou S4 notificações discretas e teste em aparelho compartilhado','Privacidade/Jurídico','Aberto')
+  @('R14','Cache ou notificação expõe conteúdo íntimo','Privacidade','Média','Crítico','No-store service worker sem S3 ou S4 notificações discretas e teste em aparelho compartilhado','Privacidade/Jurídico','Aberto'),
+  @('MR01','Escopo do MPV crescer antes da validação','MPV','Alta','Alto','Bloquear novas áreas no teste e exigir a retirada de um item para qualquer inclusão','Product Owner — Tatyele Lopes','Aberto'),
+  @('MR02','Regras dos jogos não serem entendidas sem ajuda','MPV','Média','Alto','Instrução em uma tela exemplo curto e critério de conclusão sem mediação','Product Designer','Aberto'),
+  @('MR03','Perguntas do teste causarem desconforto','MPV','Baixa','Alto','Usar apenas cartas leves permitir pular e não armazenar respostas','Conteúdo','Aberto'),
+  @('MR04','Conteúdo influenciar mais que o formato','MPV','Média','Médio','Equilibrar duração tema e quantidade de cartas entre os dois jogos','Product Owner — Tatyele Lopes','Aberto'),
+  @('MR05','Falha no celular impedir a sessão de teste','MPV','Média','Alto','Validar o caminho crítico nos navegadores alvo e manter reinício simples','Engenharia Frontend','Aberto')
 )
 
 function Escape([object]$Value) { if ($null -eq $Value) { return '' }; return [System.Security.SecurityElement]::Escape([string]$Value) }
@@ -197,7 +227,7 @@ function Sheet([array]$Rows,[int[]]$Widths,[int]$FreezeRow=1,[string]$AutoFilter
 $planRows = ,@('ID','Fase','Área','Tarefa','Entregável','Prioridade','Dependência','Responsável','Status','Estimativa (h)','Início planejado','Fim planejado','% concluído','Observações')
 foreach($t in $tasks){$pct = switch($t.Status){'Concluído'{1};'Em andamento'{0.5};default{0}}; $planRows += ,@([int]$t.ID,$t.Fase,$t.Área,$t.Tarefa,$t.Entregável,$t.Prioridade,$t.Dependência,$t.Responsável,$t.Status,[int]$t.'Estimativa (h)',$t.'Início planejado',$t.'Fim planejado',@{v=$pct;s=3},$t.Observações)}
 $dashRows = @(
-  @('PLANO DE ACOMPANHAMENTO — APP DO AMOR','',''),
+  @('PLANO DE ACOMPANHAMENTO — APP DO AMOR + MPV DE TESTE','',''),
   @('Atualizado em',(Get-Date -Format 'dd/MM/yyyy HH:mm'),''),
   @('Indicador','Valor','Leitura'),
   @('Total de tarefas',@{v=0;s=2;f="COUNTA('Plano Mestre'!A2:A$lastPlanRow)"},'escopo completo'),
@@ -220,7 +250,7 @@ $governanceRows = @(
   @('','','','',''),
   @('FLUXO','REGRA DE SAÍDA','WIP','EQUIVALÊNCIA NO PLANO','RESPONSÁVEL'),
   @('Funil','Triagem realizada','Sem limite','Não iniciado','PO'),
-  @('Análise','Descartar, pesquisar ou detalhar','5','Não iniciado','PO/TL'),
+  @('Análise','Descartar pesquisar ou detalhar','5','Não iniciado','PO/TL'),
   @('Refinamento','Definition of Ready atendida','8','Não iniciado','PO/TL'),
   @('Pronto','Selecionado no planejamento','10','Não iniciado','PO'),
   @('Em andamento','Incremento pronto para revisão','5 no time; 1 por pessoa','Em andamento','Dono do item'),

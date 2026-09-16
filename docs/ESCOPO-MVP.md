@@ -1,5 +1,7 @@
 # Escopo do MVP — Conectadois / App do Amor
 
+> Este é o plano completo do aplicativo e permanece válido. O [MPV de validação de formato](ESCOPO-MPV.md) é uma trilha adicional de teste; seus resultados serão usados como insumo para uma revisão futura deste plano, sem substituição automática.
+
 **Versão:** 1.0 — 2 de setembro de 2026  
 **Produto:** Conectadois / App do Amor  
 **Formato escolhido:** PWA responsiva, piloto fechado  

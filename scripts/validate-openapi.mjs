@@ -12,10 +12,13 @@ function assert(condition, message) {
 
 function resolvePointer(pointer) {
   if (!pointer.startsWith('#/')) return undefined
-  return pointer.slice(2).split('/').reduce((value, segment) => {
-    const key = segment.replaceAll('~1', '/').replaceAll('~0', '~')
-    return value?.[key]
-  }, document)
+  return pointer
+    .slice(2)
+    .split('/')
+    .reduce((value, segment) => {
+      const key = segment.replaceAll('~1', '/').replaceAll('~0', '~')
+      return value?.[key]
+    }, document)
 }
 
 function visit(value, location = '#') {
@@ -27,9 +30,15 @@ function visit(value, location = '#') {
 }
 
 assert(document.openapi === '3.1.0', 'openapi deve ser 3.1.0')
-assert(document.jsonSchemaDialect === 'https://json-schema.org/draft/2020-12/schema', 'dialeto JSON Schema inesperado')
+assert(
+  document.jsonSchemaDialect === 'https://json-schema.org/draft/2020-12/schema',
+  'dialeto JSON Schema inesperado',
+)
 assert(document.info?.version === '0.1.0-draft', 'info.version deve refletir o estado draft')
-assert(document.servers?.some(server => server.url === '/api/v1'), 'servidor /api/v1 ausente')
+assert(
+  document.servers?.some((server) => server.url === '/api/v1'),
+  'servidor /api/v1 ausente',
+)
 assert(document.components?.securitySchemes?.bearerAuth?.scheme === 'bearer', 'bearerAuth ausente')
 
 const operationIds = new Set()
@@ -43,10 +52,19 @@ for (const [path, pathItem] of Object.entries(document.paths || {})) {
     if (!methods.has(method)) continue
     operationCount += 1
     assert(Boolean(operation.operationId), `${method.toUpperCase()} ${path}: operationId ausente`)
-    assert(!operationIds.has(operation.operationId), `${method.toUpperCase()} ${path}: operationId duplicado`)
+    assert(
+      !operationIds.has(operation.operationId),
+      `${method.toUpperCase()} ${path}: operationId duplicado`,
+    )
     operationIds.add(operation.operationId)
-    assert(statuses.has(operation['x-implementation-status']), `${method.toUpperCase()} ${path}: status de implementação inválido`)
-    assert(Object.keys(operation.responses || {}).length > 0, `${method.toUpperCase()} ${path}: responses ausentes`)
+    assert(
+      statuses.has(operation['x-implementation-status']),
+      `${method.toUpperCase()} ${path}: status de implementação inválido`,
+    )
+    assert(
+      Object.keys(operation.responses || {}).length > 0,
+      `${method.toUpperCase()} ${path}: responses ausentes`,
+    )
     if (operation['x-implementation-status'] === 'partial') partialCount += 1
     if (operation['x-implementation-status'] === 'planned') plannedCount += 1
   }
@@ -63,4 +81,6 @@ if (errors.length) {
   process.exit(1)
 }
 
-console.log(`OpenAPI válido: ${Object.keys(document.paths).length} caminhos, ${operationCount} operações únicas, ${partialCount} parciais e ${plannedCount} planejadas; referências locais resolvidas.`)
+console.log(
+  `OpenAPI válido: ${Object.keys(document.paths).length} caminhos, ${operationCount} operações únicas, ${partialCount} parciais e ${plannedCount} planejadas; referências locais resolvidas.`,
+)

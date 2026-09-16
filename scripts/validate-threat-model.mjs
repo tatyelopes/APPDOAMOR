@@ -6,8 +6,13 @@ const errors = []
 function rows(pattern) {
   return document
     .split(/\r?\n/)
-    .map(line => line.split('|').slice(1, -1).map(cell => cell.trim()))
-    .filter(row => pattern.test(row[0] || ''))
+    .map((line) =>
+      line
+        .split('|')
+        .slice(1, -1)
+        .map((cell) => cell.trim()),
+    )
+    .filter((row) => pattern.test(row[0] || ''))
 }
 
 function assert(condition, message) {
@@ -15,7 +20,7 @@ function assert(condition, message) {
 }
 
 function uniqueIds(table, name) {
-  const ids = table.map(row => row[0])
+  const ids = table.map((row) => row[0])
   assert(new Set(ids).size === ids.length, `${name}: IDs duplicados`)
   return new Set(ids)
 }
@@ -44,7 +49,8 @@ for (const row of threats) {
   assert(Number(risk.split(' ')[0]) === score, `${id}: score não corresponde a P × I`)
   const referencedControls = response.match(/SEC-\d{2}/g) || []
   assert(referencedControls.length > 0, `${id}: nenhum controle associado`)
-  for (const control of referencedControls) assert(controlIds.has(control), `${id}: controle inexistente ${control}`)
+  for (const control of referencedControls)
+    assert(controlIds.has(control), `${id}: controle inexistente ${control}`)
   assert(situation === 'Aberta', `${id}: ameaça sem evidência deve permanecer aberta`)
 }
 
@@ -52,7 +58,10 @@ for (const row of controls) {
   const [id, requirement, state, plan] = row
   assert(/^SEC-\d{2}$/.test(id), `ID de controle inválido: ${id}`)
   assert(requirement.length >= 30, `${id}: requisito pouco verificável`)
-  assert(['Ausente', 'Parcial', 'Aberto', 'Implementado'].includes(state), `${id}: estado inválido ${state}`)
+  assert(
+    ['Ausente', 'Parcial', 'Aberto', 'Implementado'].includes(state),
+    `${id}: estado inválido ${state}`,
+  )
   assert(/\d/.test(plan), `${id}: tarefa do plano ausente`)
 }
 
@@ -65,7 +74,10 @@ for (const row of tests) {
 }
 
 assert(threatIds.has('T01') && threatIds.has('T22'), 'faixa T01–T22 incompleta')
-assert(document.includes('22 ameaças: 13 críticas, 8 altas e 1 média'), 'resumo da distribuição de riscos divergente')
+assert(
+  document.includes('22 ameaças: 13 críticas, 8 altas e 1 média'),
+  'resumo da distribuição de riscos divergente',
+)
 
 if (errors.length) {
   console.error(`Modelagem de ameaças inválida (${errors.length} erro(s)):`)
@@ -79,4 +91,6 @@ const byLevel = threats.reduce((totals, row) => {
   return totals
 }, {})
 
-console.log(`Modelagem validada: ${threats.length} ameaças, ${controls.length} controles e ${tests.length} testes; ${JSON.stringify(byLevel)}.`)
+console.log(
+  `Modelagem validada: ${threats.length} ameaças, ${controls.length} controles e ${tests.length} testes; ${JSON.stringify(byLevel)}.`,
+)

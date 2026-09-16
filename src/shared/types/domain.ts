@@ -20,11 +20,7 @@ export type Profile = {
 }
 
 export type Language =
-  | 'Tempo de qualidade'
-  | 'Palavras de afirmação'
-  | 'Atos de serviço'
-  | 'Toque físico'
-  | 'Presentes'
+  'Tempo de qualidade' | 'Palavras de afirmação' | 'Atos de serviço' | 'Toque físico' | 'Presentes'
 
 export type ApiUser = {
   id: string
@@ -42,12 +38,39 @@ export type ApiUser = {
 export type AdminMetrics = {
   generatedAt: string
   northStar: { name: string; value: number; eligibleCouples: number; rate: number }
-  acquisition: { registeredUsers7d: number; registeredUsers30d: number; coupleSpacesCreated: number }
-  activation: { pairedCouples: number; inviteToPairRate: number; couplesWithFirstMutualExperience: number; pairedToFirstExperienceRate: number }
-  engagement: { weeklyActiveCouples: number; monthlyActiveCouples: number; mutualExperiences7d: number; reciprocityRate7d: number }
-  retention: Record<'day7' | 'day30' | 'day90', { eligible: number; retained: number; rate: number }>
-  monetization: { trialsStarted: number; payingCouples: number; trialToPaidRate: number; cancellations: number }
-  safety: { privacyIncidents: number; notificationsMuted: number; safetyHelpOpened: number; unlinkedCouples: number }
+  acquisition: {
+    registeredUsers7d: number
+    registeredUsers30d: number
+    coupleSpacesCreated: number
+  }
+  activation: {
+    pairedCouples: number
+    inviteToPairRate: number
+    couplesWithFirstMutualExperience: number
+    pairedToFirstExperienceRate: number
+  }
+  engagement: {
+    weeklyActiveCouples: number
+    monthlyActiveCouples: number
+    mutualExperiences7d: number
+    reciprocityRate7d: number
+  }
+  retention: Record<
+    'day7' | 'day30' | 'day90',
+    { eligible: number; retained: number; rate: number }
+  >
+  monetization: {
+    trialsStarted: number
+    payingCouples: number
+    trialToPaidRate: number
+    cancellations: number
+  }
+  safety: {
+    privacyIncidents: number
+    notificationsMuted: number
+    safetyHelpOpened: number
+    unlinkedCouples: number
+  }
   trend: { start: string; activeCouples: number; mutualExperiences: number }[]
 }
 

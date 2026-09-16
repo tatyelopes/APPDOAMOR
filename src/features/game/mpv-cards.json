@@ -1,0 +1,122 @@
+{
+  "version": 1,
+  "selectedAt": "2026-09-12",
+  "roundsPerSession": 3,
+  "games": [
+    {
+      "id": "discovery-together",
+      "title": "Descoberta a Dois",
+      "cards": [
+        {
+          "id": "DAD-001",
+          "sourceId": "Descontraído-questions-1",
+          "theme": "Humor",
+          "prompt": "Qual seria o título de uma comédia sobre nós?"
+        },
+        {
+          "id": "DAD-002",
+          "sourceId": "Descontraído-questions-2",
+          "theme": "Diversão",
+          "prompt": "Que aventura divertida você gostaria de viver comigo?"
+        },
+        {
+          "id": "DAD-003",
+          "sourceId": "Memórias-questions-1",
+          "theme": "Memórias",
+          "prompt": "Qual lembrança nossa sempre consegue fazer você sorrir?"
+        },
+        {
+          "id": "DAD-004",
+          "sourceId": "Memórias-questions-2",
+          "theme": "Memórias",
+          "prompt": "Que momento simples nosso você gostaria de reviver?"
+        },
+        {
+          "id": "DAD-005",
+          "sourceId": "Curiosidades-questions-1",
+          "theme": "Imaginação",
+          "prompt": "Se pudéssemos acordar amanhã em qualquer lugar, onde seria?"
+        },
+        {
+          "id": "DAD-006",
+          "sourceId": "Curiosidades-questions-2",
+          "theme": "Curiosidade",
+          "prompt": "O que você gostaria que eu descobrisse sobre você?"
+        }
+      ]
+    },
+    {
+      "id": "guess-about-me",
+      "title": "Adivinhe de Mim",
+      "cards": [
+        {
+          "id": "ADM-001",
+          "sourceId": "DES-001",
+          "theme": "Tempo livre",
+          "prompt": "Se você ganhasse uma tarde livre agora, qual plano escolheria?",
+          "options": [
+            "Explorar um lugar novo",
+            "Maratonar algo no sofá",
+            "Comer em um lugar favorito",
+            "Improvisar sem decidir antes"
+          ]
+        },
+        {
+          "id": "ADM-002",
+          "sourceId": "DES-002",
+          "theme": "Humor",
+          "prompt": "Em uma dupla de filme, qual papel mais combina com você?",
+          "options": [
+            "Quem cria o plano",
+            "Quem faz todo mundo rir",
+            "Quem resolve o imprevisto",
+            "Quem leva os lanches"
+          ]
+        },
+        {
+          "id": "ADM-003",
+          "sourceId": "DES-003",
+          "theme": "Brincadeira",
+          "prompt": "Qual competição boba você teria mais chance de ganhar?",
+          "options": [
+            "Escolher a melhor música",
+            "Montar algo sem manual",
+            "Encontrar o melhor lanche",
+            "Contar a pior piada"
+          ]
+        },
+        {
+          "id": "ADM-004",
+          "sourceId": "DES-005",
+          "theme": "Viagem",
+          "prompt": "Qual viagem improvisada parece mais divertida para você?",
+          "options": ["Praia", "Montanha", "Cidade histórica", "Destino escolhido na sorte"]
+        },
+        {
+          "id": "ADM-005",
+          "sourceId": "DES-006",
+          "theme": "Talentos",
+          "prompt": "Que talento inútil seria mais engraçado dominar?",
+          "options": [
+            "Imitar vozes",
+            "Dançar uma coreografia",
+            "Fazer truques de mágica",
+            "Reconhecer músicas em um segundo"
+          ]
+        },
+        {
+          "id": "ADM-006",
+          "sourceId": "DES-009",
+          "theme": "Preferências",
+          "prompt": "Qual pequeno luxo melhora instantaneamente um dia comum para você?",
+          "options": [
+            "Dormir até mais tarde",
+            "Pedir a comida favorita",
+            "Tomar um banho demorado",
+            "Cancelar todos os planos"
+          ]
+        }
+      ]
+    }
+  ]
+}

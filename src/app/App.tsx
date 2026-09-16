@@ -1,2 +1,1 @@
-export { default } from '../App'
-
+export { default } from '../features/mpv/MpvEntryApp'

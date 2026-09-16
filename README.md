@@ -39,33 +39,47 @@ Para execução restrita à máquina e configuração explícita da API, siga o 
 
 Instale as dependências com a versão de Node compatível com o pacote instalado e execute:
 
-~~~powershell
+```powershell
 npm.cmd install --cache .npm-cache
 npm.cmd run dev
-~~~
+```
 
 Use os endereços informados no terminal. Para compilar:
 
-~~~powershell
+```powershell
 npm.cmd run build
-~~~
+```
 
 Para validar os artefatos de arquitetura e privacidade:
 
-~~~powershell
+```powershell
 npm.cmd run validate:openapi
 npm.cmd run validate:threat-model
 npm.cmd run validate:lgpd
-~~~
+```
+
+## Qualidade do código
+
+O projeto usa ESLint para JavaScript, TypeScript e React e Prettier para formatação. Execute as verificações com:
+
+```powershell
+npm.cmd run lint
+npm.cmd run format:check
+npm.cmd run build
+```
+
+Para aplicar correções automáticas, use `npm.cmd run lint:fix` e `npm.cmd run format`. O comando `npm.cmd run check` executa lint, conferência de formatação e build em sequência.
+
+O `npm.cmd install` ativa o hook do Husky por meio do script `prepare`. Antes de cada commit, o lint-staged corrige e formata apenas os arquivos staged compatíveis; se restar algum erro de lint, o commit é interrompido.
 
 ## Atualizar o acompanhamento
 
 O gerador é a fonte das tarefas; o Excel é o acompanhamento operacional. Após alterar tarefas ou status:
 
-~~~powershell
+```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-project-plan.ps1
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate-project-plan.ps1
-~~~
+```
 
 A validação confere estrutura, IDs, dependências, ciclos, conteúdo, cabeçalhos e fórmulas. A planilha solicita recálculo ao abrir no Excel.
 
