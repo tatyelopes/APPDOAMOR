@@ -2,7 +2,7 @@
 
 Definição da tarefa 38, em 08/09/2026. Responsável técnico: DevOps/Plataforma, com revisão da Liderança Técnica. Tatyele Lopes responde pelo aceite de produto e pela decisão de lançamento.
 
-Esta estratégia está definida; a infraestrutura remota completa ainda não está provisionada. Para a demonstração controlada do MPV, foi selecionado Render na região `virginia`, com serviço Node e PostgreSQL gratuitos, conforme `render.yaml`. O banco gratuito expira em 30 dias e não possui backup automático, por isso não representa a arquitetura definitiva. Domínio próprio, orçamento, contratos e responsáveis nominais de produção permanecem pendentes nas tarefas 16, 92, 122 e 123.
+Esta estratégia está definida; a infraestrutura remota definitiva ainda não está provisionada. A demonstração controlada do MPV foi publicada no Render em 16/09/2026, na região `virginia`, com serviço Node e PostgreSQL gratuitos, conforme `render.yaml`. O banco gratuito expira em 16/10/2026 e não possui backup automático, por isso não representa a arquitetura definitiva. Domínio próprio, orçamento, contratos e responsáveis nominais de produção permanecem pendentes nas tarefas 16, 92, 122 e 123.
 
 ## Matriz de ambientes
 
@@ -97,9 +97,9 @@ npm.cmd run build
 
 O arquivo `render.yaml` define um Web Service chamado `momento-a-dois-teste` e um PostgreSQL chamado `momento-a-dois-feedback`, ambos gratuitos na região `virginia`. O build usa `npm ci --include=dev --ignore-scripts --cache .npm-cache && npm run build`, o início usa `npm start` e a sonda é `/api/health`. `DATABASE_URL` é injetada internamente pelo Render e o token de exportação é gerado fora do repositório.
 
-O serviço gratuito pode entrar em suspensão após inatividade e o primeiro acesso pode demorar. O PostgreSQL gratuito tem 1 GB, expira em 30 dias e não oferece backup automático. Exportar o CSV durante o teste e novamente antes do vencimento; não usar esta configuração para produção ou retenção de longo prazo.
+O serviço foi publicado e teve saúde, página, envio, persistência e exportação verificados em 16/09/2026; o dado sintético usado na validação foi excluído e a base ficou vazia. O serviço gratuito pode entrar em suspensão após inatividade e o primeiro acesso pode demorar. O PostgreSQL gratuito tem 1 GB, expira em 16/10/2026 e não oferece backup automático. Exportar o CSV durante o teste e novamente antes do vencimento; não usar esta configuração para produção ou retenção de longo prazo.
 
-A publicação controlada não encerra os gates de produção do restante do aplicativo. Antes de enviar o endereço aos cinco casais, confirmar HTTPS ativo, banco disponível, segredo de exportação acessível somente à responsável, exportação de teste aprovada e passagem física em Android e iPhone.
+A publicação controlada não encerra os gates de produção do restante do aplicativo. HTTPS, banco, segredo restrito e exportação de teste foram confirmados. Antes de enviar o endereço aos cinco casais, falta concluir a passagem física em Android e iPhone registrada na tarefa 132.
 
 ## Promoção de versões
 
@@ -141,4 +141,4 @@ O JSON atual, CORS `*`, sessões e convites ainda mantêm as limitações docume
 
 ## Acompanhamento
 
-A tarefa 38 fica concluída como estratégia documentada. A tarefa 41 está em andamento com o adaptador PostgreSQL restrito ao feedback do MPV, e a tarefa 43 está em andamento com a sonda mínima. As tarefas 42, 92 e 118 continuam não iniciadas. A tarefa 123 registra o provisionamento definitivo de homologação e a validação de configuração. A planilha e seu gerador continuam sendo a referência do status de execução.
+A tarefa 38 fica concluída como estratégia documentada. A tarefa 41 está em andamento com o adaptador PostgreSQL restrito ao feedback do MPV, a tarefa 43 está em andamento com a sonda mínima e a tarefa 135 foi concluída com a publicação controlada. As tarefas 42, 92 e 118 continuam não iniciadas. A tarefa 123 registra o provisionamento definitivo de homologação e a validação de configuração. A planilha e seu gerador continuam sendo a referência do status de execução.

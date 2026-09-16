@@ -2,7 +2,7 @@
 
 **Versão:** 1.0
 **Data:** 16/09/2026
-**Status:** implementado para ambiente controlado; publicação externa ainda depende da tarefa 135 e dos gates de privacidade e operação.
+**Status:** publicado no ambiente gratuito controlado em 16/09/2026; a ampliação para os cinco casais ainda depende da passagem física em Android e iPhone e dos gates de privacidade e operação.
 
 ## Objetivo
 
@@ -53,11 +53,10 @@ Respostas principais: `201` criado, `200` reenvio já registrado, `400` conteúd
 
 Exige `Authorization: Bearer <MPV_EXPORT_TOKEN>`. O segredo precisa ter no mínimo 32 caracteres e nunca pode usar prefixo `VITE_` ou ser enviado ao navegador. O CSV neutraliza valores que poderiam ser interpretados como fórmula por planilhas.
 
-Use o comando local:
+Use o comando local. Na máquina da responsável, o script também procura o segredo salvo no perfil do Windows quando ele não estiver carregado no terminal:
 
 ```powershell
-$env:MPV_EXPORT_TOKEN = '<o mesmo segredo configurado na API>'
-npm.cmd run export:mpv-feedback
+npm.cmd run export:mpv-feedback -- -ApiBaseUrl 'https://momento-a-dois-teste.onrender.com'
 ```
 
 O arquivo é criado em `server/exports/`, diretório ignorado pelo Git.
@@ -74,7 +73,7 @@ DATABASE_URL=<conexão PostgreSQL opcional para o feedback>
 
 O proxy do Vite aceita `API_PROXY_TARGET` para testes automatizados. Nenhuma dessas variáveis secretas deve receber prefixo `VITE_`.
 
-## Serviço pronto para publicação
+## Serviço publicado para o teste controlado
 
 O build do frontend e a API podem operar no mesmo serviço e na mesma origem:
 
@@ -105,7 +104,9 @@ O provisionamento sem custo está declarado em `render.yaml`: Web Service gratui
 - feedback real exige transparência, retenção aplicada, canal de direitos e acesso restrito;
 - esta rota é temporária em `/api`; o contrato estável deve ser incorporado a `/api/v1` antes de produção.
 
-Para compartilhamento externo, ainda são necessários hospedagem HTTPS, banco apropriado, segredo no cofre, backup, monitoramento e aprovação dos gates registrados no inventário LGPD.
+O serviço HTTPS, o envio e a exportação foram verificados em 16/09/2026, e o registro sintético usado na validação foi removido. A base ficou vazia para iniciar o teste. O endereço permanece sem indexação, mas isso não equivale a controle de acesso.
+
+Antes de ampliar o compartilhamento além do teste controlado, ainda são necessários banco durável, backup, monitoramento e aprovação dos gates registrados no inventário LGPD.
 
 ## Verificação
 

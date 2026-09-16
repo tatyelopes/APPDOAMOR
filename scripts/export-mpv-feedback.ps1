@@ -6,6 +6,10 @@ param(
 
 $ErrorActionPreference = 'Stop'
 
+if ([string]::IsNullOrWhiteSpace($Token)) {
+  $Token = [Environment]::GetEnvironmentVariable('MPV_EXPORT_TOKEN', 'User')
+}
+
 if ([string]::IsNullOrWhiteSpace($Token) -or $Token.Length -lt 32) {
   throw 'Defina MPV_EXPORT_TOKEN com pelo menos 32 caracteres antes de exportar.'
 }
