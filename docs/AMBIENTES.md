@@ -95,7 +95,7 @@ npm.cmd run build
 
 ## Demonstração controlada no Render
 
-O arquivo `render.yaml` define um Web Service chamado `momento-a-dois-teste` e um PostgreSQL chamado `momento-a-dois-feedback`, ambos gratuitos na região `virginia`. O build usa `npm ci --cache .npm-cache && npm run build`, o início usa `npm start` e a sonda é `/api/health`. `DATABASE_URL` é injetada internamente pelo Render e o token de exportação é gerado pelo cofre, sem entrar no repositório.
+O arquivo `render.yaml` define um Web Service chamado `momento-a-dois-teste` e um PostgreSQL chamado `momento-a-dois-feedback`, ambos gratuitos na região `virginia`. O build usa `npm ci --include=dev --ignore-scripts --cache .npm-cache && npm run build`, o início usa `npm start` e a sonda é `/api/health`. `DATABASE_URL` é injetada internamente pelo Render e o token de exportação é gerado fora do repositório.
 
 O serviço gratuito pode entrar em suspensão após inatividade e o primeiro acesso pode demorar. O PostgreSQL gratuito tem 1 GB, expira em 30 dias e não oferece backup automático. Exportar o CSV durante o teste e novamente antes do vencimento; não usar esta configuração para produção ou retenção de longo prazo.
 

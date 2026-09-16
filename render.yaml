@@ -10,7 +10,7 @@ services:
     repo: https://github.com/tatyelopes/APPDOAMOR
     branch: main
     autoDeployTrigger: commit
-    buildCommand: npm ci --cache .npm-cache && npm run build
+    buildCommand: npm ci --include=dev --ignore-scripts --cache .npm-cache && npm run build
     startCommand: npm start
     healthCheckPath: /api/health
     numInstances: 1
