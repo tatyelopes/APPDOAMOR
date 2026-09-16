@@ -1,0 +1,34 @@
+previews:
+  generation: off
+
+services:
+  - type: web
+    name: momento-a-dois-teste
+    runtime: node
+    region: virginia
+    plan: 0.5c-512mb
+    branch: main
+    autoDeployTrigger: commit
+    buildCommand: npm ci --cache .npm-cache && npm run build
+    startCommand: npm start
+    healthCheckPath: /api/health
+    numInstances: 1
+    disk:
+      name: feedback-mpv
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: 24.20.0
+      - key: HOST
+        value: 0.0.0.0
+      - key: STATIC_DIR
+        value: dist
+      - key: DATABASE_FILE
+        value: /var/data/database.json
+      - key: MPV_EXPORT_TOKEN
+        generateValue: true
+      - key: MPV_FEEDBACK_RETENTION_DAYS
+        value: '90'

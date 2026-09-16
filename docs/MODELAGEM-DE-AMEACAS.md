@@ -4,7 +4,7 @@ Versão 1.0 · 05/09/2026 · Entrega da tarefa 36.
 
 ## Decisão de segurança
 
-O estado atual **não está apto para piloto externo**. A modelagem identificou 22 ameaças: 13 críticas, 8 altas e 1 média no risco inerente. Os bloqueadores imediatos são sequestro de convite, roubo ou reutilização de sessão, acesso indevido entre casais, revelação antecipada, corridas de escrita, perda silenciosa do JSON e exposição de conteúdo íntimo.
+O estado atual **não está apto para piloto externo**. A modelagem identificou 23 ameaças: 13 críticas, 9 altas e 1 média no risco inerente. Os bloqueadores imediatos são sequestro de convite, roubo ou reutilização de sessão, acesso indevido entre casais, revelação antecipada, corridas de escrita, perda silenciosa do JSON e exposição de conteúdo íntimo.
 
 Esta entrega define ameaças e controles; não afirma que as mitigações foram implementadas. Cada ameaça permanece aberta até existir evidência automatizada ou operacional do controle correspondente. O modelo precisa ser revisto quando as tarefas 112–114 definirem novas mecânicas, quando a persistência migrar para PostgreSQL, quando houver provedor externo ou antes de cada release candidate.
 
@@ -30,7 +30,7 @@ Incluídos:
 - cadastro, login, sessão, recuperação e verificação;
 - criação de casal, convite, pareamento, desvinculação e exclusão;
 - catálogo, partidas, rodadas, respostas privadas, revelação e progresso;
-- analytics, painel administrativo, logs, segredos, backups e CI/CD;
+- feedback anônimo do MPV, exportação CSV, analytics, painel administrativo, logs, segredos, backups e CI/CD;
 - PostgreSQL planejado e JSON atual;
 - e-mail, notificações e cache offline planejados.
 
@@ -45,6 +45,7 @@ Fora do controle direto: sistema operacional comprometido, aparelho com root, ca
 | S4 — íntimo/restrito | textos de resposta, escolhas, resultados, temas evitados, snapshots de rodadas | dano relacional, exposição sensível, perda de confiança |
 | S4 — segredo | senha, token de sessão, token de recuperação, convite válido, chaves e segredos | tomada de conta, entrada indevida no casal, acesso em cadeia |
 | S3 — pessoal | nome, e-mail, aniversário, fuso, vínculo e histórico de participação | identificação, enumeração, engenharia social |
+| S3/S4 — texto de pesquisa | sugestão opcional do MPV quando a pessoa ignora a orientação e inclui dado pessoal ou sensível | identificação, exposição indevida e uso além da finalidade |
 | S2 — operacional | métricas agregadas, logs redigidos, configuração e inventário de conteúdo | fraude analítica, abuso administrativo, reconhecimento |
 | S1 — público | frontend compilado e conteúdo editorial publicado | adulteração de interface, cadeia de suprimentos |
 
@@ -156,6 +157,7 @@ Esses controles reduzem risco, mas não compensam os bloqueadores abaixo.
 | T20 | I · privacidade relacional | Notificação, histórico do navegador, cache offline, preview, tela compartilhada ou texto explícito revela participação e conteúdo a quem usa o aparelho. | 4 | 4 | 16 alto | Mitigar: SEC-20, SEC-25, SEC-29; tarefas 58, 72, 73, 90 e 119 | Aberta |
 | T21 | T/I · fluxo sensível | Conteúdo não aprovado, retirado ou inadequado é servido; snapshot muda depois da resposta ou operador publica sem dupla revisão. | 3 | 4 | 12 alto | Mitigar: SEC-11, SEC-21, SEC-28; tarefas 52, 59, 76 e 77 | Aberta |
 | T22 | R | Sem trilha confiável, não é possível provar revogação, pareamento, publicação, acesso administrativo ou incidente sem registrar conteúdo íntimo. | 3 | 3 | 9 médio | Mitigar: SEC-15, SEC-21, SEC-25; tarefas 43, 59 e 84 | Aberta |
+| T23 | S/T/I/D · feedback | Origem hostil automatiza feedback anônimo, sugestão inclui dado pessoal, reenvio duplica resultado ou CSV executa fórmula e expõe o arquivo. | 4 | 4 | 16 alto | Mitigar: SEC-17, SEC-18, SEC-19, SEC-25, SEC-27 e SEC-30; tarefa 139 | Aberta |
 
 ## Requisitos de segurança
 
@@ -190,6 +192,7 @@ Esses controles reduzem risco, mas não compensam os bloqueadores abaixo.
 | SEC-27 | Automatizar testes negativos de autorização, corrida, idempotência, sessão e contrato; monitorar anomalias e manter playbook de incidente. | Ausente | 79, 81–84, 95 |
 | SEC-28 | Catálogo serve somente revisão aprovada; snapshots são imutáveis; retirada bloqueia nova seleção; operação editorial é autorizada e auditada. | Ausente | 52, 59, 76, 77 |
 | SEC-29 | Notificação e interface usam texto discreto, reautenticam para S4 quando necessário, permitem saída unilateral e não expõem quem pulou ou o conteúdo em preview. | Parcial | 50, 58, 72, 73, 90 |
+| SEC-30 | Feedback anônimo usa schema fechado, limite de 500 caracteres, idempotência, rate limit, origem configurada, retenção, ausência de IP persistido e exportação com segredo fora do cliente; CSV neutraliza fórmulas. | Parcial | 139, 42, 85, 123 |
 
 ## Casos de abuso e testes obrigatórios
 
@@ -215,6 +218,7 @@ Esses controles reduzem risco, mas não compensam os bloqueadores abaixo.
 | ST-18 | Restaurar backup e recalcular progresso. | Integridade comprovada, tokens antigos inutilizáveis e projeção equivalente. | 93, 118 |
 | ST-19 | Abrir PWA offline, voltar/avançar e sair em aparelho compartilhado. | Nenhuma resposta ou resultado S4 em cache/histórico após logout. | 82, 86, 119 |
 | ST-20 | Comprometer ou remover dependência crítica em ambiente de teste. | CI detecta lock/SBOM/vulnerabilidade e impede promoção. | 40, 83 |
+| ST-21 | Repetir feedback, exceder limites, usar origem hostil, injetar fórmula e exportar sem segredo. | Um registro por ID, 400/403/429 adequados, fórmula neutralizada e exportação negada. | 139 |
 
 ## Gates de segurança para piloto
 

@@ -15,8 +15,6 @@ type MpvFeedbackProps = {
   onFinish: () => void
 }
 
-const STORAGE_KEY = 'mpv.feedback.v1'
-
 const questions: {
   key: keyof FeedbackAnswers
   label: string
@@ -35,8 +33,15 @@ const initialAnswers: FeedbackAnswers = {
   replayIntent: '',
 }
 
+function createSubmissionId() {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}-${Math.random().toString(36).slice(2)}`
+}
+
 export default function MpvFeedback({ gameId, onPlayAgain, onFinish }: MpvFeedbackProps) {
   const [answers, setAnswers] = useState<FeedbackAnswers>(initialAnswers)
+  const [suggestion, setSuggestion] = useState('')
+  const [submissionId] = useState(createSubmissionId)
+  const [submitting, setSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [error, setError] = useState('')
 
@@ -47,28 +52,41 @@ export default function MpvFeedback({ gameId, onPlayAgain, onFinish }: MpvFeedba
     setError('')
   }
 
-  function submitFeedback(event: FormEvent<HTMLFormElement>) {
+  async function submitFeedback(event: FormEvent<HTMLFormElement>) {
     event.preventDefault()
 
-    if (!isComplete) {
+    if (!isComplete || submitting) {
       return
     }
 
-    const record = {
-      completedGame: gameId,
-      clarity: answers.clarity,
-      connection: answers.connection,
-      replayIntent: answers.replayIntent,
-    }
-
+    setSubmitting(true)
+    setError('')
     try {
-      const storedValue = localStorage.getItem(STORAGE_KEY)
-      const parsedValue = storedValue ? JSON.parse(storedValue) : []
-      const previousRecords = Array.isArray(parsedValue) ? parsedValue : []
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([...previousRecords, record]))
+      const response = await fetch('/api/mpv/feedback', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          submissionId,
+          gameId,
+          clarity: answers.clarity,
+          connection: answers.connection,
+          replayIntent: answers.replayIntent,
+          suggestion: suggestion.trim(),
+        }),
+      })
+      const result = (await response.json().catch(() => ({}))) as { error?: string }
+      if (!response.ok) {
+        throw new Error(result.error || 'Não foi possível enviar o feedback.')
+      }
       setSubmitted(true)
-    } catch {
-      setError('Não foi possível guardar o feedback neste aparelho. Vocês podem tentar novamente.')
+    } catch (submitError) {
+      setError(
+        submitError instanceof Error
+          ? submitError.message
+          : 'Não foi possível enviar o feedback. Vocês podem tentar novamente.',
+      )
+    } finally {
+      setSubmitting(false)
     }
   }
 
@@ -78,7 +96,7 @@ export default function MpvFeedback({ gameId, onPlayAgain, onFinish }: MpvFeedba
         <span aria-hidden="true">✓</span>
         <div>
           <h2 id="feedback-success-title">Obrigado pelo feedback!</h2>
-          <p>Os três sinais foram registrados neste aparelho sem nomes ou respostas das rodadas.</p>
+          <p>O feedback foi enviado sem nomes ou respostas das rodadas.</p>
         </div>
 
         <div className="mpv-complete-actions">
@@ -126,6 +144,31 @@ export default function MpvFeedback({ gameId, onPlayAgain, onFinish }: MpvFeedba
         ))}
       </div>
 
+      <div className="mpv-feedback-suggestion">
+        <label htmlFor="mpv-feedback-suggestion">
+          Sugestões de melhoria <span>(opcional)</span>
+        </label>
+        <p id="mpv-feedback-suggestion-hint">
+          Conte o que poderia melhorar. Não inclua nomes, contatos ou detalhes da conversa.
+        </p>
+        <textarea
+          id="mpv-feedback-suggestion"
+          name="suggestion"
+          rows={4}
+          maxLength={500}
+          value={suggestion}
+          aria-describedby="mpv-feedback-suggestion-hint mpv-feedback-suggestion-count"
+          placeholder="Ex.: instruções mais curtas ou mais opções de perguntas"
+          onChange={(event) => {
+            setSuggestion(event.target.value)
+            setError('')
+          }}
+        />
+        <output id="mpv-feedback-suggestion-count" htmlFor="mpv-feedback-suggestion">
+          {suggestion.length}/500
+        </output>
+      </div>
+
       {error && (
         <p className="mpv-feedback-error" role="alert">
           {error}
@@ -135,9 +178,9 @@ export default function MpvFeedback({ gameId, onPlayAgain, onFinish }: MpvFeedba
       <button
         className="mpv-primary-button mpv-feedback-submit"
         type="submit"
-        disabled={!isComplete}
+        disabled={!isComplete || submitting}
       >
-        Enviar feedback
+        {submitting ? 'Enviando…' : 'Enviar feedback'}
         <span aria-hidden="true">→</span>
       </button>
       <button className="mpv-feedback-skip" type="button" onClick={onFinish}>

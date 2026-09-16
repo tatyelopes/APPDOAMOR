@@ -2,7 +2,7 @@
 
 Versão documental 0.1 · 05/09/2026 · Entrega parcial da tarefa 35.
 
-O contrato executável está em [openapi-v1.json](openapi-v1.json). Ele usa OpenAPI 3.1, JSON Schema 2020-12 e descreve 24 operações em 21 caminhos. O documento cobre o núcleo estável do MVP e diferencia operações `partial` e `planned` por extensões OpenAPI. A API Node atual continua disponível apenas em `/api`, sem garantia de compatibilidade; este trabalho não altera as rotas do servidor nem o frontend.
+O contrato executável está em [openapi-v1.json](openapi-v1.json). Ele usa OpenAPI 3.1, JSON Schema 2020-12 e descreve 24 operações em 21 caminhos. O documento cobre o núcleo estável do MVP e diferencia operações `partial` e `planned` por extensões OpenAPI. A API Node atual continua disponível em `/api`, sem garantia de compatibilidade. A rota temporária de feedback do MPV está documentada separadamente em [FEEDBACK-MPV-CONTROLADO.md](FEEDBACK-MPV-CONTROLADO.md) e deve entrar em `/api/v1` antes de ser tratada como contrato estável.
 
 A versão permanece `0.1.0-draft` porque a tarefa 112 ainda precisa decidir a forma final das mecânicas de adivinhação e escolhas coincidentes. Nenhuma mecânica foi inventada para preencher essa lacuna. O núcleo de conta, casal, catálogo, partidas genéricas, resposta privada, revelação, progresso e analytics já tem formas e regras definidas.
 

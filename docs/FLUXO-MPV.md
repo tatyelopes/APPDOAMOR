@@ -1,12 +1,12 @@
 # Fluxo do MPV — dois jogos no mesmo celular
 
-**Versão:** 1.0  
-**Data:** 12/09/2026  
+**Versão:** 1.1
+**Data:** 16/09/2026
 **Status:** aprovado para implementação
 
 ## Resultado esperado
 
-Uma pessoa abre o link, escolhe um dos dois jogos e o casal conclui três rodadas no mesmo celular sem criar conta, informar nomes ou receber mediação. Ao final, o casal responde três perguntas objetivas de feedback.
+Uma pessoa abre o link, escolhe um dos dois jogos e o casal conclui três rodadas no mesmo celular sem criar conta, informar nomes ou receber mediação. Ao final, o casal responde três perguntas objetivas e pode escrever uma sugestão de melhoria.
 
 ## Jornada principal
 
@@ -21,7 +21,7 @@ flowchart TD
     F --> H[Escolha secreta, palpite e revelação por três rodadas]
     G --> I[Fechamento]
     H --> I
-    I --> J[Três sinais de feedback]
+    I --> J[Três sinais e sugestão opcional]
     J --> K[Jogar novamente ou encerrar]
 ```
 
@@ -34,7 +34,7 @@ flowchart TD
 | MPV-03 Descoberta | pergunta, rodada `1 de 3`, lembrete para ambos responderem em voz alta | próxima, pular, sair | próxima rodada ou MPV-06 |
 | MPV-04 Escolha secreta | pergunta e opções para quem responde sobre si | confirmar escolha, pular, sair | MPV-05 |
 | MPV-05 Palpite e revelação | bloqueio “passe o celular”, palpite da outra pessoa e comparação final | revelar, próxima, pular, sair | alternar papel ou MPV-06 |
-| MPV-06 Fechamento | conclusão, três perguntas de feedback | enviar, jogar novamente, encerrar | MPV-01 ou fim |
+| MPV-06 Fechamento | conclusão, três perguntas de feedback e sugestão opcional | escrever, enviar, jogar novamente, encerrar | MPV-01 ou fim |
 
 ## Fluxo 1 — Descoberta a Dois
 
@@ -79,11 +79,13 @@ O fechamento usa respostas **Sim / Não** para reduzir esforço:
 2. “Vocês descobriram algo ou se sentiram mais conectados?”
 3. “Jogariam novamente?”
 
+Depois dos três sinais, um campo opcional permite escrever até 500 caracteres com sugestões de melhoria. A interface orienta a não incluir nomes, contatos ou detalhes da conversa.
+
 Após o envio, mostrar agradecimento e duas ações: **Jogar novamente** e **Encerrar**.
 
-O evento de conclusão pode registrar somente identificador anônimo da sessão, jogo escolhido, conclusão ou abandono e os três sinais. Nenhum texto, escolha da rodada, nome ou dado de contato faz parte do MPV.
+O evento de conclusão pode registrar somente identificador anônimo da sessão, jogo escolhido, conclusão ou abandono, os três sinais e a sugestão opcional. Nenhuma resposta da rodada, escolha íntima, nome ou dado de contato faz parte do MPV.
 
-No teste atual, cada envio fica somente no armazenamento local do aparelho, na chave neutra `mpv.feedback.v1`, com quatro campos: `completedGame`, `clarity`, `connection` e `replayIntent`. Não há envio para servidor nem persistência de perguntas, opções ou respostas das rodadas.
+Na versão controlada, cada envio é encaminhado a `POST /api/mpv/feedback` e armazenado no servidor com identificador idempotente, horário, jogo, `clarity`, `connection`, `replayIntent` e `suggestion`. A interface só confirma após a API aceitar o registro e mantém o formulário disponível para nova tentativa em caso de falha. Não há persistência de perguntas, opções ou respostas das rodadas.
 
 ## Saídas e exceções
 
@@ -111,7 +113,7 @@ No teste atual, cada envio fica somente no armazenamento local do aparelho, na c
 - ambos os jogos permitem pular e sair;
 - Adivinhe de Mim alterna os papéis e protege a escolha na passagem do aparelho;
 - Descoberta a Dois não apresenta campo de resposta;
-- o fechamento coleta exatamente os três sinais definidos;
+- o fechamento coleta os três sinais definidos e aceita uma sugestão opcional de até 500 caracteres;
 - reiniciar, sair ou trocar de jogo elimina o estado da sessão;
 - o caminho principal funciona em viewport de 320 px sem rolagem horizontal;
 - controles são acessíveis por teclado e possuem rótulos claros para leitores de tela.

@@ -1,7 +1,7 @@
 # Escopo do MPV de validação de formato — Conectadois
 
-**Versão:** 1.0  
-**Data:** 12/09/2026  
+**Versão:** 1.1
+**Data:** 16/09/2026
 **Status:** escopo congelado
 
 ## Relação com o plano completo
@@ -29,8 +29,8 @@ Casais conseguem jogar sem mediação, percebem descoberta ou conexão e demonst
 - dois jogos com três rodadas por sessão;
 - seis cartas leves por jogo, doze no total;
 - opção de pular uma carta;
-- fechamento curto e feedback de três sinais;
-- nenhuma resposta, escolha íntima ou dado pessoal armazenado.
+- fechamento curto com três sinais e sugestão aberta opcional;
+- nenhum nome, contato, resposta de rodada ou escolha íntima armazenado; os sinais e a sugestão opcional são centralizados para análise do teste.
 
 ## Jogos
 
@@ -54,8 +54,9 @@ Ao fim da sessão, coletar somente:
 2. “Foi fácil entender como jogar?”;
 3. “Vocês descobriram algo ou se sentiram mais conectados?”;
 4. “Jogariam novamente?”.
+5. sugestão opcional de melhoria, limitada a 500 caracteres e acompanhada de orientação para não incluir nomes, contatos ou detalhes da conversa.
 
-Não coletar o conteúdo das respostas do casal. Não realizar entrevistas nem incluir uma fase de pesquisa neste ciclo.
+Não coletar o conteúdo das respostas do casal. A sugestão aberta deve tratar somente da experiência do teste. Não realizar entrevistas nem incluir uma fase de pesquisa neste ciclo.
 
 ## Critérios de decisão
 
@@ -92,7 +93,7 @@ O MPV está pronto para decisão quando:
 - os dois jogos funcionarem de ponta a ponta em celular;
 - cada jogo tiver seis cartas leves e três rodadas por sessão;
 - pular, reiniciar e trocar de jogo funcionarem;
-- o feedback de três sinais estiver disponível;
+- o feedback de três sinais e a sugestão opcional estiverem disponíveis;
 - o fluxo crítico passar por QA mobile e acessibilidade básica;
 - cinco casais tiverem concluído ou abandonado uma sessão;
 - os resultados estiverem comparados aos critérios acima;

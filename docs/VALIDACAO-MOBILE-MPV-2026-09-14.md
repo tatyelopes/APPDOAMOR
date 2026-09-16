@@ -2,6 +2,8 @@
 
 **Resultado:** checklist aprovado na matriz emulada; tarefa 132 permanece em andamento somente até a passagem final em aparelhos físicos.
 
+**Atualização de 16/09/2026:** a matriz foi repetida após incluir a sugestão aberta opcional e permaneceu aprovada nos 95 estados.
+
 ## Escopo executado
 
 - build de produção concluído sem erro;
@@ -14,6 +16,7 @@
 - cancelamento de saída preservando rodada e escolha, seguido de confirmação encerrando a sessão;
 - medição automática de rolagem horizontal, alvos de ação e nomes acessíveis.
 - verificação do título, metadados, conteúdo visível, chaves locais e pacote de produção para impedir exposição do nome do aplicativo.
+- preenchimento e persistência de sugestão opcional, incluindo envio válido sem texto.
 
 ## Resultado por critério
 
@@ -23,6 +26,7 @@
 | Layout sem rolagem horizontal | Aprovado | Nenhum overflow nos 95 estados e cinco viewports |
 | Entrada e seleção por toque | Aprovado | Toque abriu **Descoberta a Dois** nos cinco viewports |
 | Descoberta a Dois | Aprovado | Três rodadas, avanço, pulo, feedback e reinício concluídos em toda a matriz |
+| Sugestão de melhoria | Aprovado | Campo opcional aceita até 500 caracteres, envia ao servidor quando preenchido e permite envio vazio |
 | Adivinhe de Mim | Aprovado | Pulo na escolha secreta e no palpite avançou, limpou escolhas e não revelou conteúdo |
 | Rotação | Aprovado | A passagem protegida permaneceu ativa após rotação em toda a matriz |
 | Saída de sessão ativa | Aprovado | Cancelar preservou o estado e confirmar encerrou a sessão pelo botão voltar e pelo logotipo |

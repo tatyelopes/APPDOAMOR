@@ -2,7 +2,7 @@
 
 Definição da tarefa 38, em 08/09/2026. Responsável técnico: DevOps/Plataforma, com revisão da Liderança Técnica. Tatyele Lopes responde pelo aceite de produto e pela decisão de lançamento.
 
-Esta estratégia está definida; a infraestrutura remota ainda não está provisionada. Provedor, região, domínio, orçamento e responsáveis nominais de operação permanecem pendentes nas tarefas 16, 92, 122 e 123. Os endereços abaixo são convenções, sem reserva ou publicação realizada.
+Esta estratégia está definida; a infraestrutura remota completa ainda não está provisionada. Para a demonstração controlada do MPV, foi selecionado Render na região `virginia`, com serviço Node pago e disco persistente de 1 GB, conforme `render.yaml`. Domínio próprio, orçamento definitivo, contratos e responsáveis nominais de produção permanecem pendentes nas tarefas 16, 92, 122 e 123. Os endereços próprios abaixo continuam como convenções até essas decisões.
 
 ## Matriz de ambientes
 
@@ -28,26 +28,29 @@ Cada ambiente remoto terá sua própria entrada HTTPS, serviço de API, banco, i
 
 O navegador acessará frontend e API na mesma origem: `/` entrega os arquivos de `dist` e `/api/*` encaminha à API daquele ambiente, preservando o caminho completo. O cliente atual usa `/api` e não precisa receber endereço de banco ou URL absoluta de API. Quando o contrato v1 for implementado, a entrada também deverá preservar `/api/v1/*`.
 
-A entrada deve aplicar fallback da SPA apenas às páginas do frontend. Erros de `/api/*` não podem retornar `index.html`. O processo Node atual serve somente a API; servir `dist`, configurar TLS e supervisionar o processo são trabalho de provisionamento. A porta da API e o banco não serão expostos diretamente à internet.
+A entrada deve aplicar fallback da SPA apenas às páginas do frontend. Erros de `/api/*` não podem retornar `index.html`. O processo Node atual já serve `dist` e a API na mesma origem, separa o fallback da SPA das rotas `/api/*`, aplica cabeçalhos de não indexação e expõe a sonda mínima `/api/health`. Configurar TLS, volume persistente e supervisão continua sendo trabalho do provedor. A porta interna e o arquivo de dados não devem ser expostos diretamente à internet.
 
 Homologação deverá reproduzir versões de runtime e banco, migrações, cabeçalhos, autenticação, limites e política de cache de produção. Tamanho de instância, domínio, credenciais, dados e destinatários podem variar. Versões exatas serão fixadas no CI com instalação pelo lockfile (tarefas 39, 40 e 83).
 
 ## Configuração existente e contrato futuro
 
-As únicas variáveis de aplicação lidas hoje em `server/src/config.js` são `HOST`, `PORT`, `DATABASE_FILE` e `ADMIN_EMAILS`. O código não seleciona ambiente automaticamente e não valida essas entradas. `NODE_ENV` é configuração do runtime/ferramentas; atribuir `production` não adiciona controles de segurança ao backend.
+As variáveis de aplicação lidas hoje em `server/src/config.js` são `HOST`, `PORT`, `DATABASE_FILE`, `STATIC_DIR`, `ADMIN_EMAILS`, `APP_ORIGIN`, `MPV_EXPORT_TOKEN` e `MPV_FEEDBACK_RETENTION_DAYS`. O código não seleciona ambiente automaticamente. `NODE_ENV` é configuração do runtime/ferramentas; atribuir `production` não adiciona controles de segurança ao backend.
 
 | Variável | Uso atual ou planejado | Regra |
 | --- | --- | --- |
 | `HOST` | Atual, interface de escuta da API | Local: `127.0.0.1`. Remoto: interface exigida pelo provedor, com entrada privada; `0.0.0.0` somente com isolamento de rede |
 | `PORT` | Atual, porta HTTP interna | Local: `8787`, conforme proxy do Vite. Remoto: porta injetada pelo provedor |
 | `DATABASE_FILE` | Atual, arquivo JSON | Exclusivo do protótipo local; caminho relativo ao diretório de execução ou absoluto. Não usar em homologação integrada ou produção |
+| `STATIC_DIR` | Atual, frontend compilado | Padrão `dist`; o processo Node entrega esses arquivos e mantém `/api/*` fora do fallback da SPA |
 | `ADMIN_EMAILS` | Atual, lista administrativa separada por vírgula | Vazio por padrão; contas de teste locais. Em remoto, cadastro restrito e auditado, sem reutilizar lista local |
 | `NODE_ENV` | Runtime e ferramentas | Valores definidos na matriz; homologação também executa build de produção |
 | `APP_ENV` | Planejado, identidade explícita do ambiente | `local`, `staging` ou `production`; implementar e validar na tarefa 123 |
-| `APP_ORIGIN` | Planejado, origem pública canônica | URL exata por ambiente, HTTPS nos remotos; usar na validação de origem e links, tarefa 123 |
+| `APP_ORIGIN` | Atual para feedback do MPV; planejado como origem canônica geral | Lista de URLs exatas separadas por vírgula; o envio anônimo do MPV rejeita outra origem quando configurada; usar HTTPS nos remotos |
+| `MPV_EXPORT_TOKEN` | Atual, segredo da exportação controlada | Mínimo de 32 caracteres, exclusivo por ambiente, injetado somente na API e nunca exposto com prefixo `VITE_` |
+| `MPV_FEEDBACK_RETENTION_DAYS` | Atual, padrão 90 dias | Registros vencidos são eliminados na chegada de um novo feedback; agendar limpeza independente antes da publicação ampla |
 | `DATABASE_URL` | Planejado, conexão PostgreSQL | Credencial de servidor exclusiva, injetada pelo cofre; implementar adaptador na tarefa 41 |
 
-As três variáveis planejadas ainda não têm efeito no app. A tarefa 123 deverá rejeitar ambiente desconhecido, porta inválida, origem ausente ou incompatível e JSON fora de local; a tarefa 41 deverá rejeitar conexão de banco ausente ou inválida. Não adotar fallback para dados locais quando um serviço remoto falhar.
+As variáveis ainda planejadas não têm efeito no app. A tarefa 123 deverá rejeitar ambiente desconhecido, porta inválida, origem ausente ou incompatível e JSON fora de local; a tarefa 41 deverá rejeitar conexão de banco ausente ou inválida. Não adotar fallback para dados locais quando um serviço remoto falhar.
 
 O frontend continuará sem segredos. Não usar prefixo `VITE_` para senhas, tokens, chaves ou conexão de banco: variáveis com esse prefixo são expostas no código entregue ao navegador. Modo do Vite e `NODE_ENV` são conceitos distintos; a estratégia usa um build de produção promovido entre os ambientes, sem embutir configurações privadas. [Referência: variáveis e modos do Vite](https://vite.dev/guide/env-and-mode.html).
 
@@ -78,7 +81,7 @@ No segundo terminal, iniciar o frontend com endereço e porta previsíveis:
 npm.cmd exec -- vite --host 127.0.0.1 --port 5173 --strictPort
 ~~~
 
-Abrir `http://127.0.0.1:5173`. O proxy de desenvolvimento encaminha `/api` para `http://127.0.0.1:8787`. Se alterar a porta da API, ajustar também `vite.config.ts`. O JSON existente é preservado pelo modelo; ele não deve conter dados reais. Para um conjunto novo de fixtures, apontar `DATABASE_FILE` para outro arquivo dentro de `server/data`.
+Abrir `http://127.0.0.1:5173`. O proxy de desenvolvimento encaminha `/api` para `http://127.0.0.1:8787`; `API_PROXY_TARGET` permite trocar esse destino sem editar o código. O JSON existente é preservado pelo modelo e suporta somente o teste controlado documentado em [FEEDBACK-MPV-CONTROLADO.md](FEEDBACK-MPV-CONTROLADO.md). Para um conjunto novo, apontar `DATABASE_FILE` para outro arquivo dentro de `server/data`.
 
 O Node carrega `.env.local` pelo argumento `--env-file`; variáveis já definidas no terminal têm precedência. O script existente `npm.cmd run dev` não carrega esse arquivo para a API e usa interfaces abertas (`0.0.0.0`), portanto os dois comandos acima são a referência para desenvolvimento restrito à máquina. [Referência: carregamento de arquivo de ambiente no Node](https://nodejs.org/api/cli.html#--env-filefile).
 
@@ -89,6 +92,12 @@ npm.cmd run build
 ~~~
 
 `npm.cmd run preview` serve para inspeção local do build. Não representa homologação, configuração completa da API ou serviço de produção. [Referência: publicação estática com Vite](https://vite.dev/guide/static-deploy.html).
+
+## Demonstração controlada no Render
+
+O arquivo `render.yaml` define um único Web Service chamado `momento-a-dois-teste`, build por `npm ci --cache .npm-cache && npm run build`, início por `npm start`, sonda `/api/health` e volume `/var/data`. O JSON fica em `/var/data/database.json`; o token de exportação é gerado pelo cofre do Render e não entra no repositório. O serviço usa um único processo e uma única instância para evitar escritas concorrentes no arquivo.
+
+A publicação controlada não encerra os gates de produção do restante do aplicativo. Antes de enviar o endereço aos cinco casais, confirmar HTTPS ativo, disco anexado, segredo de exportação disponível somente à responsável, exportação de teste aprovada e passagem física em Android e iPhone.
 
 ## Promoção de versões
 
@@ -109,7 +118,7 @@ Mudanças de schema devem permitir retorno à versão anterior do aplicativo, pr
 
 Metas operacionais iniciais para o piloto: RPO de até 24 horas e RTO de até 4 horas. São metas de projeto, ainda não medidas. Configurar backup cifrado diário e antes de migração, retenção operacional inicial de 30 dias, respeitando o limite RT-12 de 90 dias do inventário. Ensaiar restauração antes do piloto e após mudança relevante de persistência; medir tempos, conferir integridade, invalidar sessões antigas e reaplicar exclusões. Evidências e ajustes das metas pertencem às tarefas 118 e 93.
 
-Logs, métricas e alertas terão identificação de ambiente e versão, sem respostas íntimas, tokens, convites, corpos de requisição ou listas de e-mails. Alertas mínimos: indisponibilidade, erros da API, falha de banco, backup ausente e capacidade. A tarefa 43 implementará sondas de saúde e prontidão sem dados privados, destinando a prontidão às verificações internas; o backend atual ainda não tem esses endpoints.
+Logs, métricas e alertas terão identificação de ambiente e versão, sem respostas íntimas, tokens, convites, corpos de requisição ou listas de e-mails. Alertas mínimos: indisponibilidade, erros da API, falha de banco, backup ausente e capacidade. A sonda mínima `GET /api/health` já informa apenas `{"status":"ok"}`; prontidão do armazenamento, alertas e observabilidade completa continuam na tarefa 43 e devem ficar restritos às verificações operacionais.
 
 Homologação terá acesso restrito na entrada, sinalização de ambiente e bloqueio de indexação. `robots.txt` ou `noindex` não substituem autenticação. Envios externos usarão sandbox ou destinatários autorizados. A produção seguirá as preferências e consentimentos implementados; o piloto gratuito não habilitará cobrança.
 

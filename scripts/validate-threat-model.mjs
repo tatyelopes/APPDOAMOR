@@ -73,9 +73,9 @@ for (const row of tests) {
   assert(/\d/.test(plan), `${id}: cobertura futura ausente`)
 }
 
-assert(threatIds.has('T01') && threatIds.has('T22'), 'faixa T01–T22 incompleta')
+assert(threatIds.has('T01') && threatIds.has('T23'), 'faixa T01–T23 incompleta')
 assert(
-  document.includes('22 ameaças: 13 críticas, 8 altas e 1 média'),
+  document.includes('23 ameaças: 13 críticas, 9 altas e 1 média'),
   'resumo da distribuição de riscos divergente',
 )
 

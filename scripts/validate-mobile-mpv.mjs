@@ -1,10 +1,11 @@
 import { spawn } from 'node:child_process'
-import { access, mkdtemp, rm } from 'node:fs/promises'
+import { access, mkdtemp, readFile, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 
 const projectRoot = resolve(import.meta.dirname, '..')
 const appPort = 5176
+const apiPort = 8792
 const debugPort = 9334
 const temporaryRoot = await mkdtemp(join(tmpdir(), 'conectadois-mobile-mpv-'))
 const processes = []
@@ -38,9 +39,10 @@ async function findBrowser() {
   throw new Error('Microsoft Edge ou Google Chrome não encontrado para a validação mobile.')
 }
 
-function start(command, args) {
+function start(command, args, env = {}) {
   const child = spawn(command, args, {
     cwd: projectRoot,
+    env: { ...process.env, ...env },
     stdio: ['ignore', 'pipe', 'pipe'],
     windowsHide: true,
   })
@@ -112,14 +114,26 @@ function cdpClient(socketUrl) {
 let cdp
 try {
   const browserPath = await findBrowser()
-  start(process.execPath, [
-    'node_modules/vite/bin/vite.js',
-    '--host',
-    '127.0.0.1',
-    '--port',
-    String(appPort),
-    '--strictPort',
-  ])
+  const databaseFile = join(temporaryRoot, 'database.json')
+  start(process.execPath, ['server/index.mjs'], {
+    HOST: '127.0.0.1',
+    PORT: String(apiPort),
+    DATABASE_FILE: databaseFile,
+    APP_ORIGIN: `http://127.0.0.1:${appPort}`,
+    MPV_EXPORT_TOKEN: 'teste-exportacao-mpv-1234567890-seguro',
+  })
+  start(
+    process.execPath,
+    [
+      'node_modules/vite/bin/vite.js',
+      '--host',
+      '127.0.0.1',
+      '--port',
+      String(appPort),
+      '--strictPort',
+    ],
+    { API_PROXY_TARGET: `http://127.0.0.1:${apiPort}` },
+  )
   start(browserPath, [
     '--headless=new',
     `--remote-debugging-port=${debugPort}`,
@@ -131,6 +145,7 @@ try {
   ])
 
   await Promise.all([
+    waitFor(`http://127.0.0.1:${apiPort}/api/me`),
     waitFor(`http://127.0.0.1:${appPort}`),
     waitFor(`http://127.0.0.1:${debugPort}/json/list`),
   ])
@@ -217,6 +232,20 @@ try {
     })()`)
     if (!clicked) throw new Error(`Elemento não encontrado: ${selector}`)
     await new Promise((resolveWait) => setTimeout(resolveWait, 40))
+  }
+
+  async function type(selector, value) {
+    const encodedSelector = JSON.stringify(selector)
+    const encodedValue = JSON.stringify(value)
+    const changed = await evaluate(`(() => {
+      const element = document.querySelector(${encodedSelector});
+      if (!(element instanceof HTMLTextAreaElement)) return false;
+      const setter = Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, 'value').set;
+      setter.call(element, ${encodedValue});
+      element.dispatchEvent(new Event('input', { bubbles: true }));
+      return true;
+    })()`)
+    if (!changed) throw new Error(`Campo não encontrado: ${selector}`)
   }
 
   async function touchSelector(selector) {
@@ -315,7 +344,7 @@ try {
     })()`)
   }
 
-  async function submitFeedback() {
+  async function submitFeedback(suggestion = '') {
     const selected = await evaluate(`(() => {
       const labels = [...document.querySelectorAll('.mpv-signal-options label')]
         .filter((label) => label.querySelector('input[value="yes"]'));
@@ -323,6 +352,7 @@ try {
       return labels.length;
     })()`)
     if (selected !== 3) throw new Error(`Esperados 3 sinais de feedback; encontrados: ${selected}`)
+    await type('#mpv-feedback-suggestion', suggestion)
     await clickText('Enviar feedback')
     await waitForExpression(`document.querySelector('.mpv-feedback-success') !== null`)
   }
@@ -354,7 +384,7 @@ try {
     await clickText('Concluir jogo')
     await waitForExpression(`document.querySelector('.mpv-feedback-form') !== null`)
     snapshots.push(await snapshot(viewport.name, 'Descoberta — feedback'))
-    await submitFeedback()
+    await submitFeedback(`Mais exemplos de perguntas para ${viewport.name}.`)
     snapshots.push(await snapshot(viewport.name, 'Descoberta — feedback enviado'))
     await clickText('Jogar novamente')
     await waitForExpression(`document.querySelector('.mpv-question-card') !== null`)
@@ -461,14 +491,16 @@ try {
     })
   }
 
-  const feedbackRecords = await evaluate(`(() => {
-    try {
-      const value = JSON.parse(localStorage.getItem('mpv.feedback.v1') || '[]');
-      return Array.isArray(value) ? value : [];
-    } catch {
-      return [];
-    }
-  })()`)
+  const feedbackDatabase = JSON.parse(await readFile(databaseFile, 'utf8'))
+  const feedbackRecords = Array.isArray(feedbackDatabase.mpvFeedback)
+    ? feedbackDatabase.mpvFeedback
+    : []
+  const feedbackSuggestionValid =
+    feedbackRecords.length === viewports.length * 2 &&
+    feedbackRecords.every(
+      (record) => typeof record.suggestion === 'string' && record.suggestion.length <= 500,
+    ) &&
+    feedbackRecords.filter((record) => record.suggestion.length > 0).length === viewports.length
   const overflowSnapshots = snapshots.filter(
     (item) => item.horizontalOverflow || item.overflowElements.length > 0,
   )
@@ -531,7 +563,8 @@ try {
           !guessSkipFailure &&
           !exitConfirmationFailure &&
           !targetsUnder44 &&
-          applicationNameExposures.length === 0
+          applicationNameExposures.length === 0 &&
+          feedbackSuggestionValid
             ? 'aprovado'
             : 'aprovado_parcialmente',
         browser: browserPath,
@@ -560,6 +593,7 @@ try {
           allActionTargetsAtLeast44Px: !targetsUnder44,
           allControlsNamed: snapshots.every((item) => item.unnamedControls === 0),
           applicationNameHidden: applicationNameExposures.length === 0,
+          optionalSuggestionStored: feedbackSuggestionValid,
         },
         findings: {
           guessSkipFailure,
@@ -567,6 +601,7 @@ try {
           targetsUnder44: uniqueSmallTargets,
           overflowSnapshots,
           applicationNameExposures,
+          feedbackSuggestionFailure: !feedbackSuggestionValid,
         },
         typography: {
           badgeMinimumPx: Math.min(...snapshots.map((item) => item.badgeFontPx).filter(Boolean)),

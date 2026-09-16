@@ -30,6 +30,7 @@ O projeto compila, mas ainda depende de integração bilateral completa, testes 
 - [Protótipo da home](docs/prototipo-home-rotina.html)
 - [Desenho de testes e resultados](docs/TESTES-E-RESULTADOS.md)
 - [Protótipo de testes e resultados](docs/prototipo-testes-resultados.html)
+- [Feedback centralizado do MPV](docs/FEEDBACK-MPV-CONTROLADO.md)
 
 O protótipo HTML é uma demonstração local com dados fictícios. Ele não está integrado à home do app.
 
@@ -56,7 +57,13 @@ Para validar os artefatos de arquitetura e privacidade:
 npm.cmd run validate:openapi
 npm.cmd run validate:threat-model
 npm.cmd run validate:lgpd
+npm.cmd run validate:mpv-feedback
+npm.cmd run validate:mpv-production
 ```
+
+Para exportar os feedbacks do MPV em CSV, configure o mesmo `MPV_EXPORT_TOKEN` da API e execute `npm.cmd run export:mpv-feedback`. O procedimento e os limites desta versão estão no [guia do feedback controlado](docs/FEEDBACK-MPV-CONTROLADO.md).
+
+A demonstração controlada possui configuração de infraestrutura em `render.yaml`, com frontend e API no mesmo serviço, sonda de saúde e disco persistente para o arquivo de feedback.
 
 ## Qualidade do código
 

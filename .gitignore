@@ -4,6 +4,7 @@ dist/
 *.tsbuildinfo
 server/data/**
 !server/data/.gitkeep
+server/exports/
 .env
 .env.*
 !.env.*.example

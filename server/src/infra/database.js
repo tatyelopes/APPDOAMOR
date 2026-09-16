@@ -2,7 +2,14 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs'
 import { dirname } from 'node:path'
 import { config } from '../config.js'
 
-const emptyDatabase = { users: [], couples: [], sessions: [], answers: [], analyticsEvents: [] }
+const emptyDatabase = {
+  users: [],
+  couples: [],
+  sessions: [],
+  answers: [],
+  analyticsEvents: [],
+  mpvFeedback: [],
+}
 
 export function loadDatabase() {
   if (!existsSync(config.dataFile)) return structuredClone(emptyDatabase)
