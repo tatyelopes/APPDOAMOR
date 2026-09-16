@@ -6,7 +6,7 @@ services:
     name: momento-a-dois-teste
     runtime: node
     region: virginia
-    plan: 0.5c-512mb
+    plan: free
     repo: https://github.com/tatyelopes/APPDOAMOR
     branch: main
     autoDeployTrigger: commit
@@ -14,10 +14,6 @@ services:
     startCommand: npm start
     healthCheckPath: /api/health
     numInstances: 1
-    disk:
-      name: feedback-mpv
-      mountPath: /var/data
-      sizeGB: 1
     envVars:
       - key: NODE_ENV
         value: production
@@ -28,8 +24,21 @@ services:
       - key: STATIC_DIR
         value: dist
       - key: DATABASE_FILE
-        value: /var/data/database.json
+        value: /tmp/database.json
+      - key: DATABASE_URL
+        fromDatabase:
+          name: momento-a-dois-feedback
+          property: connectionString
       - key: MPV_EXPORT_TOKEN
         generateValue: true
       - key: MPV_FEEDBACK_RETENTION_DAYS
-        value: '90'
+        value: '30'
+
+databases:
+  - name: momento-a-dois-feedback
+    databaseName: mpv_feedback
+    user: mpv_feedback
+    plan: free
+    region: virginia
+    postgresMajorVersion: '18'
+    ipAllowList: []

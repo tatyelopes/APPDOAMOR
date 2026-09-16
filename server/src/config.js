@@ -8,6 +8,7 @@ export const config = {
   host: process.env.HOST || '0.0.0.0',
   port: Number(process.env.PORT || 8787),
   dataFile: process.env.DATABASE_FILE || join(serverRoot, 'data', 'database.json'),
+  databaseUrl: String(process.env.DATABASE_URL || ''),
   staticDir: process.env.STATIC_DIR || join(dirname(serverRoot), 'dist'),
   sessionTtlMs: 30 * 86_400_000,
   adminEmails: String(process.env.ADMIN_EMAILS || '')

@@ -2,7 +2,7 @@
 
 Definição da tarefa 38, em 08/09/2026. Responsável técnico: DevOps/Plataforma, com revisão da Liderança Técnica. Tatyele Lopes responde pelo aceite de produto e pela decisão de lançamento.
 
-Esta estratégia está definida; a infraestrutura remota completa ainda não está provisionada. Para a demonstração controlada do MPV, foi selecionado Render na região `virginia`, com serviço Node pago e disco persistente de 1 GB, conforme `render.yaml`. Domínio próprio, orçamento definitivo, contratos e responsáveis nominais de produção permanecem pendentes nas tarefas 16, 92, 122 e 123. Os endereços próprios abaixo continuam como convenções até essas decisões.
+Esta estratégia está definida; a infraestrutura remota completa ainda não está provisionada. Para a demonstração controlada do MPV, foi selecionado Render na região `virginia`, com serviço Node e PostgreSQL gratuitos, conforme `render.yaml`. O banco gratuito expira em 30 dias e não possui backup automático, por isso não representa a arquitetura definitiva. Domínio próprio, orçamento, contratos e responsáveis nominais de produção permanecem pendentes nas tarefas 16, 92, 122 e 123.
 
 ## Matriz de ambientes
 
@@ -34,7 +34,7 @@ Homologação deverá reproduzir versões de runtime e banco, migrações, cabe�
 
 ## Configuração existente e contrato futuro
 
-As variáveis de aplicação lidas hoje em `server/src/config.js` são `HOST`, `PORT`, `DATABASE_FILE`, `STATIC_DIR`, `ADMIN_EMAILS`, `APP_ORIGIN`, `MPV_EXPORT_TOKEN` e `MPV_FEEDBACK_RETENTION_DAYS`. O código não seleciona ambiente automaticamente. `NODE_ENV` é configuração do runtime/ferramentas; atribuir `production` não adiciona controles de segurança ao backend.
+As variáveis de aplicação lidas hoje em `server/src/config.js` são `HOST`, `PORT`, `DATABASE_FILE`, `DATABASE_URL`, `STATIC_DIR`, `ADMIN_EMAILS`, `APP_ORIGIN`, `MPV_EXPORT_TOKEN` e `MPV_FEEDBACK_RETENTION_DAYS`. O código não seleciona ambiente automaticamente. `NODE_ENV` é configuração do runtime/ferramentas; atribuir `production` não adiciona controles de segurança ao backend.
 
 | Variável | Uso atual ou planejado | Regra |
 | --- | --- | --- |
@@ -48,7 +48,7 @@ As variáveis de aplicação lidas hoje em `server/src/config.js` são `HOST`, `
 | `APP_ORIGIN` | Atual para feedback do MPV; planejado como origem canônica geral | Lista de URLs exatas separadas por vírgula; o envio anônimo do MPV rejeita outra origem quando configurada; usar HTTPS nos remotos |
 | `MPV_EXPORT_TOKEN` | Atual, segredo da exportação controlada | Mínimo de 32 caracteres, exclusivo por ambiente, injetado somente na API e nunca exposto com prefixo `VITE_` |
 | `MPV_FEEDBACK_RETENTION_DAYS` | Atual, padrão 90 dias | Registros vencidos são eliminados na chegada de um novo feedback; agendar limpeza independente antes da publicação ampla |
-| `DATABASE_URL` | Planejado, conexão PostgreSQL | Credencial de servidor exclusiva, injetada pelo cofre; implementar adaptador na tarefa 41 |
+| `DATABASE_URL` | Atual para feedback do MPV; planejado para o restante do produto | Credencial exclusiva, injetada pelo provedor; quando ausente, somente o feedback local usa o fallback JSON |
 
 As variáveis ainda planejadas não têm efeito no app. A tarefa 123 deverá rejeitar ambiente desconhecido, porta inválida, origem ausente ou incompatível e JSON fora de local; a tarefa 41 deverá rejeitar conexão de banco ausente ou inválida. Não adotar fallback para dados locais quando um serviço remoto falhar.
 
@@ -95,9 +95,11 @@ npm.cmd run build
 
 ## Demonstração controlada no Render
 
-O arquivo `render.yaml` define um único Web Service chamado `momento-a-dois-teste`, build por `npm ci --cache .npm-cache && npm run build`, início por `npm start`, sonda `/api/health` e volume `/var/data`. O JSON fica em `/var/data/database.json`; o token de exportação é gerado pelo cofre do Render e não entra no repositório. O serviço usa um único processo e uma única instância para evitar escritas concorrentes no arquivo.
+O arquivo `render.yaml` define um Web Service chamado `momento-a-dois-teste` e um PostgreSQL chamado `momento-a-dois-feedback`, ambos gratuitos na região `virginia`. O build usa `npm ci --cache .npm-cache && npm run build`, o início usa `npm start` e a sonda é `/api/health`. `DATABASE_URL` é injetada internamente pelo Render e o token de exportação é gerado pelo cofre, sem entrar no repositório.
 
-A publicação controlada não encerra os gates de produção do restante do aplicativo. Antes de enviar o endereço aos cinco casais, confirmar HTTPS ativo, disco anexado, segredo de exportação disponível somente à responsável, exportação de teste aprovada e passagem física em Android e iPhone.
+O serviço gratuito pode entrar em suspensão após inatividade e o primeiro acesso pode demorar. O PostgreSQL gratuito tem 1 GB, expira em 30 dias e não oferece backup automático. Exportar o CSV durante o teste e novamente antes do vencimento; não usar esta configuração para produção ou retenção de longo prazo.
+
+A publicação controlada não encerra os gates de produção do restante do aplicativo. Antes de enviar o endereço aos cinco casais, confirmar HTTPS ativo, banco disponível, segredo de exportação acessível somente à responsável, exportação de teste aprovada e passagem física em Android e iPhone.
 
 ## Promoção de versões
 
@@ -139,4 +141,4 @@ O JSON atual, CORS `*`, sessões e convites ainda mantêm as limitações docume
 
 ## Acompanhamento
 
-A tarefa 38 fica concluída como estratégia documentada. As tarefas 41, 42, 43, 92 e 118 recebem os requisitos por ambiente e continuam não iniciadas. A tarefa 123 registra o provisionamento de homologação e a validação de configuração, que ainda não tinham item próprio. O marco MC4 passa a explicitar homologação operacional. A planilha e seu gerador continuam sendo a referência do status de execução.
+A tarefa 38 fica concluída como estratégia documentada. A tarefa 41 está em andamento com o adaptador PostgreSQL restrito ao feedback do MPV, e a tarefa 43 está em andamento com a sonda mínima. As tarefas 42, 92 e 118 continuam não iniciadas. A tarefa 123 registra o provisionamento definitivo de homologação e a validação de configuração. A planilha e seu gerador continuam sendo a referência do status de execução.

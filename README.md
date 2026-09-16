@@ -63,7 +63,7 @@ npm.cmd run validate:mpv-production
 
 Para exportar os feedbacks do MPV em CSV, configure o mesmo `MPV_EXPORT_TOKEN` da API e execute `npm.cmd run export:mpv-feedback`. O procedimento e os limites desta versão estão no [guia do feedback controlado](docs/FEEDBACK-MPV-CONTROLADO.md).
 
-A demonstração controlada possui configuração de infraestrutura em `render.yaml`, com frontend e API no mesmo serviço, sonda de saúde e disco persistente para o arquivo de feedback.
+A demonstração controlada possui configuração gratuita em `render.yaml`, com frontend e API no mesmo serviço, sonda de saúde e PostgreSQL para o feedback. O banco gratuito expira em 30 dias, portanto a exportação deve ocorrer antes do vencimento.
 
 ## Qualidade do código
 

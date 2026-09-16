@@ -5,6 +5,11 @@ import { extname, resolve, sep } from 'node:path'
 import { config } from './src/config.js'
 import { loadDatabase as loadDb, saveDatabase as saveDb } from './src/infra/database.js'
 import {
+  listPostgresFeedback,
+  storePostgresFeedback,
+  usesPostgresFeedback,
+} from './src/infra/mpv-feedback-postgres.js'
+import {
   hashPassword as passwordHash,
   matchesPassword as passwordMatches,
 } from './src/shared/security.js'
@@ -274,14 +279,6 @@ const server = createServer(async (req, res) => {
       if (suggestion.length > 500)
         return send(req, res, 400, { error: 'A sugestão deve ter no máximo 500 caracteres.' })
 
-      db.mpvFeedback ??= []
-      const existing = db.mpvFeedback.find((record) => record.submissionId === submissionId)
-      if (existing) return send(req, res, 200, { id: existing.id, duplicate: true })
-
-      const cutoff = Date.now() - config.mpvFeedbackRetentionDays * 86_400_000
-      db.mpvFeedback = db.mpvFeedback.filter(
-        (record) => new Date(record.createdAt).getTime() >= cutoff,
-      )
       const record = {
         id: randomUUID(),
         submissionId,
@@ -292,6 +289,18 @@ const server = createServer(async (req, res) => {
         suggestion,
         createdAt: new Date().toISOString(),
       }
+
+      if (usesPostgresFeedback()) {
+        const result = await storePostgresFeedback(record, config.mpvFeedbackRetentionDays)
+        return send(req, res, result.duplicate ? 200 : 201, result)
+      }
+
+      db.mpvFeedback ??= []
+      const existing = db.mpvFeedback.find((item) => item.submissionId === submissionId)
+      if (existing) return send(req, res, 200, { id: existing.id, duplicate: true })
+
+      const cutoff = Date.now() - config.mpvFeedbackRetentionDays * 86_400_000
+      db.mpvFeedback = db.mpvFeedback.filter((item) => new Date(item.createdAt).getTime() >= cutoff)
       db.mpvFeedback.push(record)
       saveDb(db)
       return send(req, res, 201, { id: record.id, duplicate: false })
@@ -300,11 +309,12 @@ const server = createServer(async (req, res) => {
       if (config.mpvExportToken.length < 32)
         return send(req, res, 503, { error: 'Exportação não configurada.' })
       if (!validExportToken(req)) return send(req, res, 403, { error: 'Acesso negado.' })
+      const records = usesPostgresFeedback() ? await listPostgresFeedback() : db.mpvFeedback || []
       return sendCsv(
         req,
         res,
         `feedback-mpv-${new Date().toISOString().slice(0, 10)}.csv`,
-        feedbackCsv(db.mpvFeedback || []),
+        feedbackCsv(records),
       )
     }
     const user = auth(req, db)

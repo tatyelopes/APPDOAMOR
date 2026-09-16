@@ -49,7 +49,7 @@ O inventário parte do código e dos documentos existentes em 05/09/2026 e foi a
 | DG-15 | Mensagens de suporte, pedidos e resposta ao exercício de direitos | Pessoal comum e conteúdo possivelmente sensível | Titular e equipe | Canal a definir e registro restrito |
 | DG-16 | Versão de aviso e consentimento, aceite, recusa, revogação e prova de atendimento | Pessoal de conformidade | Titular e servidor | Registro auditável previsto |
 | DG-17 | Gravação, notas, transcrição e perfil de recrutamento de pesquisa | Pessoal e possivelmente sensível | Participante e pesquisador | Repositório de pesquisa separado, a definir |
-| DG-18 | Três sinais do MPV, sugestão opcional, jogo, identificador idempotente e horário | Anônimo por desenho, mas texto livre pode conter dado pessoal ou sensível inserido indevidamente | Participante e servidor | `mpvFeedback` no JSON controlado; exportação CSV restrita |
+| DG-18 | Três sinais do MPV, sugestão opcional, jogo, identificador idempotente e horário | Anônimo por desenho, mas texto livre pode conter dado pessoal ou sensível inserido indevidamente | Participante e servidor | PostgreSQL no teste remoto ou `mpvFeedback` no JSON local; exportação CSV restrita |
 
 ## Registro das operações de tratamento
 

@@ -25,6 +25,7 @@
   "dependencies": {
     "@vitejs/plugin-react": "latest",
     "concurrently": "latest",
+    "pg": "^8.16.3",
     "react": "latest",
     "react-dom": "latest",
     "typescript": "latest",

@@ -13,7 +13,7 @@ Receber em um ponto central os três sinais do MPV e a sugestão opcional, sem c
 1. O navegador gera um identificador aleatório de submissão.
 2. `POST /api/mpv/feedback` valida origem, limite de requisições, jogo, sinais e sugestão.
 3. O servidor usa o identificador para impedir duplicação em tentativas repetidas.
-4. O registro recebe ID e horário do servidor e é salvo em `mpvFeedback` no arquivo JSON controlado.
+4. O registro recebe ID e horário do servidor e é salvo em PostgreSQL quando `DATABASE_URL` está configurada; localmente, o JSON permanece como fallback de desenvolvimento.
 5. A interface só confirma o envio após resposta de sucesso da API.
 6. A pessoa responsável exporta os registros por uma rota protegida, sem expor o token ao frontend.
 
@@ -69,6 +69,7 @@ APP_ORIGIN=https://endereco-exato-do-teste.example
 MPV_EXPORT_TOKEN=<segredo aleatório com pelo menos 32 caracteres>
 MPV_FEEDBACK_RETENTION_DAYS=90
 DATABASE_FILE=server/data/database.json
+DATABASE_URL=<conexão PostgreSQL opcional para o feedback>
 ```
 
 O proxy do Vite aceita `API_PROXY_TARGET` para testes automatizados. Nenhuma dessas variáveis secretas deve receber prefixo `VITE_`.
@@ -93,11 +94,12 @@ npm.cmd run export:mpv-feedback -- -ApiBaseUrl 'https://endereco-do-teste.exampl
 
 O token continua apenas no terminal da pessoa responsável e no cofre do provedor.
 
-O provisionamento selecionado está declarado em `render.yaml`: Web Service pago na região `virginia`, uma instância e disco persistente de 1 GB em `/var/data`. O segredo `MPV_EXPORT_TOKEN` é gerado pelo Render e não é versionado.
+O provisionamento sem custo está declarado em `render.yaml`: Web Service gratuito e PostgreSQL gratuito na região `virginia`. O segredo `MPV_EXPORT_TOKEN` é gerado pelo Render e não é versionado. Esse banco gratuito expira 30 dias após a criação, não possui backup automático e deve ser exportado antes do vencimento.
 
 ## Limites da versão controlada
 
-- JSON não fornece transação, replicação, backup ou concorrência adequada para publicação ampla;
+- o JSON é usado somente como fallback local; o serviço remoto usa PostgreSQL;
+- o PostgreSQL gratuito expira em 30 dias e não possui backup automático;
 - o rate limit é local ao processo e não substitui proteção na entrada HTTPS;
 - a exportação usa segredo operacional único, ainda sem usuários administrativos, MFA ou auditoria;
 - feedback real exige transparência, retenção aplicada, canal de direitos e acesso restrito;
