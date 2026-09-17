@@ -19,6 +19,7 @@
     "validate:mpv-feedback": "node scripts/validate-mpv-feedback-api.mjs",
     "validate:mpv-production": "npm run build && node scripts/validate-mpv-production.mjs",
     "validate:database": "node scripts/validate-postgres-database.mjs",
+    "validate:database-runtime": "node scripts/validate-postgres-runtime.mjs",
     "validate:secret-config": "node scripts/validate-secret-controls.mjs",
     "validate:secrets": "npm run scan:secrets && npm run validate:secret-config",
     "export:mpv-feedback": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/export-mpv-feedback.ps1",

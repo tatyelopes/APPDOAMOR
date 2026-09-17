@@ -50,6 +50,8 @@ Uma auditoria explícita dos patches já presentes no histórico pode ser execut
 
 Em 17/09/2026, a varredura do histórico existente foi aprovada e a [primeira execução remota com o novo gate](https://github.com/tatyelopes/APPDOAMOR/actions/runs/35272382976) concluiu todos os controles do CI com sucesso.
 
+Também em 17/09/2026, o token de exportação do MPV foi rotacionado no Render após exposição acidental. O valor anterior foi substituído, o novo valor foi salvo localmente sem exibição e nenhum segredo foi incluído neste registro.
+
 A API recusa:
 
 - qualquer variável `VITE_*` cujo nome indique segredo, token, senha, chave privada ou URL de banco;

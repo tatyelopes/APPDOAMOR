@@ -63,12 +63,13 @@ Uma migração aplicada é imutável. Qualquer evolução deve entrar em um novo
 
 ## Execução nos ambientes
 
-O Render executa `npm run db:migrate` antes de iniciar a API. A migração `0002_mpv_feedback.sql` reconhece a tabela de feedback já existente e registra sua versão sem apagar registros. Homologação e produção futuras deverão usar o mesmo comando com bancos e identidades separados.
+Quando `DATABASE_URL` está configurada, a própria API aplica as migrações antes de abrir a porta HTTP. O Render também declara `npm run db:migrate` antes de iniciar a API, oferecendo uma segunda barreira idempotente. A migração `0002_mpv_feedback.sql` reconhece a tabela de feedback já existente e registra sua versão sem apagar registros. Homologação e produção futuras deverão usar o mesmo processo com bancos e identidades separados.
 
 O CI inicia um PostgreSQL 18 descartável, aplica todas as migrações e valida:
 
 - histórico e checksums;
 - idempotência do executor;
+- aplicação automática antes de a API aceitar tráfego;
 - presença das 13 tabelas operacionais, incluindo `schema_migrations`;
 - unicidade de e-mail normalizado;
 - limite de duas vagas vigentes por casal;
@@ -78,7 +79,7 @@ O CI inicia um PostgreSQL 18 descartável, aplica todas as migrações e valida:
 
 O banco do CI não contém dados reais e é descartado ao final da execução.
 
-A primeira execução com PostgreSQL real foi [aprovada no GitHub Actions em 17/09/2026](https://github.com/tatyelopes/APPDOAMOR/actions/runs/35269876662).
+A primeira execução com PostgreSQL real foi [aprovada no GitHub Actions em 17/09/2026](https://github.com/tatyelopes/APPDOAMOR/actions/runs/35269876662). A cobertura posterior também valida o bootstrap automático da API para evitar dependência da configuração externa do comando de início.
 
 ## Próximos passos da tarefa 41
 

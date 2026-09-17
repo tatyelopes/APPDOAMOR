@@ -4,6 +4,7 @@ import { createReadStream, existsSync, statSync } from 'node:fs'
 import { extname, resolve, sep } from 'node:path'
 import { config } from './src/config.js'
 import { loadDatabase as loadDb, saveDatabase as saveDb } from './src/infra/database.js'
+import { applyMigrations } from './src/infra/migrations.js'
 import {
   listPostgresFeedback,
   storePostgresFeedback,
@@ -434,6 +435,16 @@ const server = createServer(async (req, res) => {
     send(req, res, 500, { error: error instanceof Error ? error.message : 'Erro interno.' })
   }
 })
+
+if (config.databaseUrl) {
+  try {
+    await applyMigrations({ connectionString: config.databaseUrl, logger: console.log })
+  } catch (error) {
+    const code = error && typeof error === 'object' && 'code' in error ? error.code : 'unknown'
+    console.error(`Falha ao preparar o PostgreSQL (${code}).`)
+    process.exit(1)
+  }
+}
 
 server.listen(config.port, config.host, () => {
   console.log(`Aplicação disponível em http://${config.host}:${config.port}`)

@@ -56,6 +56,11 @@ jobs:
       - name: Validar gestão e ausência de segredos
         run: npm run validate:secrets
 
+      - name: Validar migração automática e runtime PostgreSQL
+        run: npm run validate:database-runtime
+        env:
+          DATABASE_URL: postgresql://app_do_amor_ci:ci-only-password@127.0.0.1:5432/app_do_amor_ci
+
       - name: Aplicar migrações em PostgreSQL descartável
         run: npm run db:migrate
         env:
