@@ -1,6 +1,6 @@
 # Revalidação mobile do MPV — 14/09/2026
 
-**Resultado:** checklist aprovado na matriz emulada; tarefa 132 permanece em andamento somente até a passagem final em aparelhos físicos.
+**Resultado:** matriz emulada aprovada e passagem física no Chrome aceita com ressalva em 16/09/2026; Safari permanece adiado e sem cobertura física.
 
 **Atualização de 16/09/2026:** a matriz foi repetida após incluir a sugestão aberta opcional e permaneceu aprovada nos 95 estados. O roteiro abaixo incorpora a passagem física que encerra a tarefa 132.
 
@@ -101,11 +101,21 @@ Frases obrigatórias para identificar os registros de teste:
 | Android / Chrome | ☐ Aprovado ☐ Reprovado | A preencher ou “nenhuma” | Captura ou gravação local |
 | iPhone / Safari | ☐ Aprovado ☐ Reprovado | A preencher ou “nenhuma” | Captura ou gravação local |
 
-A tarefa 132 só pode mudar para **Concluído** quando as 12 etapas estiverem aprovadas nos dois aparelhos, as identificações dos dispositivos estiverem preenchidas e os dois feedbacks técnicos tiverem sido conferidos e removidos. Qualquer falha deve registrar aparelho, sistema, navegador, etapa, comportamento observado e captura sem dados pessoais.
+A tarefa 132 só pode mudar para **Concluído sem ressalvas** quando as 12 etapas estiverem aprovadas nos dois aparelhos, as identificações dos dispositivos estiverem preenchidas e os dois feedbacks técnicos tiverem sido conferidos e removidos. Qualquer falha deve registrar aparelho, sistema, navegador, etapa, comportamento observado e captura sem dados pessoais.
+
+### Resultado registrado em 16/09/2026
+
+- a Product Owner confirmou a passagem em um celular pelo Chrome; modelo, sistema e versão do navegador não foram informados;
+- o servidor recebeu um feedback do jogo **Descoberta a Dois**, com os três sinais positivos e a sugestão técnica `teste`;
+- a saúde do ambiente, a exportação protegida, a persistência, os dois jogos e os 95 estados da matriz móvel foram revalidados e aprovados depois da passagem;
+- o registro técnico foi conferido e removido, deixando a base vazia para os participantes;
+- a passagem no Safari foi adiada por decisão da Product Owner e não pode ser considerada aprovada ou coberta por esta evidência.
+
+**Aceite:** aprovado com ressalva para um teste controlado orientado ao Chrome. Qualquer participação pelo Safari deve ser tratada como plataforma ainda não validada; antes de declarar compatibilidade com Safari, executar o roteiro físico correspondente e registrar aparelho, sistema e versão.
 
 ## Decisão
 
-A estrutura responsiva, o caminho feliz e as regressões MOB-01, MOB-02 e MOB-03 estão aprovados na matriz emulada. O roteiro da passagem física foi incorporado em 16/09/2026. O item 132 permanece **em andamento** até obter o aceite registrado em Chrome Android e Safari iOS físicos.
+A estrutura responsiva, o caminho feliz e as regressões MOB-01, MOB-02 e MOB-03 estão aprovados na matriz emulada. A tarefa 132 foi encerrada com ressalva para o escopo atual orientado ao Chrome, por decisão da Product Owner em 16/09/2026. Safari continua explicitamente não validado e deve ser retomado antes de afirmar suporte a essa plataforma.
 
 ## Reproduzir
 

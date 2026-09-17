@@ -2,7 +2,7 @@
 
 **Versão:** 1.0
 **Data:** 16/09/2026
-**Status:** publicado no ambiente gratuito controlado em 16/09/2026; a ampliação para os cinco casais ainda depende da passagem física em Android e iPhone e dos gates de privacidade e operação.
+**Status:** publicado no ambiente gratuito controlado em 16/09/2026; passagem física no Chrome aprovada com ressalva, Safari adiado e ainda não validado.
 
 ## Objetivo
 

@@ -99,7 +99,7 @@ O arquivo `render.yaml` define um Web Service chamado `momento-a-dois-teste` e u
 
 O serviço foi publicado e teve saúde, página, envio, persistência e exportação verificados em 16/09/2026; o dado sintético usado na validação foi excluído e a base ficou vazia. O serviço gratuito pode entrar em suspensão após inatividade e o primeiro acesso pode demorar. O PostgreSQL gratuito tem 1 GB, expira em 16/10/2026 e não oferece backup automático. Exportar o CSV durante o teste e novamente antes do vencimento; não usar esta configuração para produção ou retenção de longo prazo.
 
-A publicação controlada não encerra os gates de produção do restante do aplicativo. HTTPS, banco, segredo restrito e exportação de teste foram confirmados. Antes de enviar o endereço aos cinco casais, falta concluir a passagem física em Android e iPhone registrada na tarefa 132.
+A publicação controlada não encerra os gates de produção do restante do aplicativo. HTTPS, banco, segredo restrito, exportação e passagem física no Chrome foram confirmados. A Product Owner adiou o Safari em 16/09/2026; portanto, o aceite atual é restrito ao teste controlado no Chrome e não comprova compatibilidade física com Safari.
 
 ## Promoção de versões
 
