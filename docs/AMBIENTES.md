@@ -54,20 +54,20 @@ As variáveis ainda planejadas não têm efeito no app. A tarefa 123 deverá rej
 
 O frontend continuará sem segredos. Não usar prefixo `VITE_` para senhas, tokens, chaves ou conexão de banco: variáveis com esse prefixo são expostas no código entregue ao navegador. Modo do Vite e `NODE_ENV` são conceitos distintos; a estratégia usa um build de produção promovido entre os ambientes, sem embutir configurações privadas. [Referência: variáveis e modos do Vite](https://vite.dev/guide/env-and-mode.html).
 
-Arquivos `.env` e `.env.*` e dados locais estão ignorados pelo Git; apenas modelos `.env.*.example` sem segredos são versionados. Isso não constitui cofre, bloqueio de commit ou rotação: esses controles pertencem às tarefas 40, 42 e 83. Segredos remotos serão injetados no processo pela plataforma, sem incluí-los em artefatos, logs ou planilhas.
+Arquivos `.env` e `.env.*` e dados locais estão ignorados pelo Git; apenas modelos `.env.*.example` sem segredos são versionados. A tarefa 42 adicionou geração local sem exibição, validação em runtime, scanner pre-commit e gate no CI; o procedimento e o inventário estão em [Gestão segura de segredos](GESTAO-DE-SEGREDOS.md). Segredos remotos são injetados no processo pela plataforma, sem incluí-los em artefatos, logs ou planilhas. Cofres definitivos e rotação comprovada de homologação e produção dependem do provisionamento desses ambientes.
 
 ## Executar localmente hoje
 
 Executar a partir da raiz do repositório. A referência verificada nesta entrega é Node `24.20.0` e Vite instalado `8.2.2`; a fixação de versões e análise de dependências continuam nas tarefas 39, 40 e 83.
 
-Instalar dependências e copiar o modelo apenas se ainda não existir configuração local:
+Instalar dependências e gerar a configuração apenas em um checkout que ainda não possua `.env.local` nem `.env.postgres.local`:
 
 ~~~powershell
 npm.cmd ci --cache .npm-cache
-if (-not (Test-Path -LiteralPath .env.local)) {
-  Copy-Item -LiteralPath .env.local.example -Destination .env.local
-}
+npm.cmd run secrets:init
 ~~~
+
+O gerador recusa sobrescrita e não mostra os valores. Em uma instalação já configurada, preserve os arquivos existentes e siga o procedimento de rotação em [Gestão segura de segredos](GESTAO-DE-SEGREDOS.md).
 
 Para trabalhar com PostgreSQL, siga primeiro o [guia de banco de dados e migrações](BANCO-DE-DADOS-E-MIGRACOES.md), inicie o container local e aplique o schema. No primeiro terminal, carregue explicitamente a configuração da API:
 
@@ -141,4 +141,4 @@ O JSON atual, CORS `*`, sessões e convites ainda mantêm as limitações docume
 
 ## Acompanhamento
 
-A tarefa 38 fica concluída como estratégia documentada. A tarefa 41 está em andamento com PostgreSQL local reproduzível, migrações para o esquema alvo, validação real no CI e adaptador ainda restrito ao feedback do MPV. A tarefa 43 está em andamento com a sonda mínima e a tarefa 135 foi concluída com a publicação controlada. As tarefas 42, 92 e 118 continuam não iniciadas. A tarefa 123 registra o provisionamento definitivo de homologação e a validação de configuração. A planilha e seu gerador continuam sendo a referência do status de execução.
+A tarefa 38 fica concluída como estratégia documentada. A tarefa 41 está em andamento com PostgreSQL local reproduzível, migrações para o esquema alvo, validação real no CI e adaptador ainda restrito ao feedback do MPV. A tarefa 42 está em andamento com inventário, geração local, validação, bloqueio de commit e injeção atual do Render; faltam cofre definitivo por ambiente e rotação comprovada. A tarefa 43 está em andamento com a sonda mínima e a tarefa 135 foi concluída com a publicação controlada. As tarefas 92 e 118 continuam não iniciadas. A tarefa 123 registra o provisionamento definitivo de homologação e a validação de configuração. A planilha e seu gerador continuam sendo a referência do status de execução.

@@ -153,7 +153,7 @@ Esses controles reduzem risco, mas não compensam os bloqueadores abaixo.
 | T16 | S/E | Recuperação ou verificação enumerável, token reutilizável ou link vazado permite tomada de conta. Os fluxos ainda não existem. | 3 | 5 | 15 alto | Mitigar: SEC-05, SEC-23, SEC-25, SEC-27; tarefas 46, 47 e 84 | Aberta |
 | T17 | E/I | Ex-integrante usa sessão ou ID antigo após desvinculação; respostas ou resultados migram indevidamente para novo casal. | 4 | 5 | 20 crítico | Mitigar: SEC-08, SEC-11, SEC-24, SEC-27; tarefas 50, 81, 84 e 90 | Aberta |
 | T18 | S/E | Conta administrativa comprometida ou e-mail configurado incorretamente acessa métricas, conteúdo e futura operação editorial. | 3 | 5 | 15 alto | Mitigar: SEC-04, SEC-14, SEC-21, SEC-25; tarefas 42, 59, 83 e 106 | Aberta |
-| T19 | T/E · configuração/cadeia | Dependência, pipeline, segredo ou artefato adulterado injeta código; não há CI, análise de dependências ou gestão de segredos. | 3 | 5 | 15 alto | Mitigar: SEC-14, SEC-26, SEC-27; tarefas 39, 40, 42 e 83 | Aberta |
+| T19 | T/E · configuração/cadeia | Dependência, pipeline, segredo ou artefato adulterado injeta código; CI e bloqueio preventivo de segredos foram adicionados, mas análise de dependências, SBOM, cofre definitivo e rotação comprovada ainda faltam. | 3 | 5 | 15 alto | Mitigar: SEC-14, SEC-26, SEC-27; tarefas 39, 40, 42 e 83 | Aberta |
 | T20 | I · privacidade relacional | Notificação, histórico do navegador, cache offline, preview, tela compartilhada ou texto explícito revela participação e conteúdo a quem usa o aparelho. | 4 | 4 | 16 alto | Mitigar: SEC-20, SEC-25, SEC-29; tarefas 58, 72, 73, 90 e 119 | Aberta |
 | T21 | T/I · fluxo sensível | Conteúdo não aprovado, retirado ou inadequado é servido; snapshot muda depois da resposta ou operador publica sem dupla revisão. | 3 | 4 | 12 alto | Mitigar: SEC-11, SEC-21, SEC-28; tarefas 52, 59, 76 e 77 | Aberta |
 | T22 | R | Sem trilha confiável, não é possível provar revogação, pareamento, publicação, acesso administrativo ou incidente sem registrar conteúdo íntimo. | 3 | 3 | 9 médio | Mitigar: SEC-15, SEC-21, SEC-25; tarefas 43, 59 e 84 | Aberta |
@@ -176,7 +176,7 @@ Esses controles reduzem risco, mas não compensam os bloqueadores abaixo.
 | SEC-11 | Usar constraints, locks na ordem casal → partida → rodada, idempotência e ETag; um evento de progresso por rodada. | Ausente | 41, 53–55, 81 |
 | SEC-12 | Migrar para PostgreSQL com escrita atômica; falha de leitura ou gravação fecha a operação e preserva o último estado confirmado. | Ausente | 41, 81, 93 |
 | SEC-13 | Cifrar volumes e backups; cifrar em nível de aplicação os valores S4 com envelope/KMS e separar chaves por ambiente; plaintext existe apenas durante a operação autorizada. | Ausente | 37, 41, 42, 93 |
-| SEC-14 | Manter segredos em cofre, com privilégio mínimo, rotação, inventário, separação por ambiente e bloqueio de commit. | Ausente | 40, 42 |
+| SEC-14 | Manter segredos em cofre, com privilégio mínimo, rotação, inventário, separação por ambiente e bloqueio de commit; já há inventário, geração local, injeção no Render, runtime, pre-commit e CI, com cofres definitivos e rotação pendentes. | Parcial | 40, 42 |
 | SEC-15 | Logar request ID, decisão e resultado sem corpo S4; auditoria append-only para login, sessão, convite, vínculo, publicação, admin e exclusão; relógio UTC confiável. | Ausente | 43, 59, 84 |
 | SEC-16 | Backup cifrado, acesso restrito, retenção definida, teste de restauração e impedimento de sobrescrita por banco vazio. | Ausente | 37, 93, 118 |
 | SEC-17 | Validar schema, tipo de conteúdo, tamanho, Unicode e limites no servidor; rejeitar campos desconhecidos e upload não previsto. | Parcial | 35, 52, 79, 81 |
@@ -188,7 +188,7 @@ Esses controles reduzem risco, mas não compensam os bloqueadores abaixo.
 | SEC-23 | Tokens de recuperação/verificação têm alta entropia, hash, escopo, uso único e TTL curto; recuperação revoga sessões conforme política. | Ausente | 46, 47, 79 |
 | SEC-24 | Desvincular encerra vínculos e partidas abertas, invalida acessos compartilhados e não transfere histórico a casal futuro. | Ausente | 50, 81, 84, 90 |
 | SEC-25 | Inventariar dados, base legal, retenção, acesso, exportação, exclusão e resposta a incidente; mensagens não fazem promessa de E2EE. | Parcial | 37, 88–91 |
-| SEC-26 | Fixar versões, analisar dependências e segredos no CI, gerar SBOM, revisar artefatos e impedir promoção com vulnerabilidade crítica explorável. | Ausente | 39, 40, 83 |
+| SEC-26 | Fixar versões, analisar dependências e segredos no CI, gerar SBOM, revisar artefatos e impedir promoção com vulnerabilidade crítica explorável; lockfile, runtime, CI e scanner existem, mas análise, SBOM e política de bloqueio ainda faltam. | Parcial | 39, 40, 83 |
 | SEC-27 | Automatizar testes negativos de autorização, corrida, idempotência, sessão e contrato; monitorar anomalias e manter playbook de incidente. | Ausente | 79, 81–84, 95 |
 | SEC-28 | Catálogo serve somente revisão aprovada; snapshots são imutáveis; retirada bloqueia nova seleção; operação editorial é autorizada e auditada. | Ausente | 52, 59, 76, 77 |
 | SEC-29 | Notificação e interface usam texto discreto, reautenticam para S4 quando necessário, permitem saída unilateral e não expõem quem pulou ou o conteúdo em preview. | Parcial | 50, 58, 72, 73, 90 |

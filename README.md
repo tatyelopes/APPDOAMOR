@@ -25,6 +25,7 @@ O projeto compila, mas ainda depende de integração bilateral completa, testes 
 - [Ambientes local, homologação e produção](docs/AMBIENTES.md)
 - [Modelo de dados](docs/MODELO-DE-DADOS.md)
 - [Banco PostgreSQL local e migrações](docs/BANCO-DE-DADOS-E-MIGRACOES.md)
+- [Gestão segura de segredos](docs/GESTAO-DE-SEGREDOS.md)
 - [Modelagem de ameaças](docs/MODELAGEM-DE-AMEACAS.md)
 - [Inventário de dados e bases legais LGPD](docs/INVENTARIO-DE-DADOS-E-BASES-LEGAIS-LGPD.md)
 - [Contrato e versionamento da API](docs/CONTRATO-E-VERSIONAMENTO-DA-API.md)
@@ -40,7 +41,7 @@ O protótipo HTML é uma demonstração local com dados fictícios. Ele não est
 
 ## Executar e compilar
 
-Para execução restrita à máquina e configuração explícita da API, siga o [guia de ambientes](docs/AMBIENTES.md#executar-localmente-hoje) e use `.env.local.example`. O comando rápido abaixo usa interfaces abertas e não carrega `.env.local` na API. Homologação e produção estão definidas no guia, com provisionamento pendente.
+Para execução restrita à máquina e configuração explícita da API, siga o [guia de ambientes](docs/AMBIENTES.md#executar-localmente-hoje). Os arquivos `.env.*.example` são apenas referências; use o gerador seguro descrito abaixo. O comando rápido usa interfaces abertas e não carrega `.env.local` na API. Homologação e produção estão definidas no guia, com provisionamento pendente.
 
 Instale as dependências com a versão de Node compatível com o pacote instalado e execute:
 
@@ -66,6 +67,8 @@ npm.cmd run validate:mpv-production
 ```
 
 O PostgreSQL local e as migrações versionadas estão documentados no [guia de banco de dados](docs/BANCO-DE-DADOS-E-MIGRACOES.md). Com `DATABASE_URL` carregada, use `npm.cmd run db:migrate` e `npm.cmd run validate:database`.
+
+Para gerar configurações locais fortes sem exibir os valores, use `npm.cmd run secrets:init`. O comando não sobrescreve arquivos existentes. A varredura e os testes de configuração podem ser executados com `npm.cmd run validate:secrets`; regras e rotação estão no [guia de gestão de segredos](docs/GESTAO-DE-SEGREDOS.md).
 
 Para exportar os feedbacks do MPV em CSV, configure o mesmo `MPV_EXPORT_TOKEN` da API e execute `npm.cmd run export:mpv-feedback`. O procedimento e os limites desta versão estão no [guia do feedback controlado](docs/FEEDBACK-MPV-CONTROLADO.md).
 

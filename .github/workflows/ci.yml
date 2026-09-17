@@ -53,6 +53,9 @@ jobs:
       - name: Instalar dependências pelo lockfile
         run: npm ci --ignore-scripts
 
+      - name: Validar gestão e ausência de segredos
+        run: npm run validate:secrets
+
       - name: Aplicar migrações em PostgreSQL descartável
         run: npm run db:migrate
         env:

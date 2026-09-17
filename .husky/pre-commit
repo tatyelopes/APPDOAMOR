@@ -1,1 +1,3 @@
 npm exec lint-staged
+npm run scan:secrets -- --staged
+npm run validate:secret-config

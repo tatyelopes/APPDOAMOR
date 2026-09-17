@@ -8,13 +8,13 @@ A integração da aplicação ainda é parcial: o feedback do MPV usa PostgreSQL
 
 ## Iniciar PostgreSQL local
 
-É necessário Docker Desktop ou outro ambiente compatível com Docker Compose. Na raiz do projeto:
+É necessário Docker Desktop ou outro ambiente compatível com Docker Compose. Em um checkout ainda sem configuração local, execute na raiz do projeto:
 
 ```powershell
-Copy-Item -LiteralPath .env.postgres.local.example -Destination .env.postgres.local
+npm.cmd run secrets:init
 ```
 
-Altere a senha nos dois campos correspondentes de `.env.postgres.local` e inicie o serviço:
+O comando cria `.env.local` e `.env.postgres.local` com valores aleatórios correspondentes, sem exibi-los e sem sobrescrever arquivos existentes. Inicie o serviço:
 
 ```powershell
 docker compose --env-file .env.postgres.local up -d postgres

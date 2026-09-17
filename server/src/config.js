@@ -1,5 +1,8 @@
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
+import { validateSecretConfiguration } from './shared/secret-configuration.js'
+
+validateSecretConfiguration()
 
 const serverRoot = dirname(dirname(fileURLToPath(import.meta.url)))
 const configuredFeedbackRetentionDays = Number(process.env.MPV_FEEDBACK_RETENTION_DAYS || 90)
