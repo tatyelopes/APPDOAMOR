@@ -48,6 +48,8 @@ O hook pre-commit verifica o conteúdo staged e oculta valores nos achados. O CI
 
 Uma auditoria explícita dos patches já presentes no histórico pode ser executada com `npm.cmd run scan:secrets:history`. Ela informa apenas commit, arquivo e regra, sem reproduzir possíveis valores. O CI verifica o estado rastreado atual; a auditoria histórica deve ser repetida antes de abrir o repositório ou após incorporar histórico externo.
 
+Em 17/09/2026, a varredura do histórico existente foi aprovada e a [primeira execução remota com o novo gate](https://github.com/tatyelopes/APPDOAMOR/actions/runs/35272382976) concluiu todos os controles do CI com sucesso.
+
 A API recusa:
 
 - qualquer variável `VITE_*` cujo nome indique segredo, token, senha, chave privada ou URL de banco;
