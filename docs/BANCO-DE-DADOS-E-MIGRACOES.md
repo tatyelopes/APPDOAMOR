@@ -78,6 +78,8 @@ O CI inicia um PostgreSQL 18 descartável, aplica todas as migrações e valida:
 
 O banco do CI não contém dados reais e é descartado ao final da execução.
 
+A primeira execução com PostgreSQL real foi [aprovada no GitHub Actions em 17/09/2026](https://github.com/tatyelopes/APPDOAMOR/actions/runs/35269876662).
+
 ## Próximos passos da tarefa 41
 
 Antes de concluir a tarefa 41 ainda é necessário:
