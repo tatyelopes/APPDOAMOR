@@ -1,5 +1,7 @@
 # Conectadois — App do Amor
 
+[![CI](https://github.com/tatyelopes/APPDOAMOR/actions/workflows/ci.yml/badge.svg)](https://github.com/tatyelopes/APPDOAMOR/actions/workflows/ci.yml)
+
 Aplicativo de conexão para casais. O repositório reúne documentação de produto, protótipos e uma implementação parcial em React e Node.
 
 ## Estado atual
@@ -31,6 +33,7 @@ O projeto compila, mas ainda depende de integração bilateral completa, testes 
 - [Desenho de testes e resultados](docs/TESTES-E-RESULTADOS.md)
 - [Protótipo de testes e resultados](docs/prototipo-testes-resultados.html)
 - [Feedback centralizado do MPV](docs/FEEDBACK-MPV-CONTROLADO.md)
+- [Integração contínua](docs/INTEGRACAO-CONTINUA.md)
 
 O protótipo HTML é uma demonstração local com dados fictícios. Ele não está integrado à home do app.
 
@@ -78,6 +81,8 @@ npm.cmd run build
 Para aplicar correções automáticas, use `npm.cmd run lint:fix` e `npm.cmd run format`. O comando `npm.cmd run check` executa lint, conferência de formatação e build em sequência.
 
 O `npm.cmd install` ativa o hook do Husky por meio do script `prepare`. Antes de cada commit, o lint-staged corrige e formata apenas os arquivos staged compatíveis; se restar algum erro de lint, o commit é interrompido.
+
+O GitHub Actions repete automaticamente as verificações de qualidade, arquitetura, privacidade, feedback, execução de produção, experiência móvel e consistência do plano a cada alteração na branch principal ou em pull requests. Consulte o [guia de integração contínua](docs/INTEGRACAO-CONTINUA.md).
 
 ## Atualizar o acompanhamento
 

@@ -1,0 +1,71 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Qualidade e validação
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    env:
+      CI: true
+      NPM_CONFIG_AUDIT: false
+      NPM_CONFIG_FUND: false
+
+    steps:
+      - name: Obter o código
+        uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+
+      - name: Preparar Node.js
+        uses: actions/setup-node@v7
+        with:
+          node-version: 24.20.0
+          cache: npm
+
+      - name: Instalar dependências pelo lockfile
+        run: npm ci --ignore-scripts
+
+      - name: Validar lint
+        run: npm run lint
+
+      - name: Validar formatação
+        run: npm run format:check
+
+      - name: Compilar aplicação
+        run: npm run build
+
+      - name: Validar contrato OpenAPI
+        run: npm run validate:openapi
+
+      - name: Validar modelagem de ameaças
+        run: npm run validate:threat-model
+
+      - name: Validar inventário LGPD
+        run: npm run validate:lgpd
+
+      - name: Validar API de feedback
+        run: npm run validate:mpv-feedback
+
+      - name: Validar execução de produção
+        run: npm run validate:mpv-production
+
+      - name: Validar matriz móvel do MPV
+        run: node scripts/validate-mobile-mpv.mjs
+
+      - name: Validar plano operacional
+        shell: pwsh
+        run: ./scripts/validate-project-plan.ps1
