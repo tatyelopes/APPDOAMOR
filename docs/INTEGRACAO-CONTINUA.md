@@ -2,7 +2,7 @@
 
 ## Estado
 
-O pipeline de integração contínua está configurado em `.github/workflows/ci.yml`. A tarefa 40 do plano permanece em andamento até a primeira execução remota ser aprovada no GitHub Actions.
+O pipeline de integração contínua está configurado em `.github/workflows/ci.yml`. A [primeira execução remota](https://github.com/tatyelopes/APPDOAMOR/actions/runs/35267092012) foi aprovada em 17/09/2026, concluindo a tarefa 40 do plano.
 
 O fluxo verifica o código, os contratos técnicos e o plano operacional. Ele não publica o aplicativo no Render, não acessa dados reais e não requer segredos.
 
