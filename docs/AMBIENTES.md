@@ -12,7 +12,7 @@ Esta estratégia está definida; a infraestrutura remota definitiva ainda não e
 | Público | Pessoa desenvolvedora | Equipe e avaliadores autorizados | Usuários convidados após go/no-go |
 | Endereço | `http://127.0.0.1:5173`, API em `127.0.0.1:8787` | `https://homologacao.<dominio-aprovado>` | `https://app.<dominio-aprovado>` |
 | Aplicação | Vite e API Node em processos locais | Arquivos compilados e API Node atrás de entrada HTTPS | Mesmo artefato validado em homologação, atrás de entrada HTTPS |
-| Dados atuais | JSON local com dados fictícios | Nenhum ambiente ativo | Nenhum ambiente ativo |
+| Dados atuais | PostgreSQL 18 local disponível; JSON ainda usado pelos fluxos antigos | Nenhum ambiente definitivo ativo | Demonstração controlada com PostgreSQL temporário apenas para feedback |
 | Persistência alvo | PostgreSQL local com mesma versão principal e migrações | PostgreSQL exclusivo de homologação | PostgreSQL exclusivo de produção |
 | Conteúdo | Fixtures e catálogo candidato | Fixtures e versão editorial candidata | Somente catálogo aprovado e publicado |
 | Credenciais | Exclusivas de desenvolvimento | Cofre e identidade exclusivos de homologação | Cofre e identidade exclusivos de produção |
@@ -48,7 +48,7 @@ As variáveis de aplicação lidas hoje em `server/src/config.js` são `HOST`, `
 | `APP_ORIGIN` | Atual para feedback do MPV; planejado como origem canônica geral | Lista de URLs exatas separadas por vírgula; o envio anônimo do MPV rejeita outra origem quando configurada; usar HTTPS nos remotos |
 | `MPV_EXPORT_TOKEN` | Atual, segredo da exportação controlada | Mínimo de 32 caracteres, exclusivo por ambiente, injetado somente na API e nunca exposto com prefixo `VITE_` |
 | `MPV_FEEDBACK_RETENTION_DAYS` | Atual, padrão 90 dias | Registros vencidos são eliminados na chegada de um novo feedback; agendar limpeza independente antes da publicação ampla |
-| `DATABASE_URL` | Atual para feedback do MPV; planejado para o restante do produto | Credencial exclusiva, injetada pelo provedor; quando ausente, somente o feedback local usa o fallback JSON |
+| `DATABASE_URL` | Atual para feedback do MPV e migrações; planejado para o restante do produto | Credencial exclusiva, injetada pelo provedor; quando ausente, o protótipo local usa o fallback JSON; ambientes remotos executam migrações e não podem depender do fallback |
 
 As variáveis ainda planejadas não têm efeito no app. A tarefa 123 deverá rejeitar ambiente desconhecido, porta inválida, origem ausente ou incompatível e JSON fora de local; a tarefa 41 deverá rejeitar conexão de banco ausente ou inválida. Não adotar fallback para dados locais quando um serviço remoto falhar.
 
@@ -69,7 +69,7 @@ if (-not (Test-Path -LiteralPath .env.local)) {
 }
 ~~~
 
-No primeiro terminal, carregar explicitamente a configuração da API:
+Para trabalhar com PostgreSQL, siga primeiro o [guia de banco de dados e migrações](BANCO-DE-DADOS-E-MIGRACOES.md), inicie o container local e aplique o schema. No primeiro terminal, carregue explicitamente a configuração da API:
 
 ~~~powershell
 node --env-file=.env.local server/index.mjs
@@ -81,7 +81,7 @@ No segundo terminal, iniciar o frontend com endereço e porta previsíveis:
 npm.cmd exec -- vite --host 127.0.0.1 --port 5173 --strictPort
 ~~~
 
-Abrir `http://127.0.0.1:5173`. O proxy de desenvolvimento encaminha `/api` para `http://127.0.0.1:8787`; `API_PROXY_TARGET` permite trocar esse destino sem editar o código. O JSON existente é preservado pelo modelo e suporta somente o teste controlado documentado em [FEEDBACK-MPV-CONTROLADO.md](FEEDBACK-MPV-CONTROLADO.md). Para um conjunto novo, apontar `DATABASE_FILE` para outro arquivo dentro de `server/data`.
+Abrir `http://127.0.0.1:5173`. O proxy de desenvolvimento encaminha `/api` para `http://127.0.0.1:8787`; `API_PROXY_TARGET` permite trocar esse destino sem editar o código. O JSON existente é preservado como fallback de desenvolvimento para os fluxos ainda não integrados. Para um conjunto novo, apontar `DATABASE_FILE` para outro arquivo dentro de `server/data`. A presença das tabelas PostgreSQL não migra automaticamente esses registros.
 
 O Node carrega `.env.local` pelo argumento `--env-file`; variáveis já definidas no terminal têm precedência. O script existente `npm.cmd run dev` não carrega esse arquivo para a API e usa interfaces abertas (`0.0.0.0`), portanto os dois comandos acima são a referência para desenvolvimento restrito à máquina. [Referência: carregamento de arquivo de ambiente no Node](https://nodejs.org/api/cli.html#--env-filefile).
 
@@ -95,7 +95,7 @@ npm.cmd run build
 
 ## Demonstração controlada no Render
 
-O arquivo `render.yaml` define um Web Service chamado `momento-a-dois-teste` e um PostgreSQL chamado `momento-a-dois-feedback`, ambos gratuitos na região `virginia`. O build usa `npm ci --include=dev --ignore-scripts --cache .npm-cache && npm run build`, o início usa `npm start` e a sonda é `/api/health`. `DATABASE_URL` é injetada internamente pelo Render e o token de exportação é gerado fora do repositório.
+O arquivo `render.yaml` define um Web Service chamado `momento-a-dois-teste` e um PostgreSQL chamado `momento-a-dois-feedback`, ambos gratuitos na região `virginia`. O build usa `npm ci --include=dev --ignore-scripts --cache .npm-cache && npm run build`, o início aplica `npm run db:migrate` antes de `npm start` e a sonda é `/api/health`. `DATABASE_URL` é injetada internamente pelo Render e o token de exportação é gerado fora do repositório.
 
 O serviço foi publicado e teve saúde, página, envio, persistência e exportação verificados em 16/09/2026. Em 17/09/2026, a versão ampliada foi publicada e o novo tipo de feedback da amostra autoral foi persistido e exportado no PostgreSQL; o registro sintético foi excluído e a base ficou vazia. O serviço gratuito pode entrar em suspensão após inatividade e o primeiro acesso pode demorar. O PostgreSQL gratuito tem 1 GB, expira em 16/10/2026 e não oferece backup automático. Exportar o CSV durante o teste e novamente antes do vencimento; não usar esta configuração para produção ou retenção de longo prazo.
 
@@ -141,4 +141,4 @@ O JSON atual, CORS `*`, sessões e convites ainda mantêm as limitações docume
 
 ## Acompanhamento
 
-A tarefa 38 fica concluída como estratégia documentada. A tarefa 41 está em andamento com o adaptador PostgreSQL restrito ao feedback do MPV, a tarefa 43 está em andamento com a sonda mínima e a tarefa 135 foi concluída com a publicação controlada. As tarefas 42, 92 e 118 continuam não iniciadas. A tarefa 123 registra o provisionamento definitivo de homologação e a validação de configuração. A planilha e seu gerador continuam sendo a referência do status de execução.
+A tarefa 38 fica concluída como estratégia documentada. A tarefa 41 está em andamento com PostgreSQL local reproduzível, migrações para o esquema alvo, validação real no CI e adaptador ainda restrito ao feedback do MPV. A tarefa 43 está em andamento com a sonda mínima e a tarefa 135 foi concluída com a publicação controlada. As tarefas 42, 92 e 118 continuam não iniciadas. A tarefa 123 registra o provisionamento definitivo de homologação e a validação de configuração. A planilha e seu gerador continuam sendo a referência do status de execução.

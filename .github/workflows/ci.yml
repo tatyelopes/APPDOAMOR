@@ -19,6 +19,20 @@ jobs:
     name: Qualidade e validação
     runs-on: ubuntu-24.04
     timeout-minutes: 20
+    services:
+      postgres:
+        image: postgres:18
+        env:
+          POSTGRES_DB: app_do_amor_ci
+          POSTGRES_USER: app_do_amor_ci
+          POSTGRES_PASSWORD: ci-only-password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U app_do_amor_ci -d app_do_amor_ci"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
     env:
       CI: true
       NPM_CONFIG_AUDIT: false
@@ -38,6 +52,16 @@ jobs:
 
       - name: Instalar dependências pelo lockfile
         run: npm ci --ignore-scripts
+
+      - name: Aplicar migrações em PostgreSQL descartável
+        run: npm run db:migrate
+        env:
+          DATABASE_URL: postgresql://app_do_amor_ci:ci-only-password@127.0.0.1:5432/app_do_amor_ci
+
+      - name: Validar schema e integridade do PostgreSQL
+        run: npm run validate:database
+        env:
+          DATABASE_URL: postgresql://app_do_amor_ci:ci-only-password@127.0.0.1:5432/app_do_amor_ci
 
       - name: Validar lint
         run: npm run lint

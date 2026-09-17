@@ -23,6 +23,8 @@ erDiagram
 
 O diagrama representa partidas iniciadas: cada partida tem exatamente dois participantes e ao menos uma rodada. As cardinalidades mínimas são regras transacionais, não apenas chaves estrangeiras.
 
+**Implementação em 17/09/2026:** o esquema alvo passou a ter migração PostgreSQL executável em `server/migrations/0001_core_schema.sql`, complementada pela migração do feedback controlado. As tabelas e restrições são verificadas contra PostgreSQL real no CI. A existência do schema não significa que os fluxos antigos já deixaram o JSON; acompanhe a integração gradual no [guia de banco de dados e migrações](BANCO-DE-DADOS-E-MIGRACOES.md).
+
 ## Convenções
 
 - Identificadores UUID gerados no servidor, independentes de nome, e-mail e posição na interface.

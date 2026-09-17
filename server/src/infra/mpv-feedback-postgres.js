@@ -21,29 +21,23 @@ async function ensureSchema() {
   schemaReady ??= pool
     .query(
       `
-      CREATE TABLE IF NOT EXISTS mpv_feedback (
-        id uuid PRIMARY KEY,
-        submission_id varchar(80) UNIQUE NOT NULL,
-        game_id varchar(40) NOT NULL,
-        clarity varchar(3) NOT NULL,
-        connection varchar(3) NOT NULL,
-        replay_intent varchar(3) NOT NULL,
-        suggestion varchar(500) NOT NULL DEFAULT '',
-        created_at timestamptz NOT NULL DEFAULT now(),
-        CONSTRAINT mpv_feedback_game CHECK (game_id IN ('discovery-together', 'guess-about-me', 'love-style-sample')),
-        CONSTRAINT mpv_feedback_clarity CHECK (clarity IN ('yes', 'no')),
-        CONSTRAINT mpv_feedback_connection CHECK (connection IN ('yes', 'no')),
-        CONSTRAINT mpv_feedback_replay CHECK (replay_intent IN ('yes', 'no'))
-      );
-      ALTER TABLE mpv_feedback DROP CONSTRAINT IF EXISTS mpv_feedback_game;
-      ALTER TABLE mpv_feedback
-        ADD CONSTRAINT mpv_feedback_game
-        CHECK (game_id IN ('discovery-together', 'guess-about-me', 'love-style-sample'))
+      SELECT EXISTS (
+        SELECT 1
+        FROM schema_migrations
+        WHERE version = 2 AND name = 'mpv_feedback'
+      ) AS ready
     `,
     )
+    .then((result) => {
+      if (!result.rows[0]?.ready) {
+        throw new Error('Schema PostgreSQL desatualizado. Execute npm run db:migrate.')
+      }
+    })
     .catch((error) => {
       schemaReady = undefined
-      throw error
+      throw new Error('Schema PostgreSQL indisponível. Execute npm run db:migrate.', {
+        cause: error,
+      })
     })
   await schemaReady
 }

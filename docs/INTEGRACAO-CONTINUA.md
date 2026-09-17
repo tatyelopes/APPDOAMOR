@@ -33,10 +33,12 @@ Uma alteração só fica verde quando todos estes passos passam:
 4. validação do contrato OpenAPI;
 5. validação da modelagem de ameaças;
 6. validação do inventário LGPD;
-7. validação da API e da exportação de feedback;
-8. validação da execução com configuração de produção;
-9. validação automatizada da experiência móvel em cinco tamanhos de tela;
-10. validação da estrutura, das dependências e das fórmulas do plano operacional.
+7. aplicação das migrações em PostgreSQL 18 descartável;
+8. validação do schema, da integridade e da idempotência das migrações;
+9. validação da API e da exportação de feedback;
+10. validação da execução com configuração de produção;
+11. validação automatizada da experiência móvel em cinco tamanhos de tela;
+12. validação da estrutura, das dependências e das fórmulas do plano operacional.
 
 A validação móvel usa o navegador Chrome já presente na imagem padrão do runner. O script também preserva compatibilidade local com Edge, Chrome e Chromium em Windows, Linux e macOS.
 
@@ -46,6 +48,8 @@ No Windows, execute a partir da raiz do repositório:
 
 ```powershell
 npm.cmd ci --ignore-scripts
+node --env-file=.env.postgres.local scripts/migrate-database.mjs
+node --env-file=.env.postgres.local scripts/validate-postgres-database.mjs
 npm.cmd run lint
 npm.cmd run format:check
 npm.cmd run build

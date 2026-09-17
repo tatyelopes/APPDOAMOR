@@ -24,6 +24,7 @@ O projeto compila, mas ainda depende de integração bilateral completa, testes 
 - [Arquitetura](docs/ARCHITECTURE.md)
 - [Ambientes local, homologação e produção](docs/AMBIENTES.md)
 - [Modelo de dados](docs/MODELO-DE-DADOS.md)
+- [Banco PostgreSQL local e migrações](docs/BANCO-DE-DADOS-E-MIGRACOES.md)
 - [Modelagem de ameaças](docs/MODELAGEM-DE-AMEACAS.md)
 - [Inventário de dados e bases legais LGPD](docs/INVENTARIO-DE-DADOS-E-BASES-LEGAIS-LGPD.md)
 - [Contrato e versionamento da API](docs/CONTRATO-E-VERSIONAMENTO-DA-API.md)
@@ -63,6 +64,8 @@ npm.cmd run validate:lgpd
 npm.cmd run validate:mpv-feedback
 npm.cmd run validate:mpv-production
 ```
+
+O PostgreSQL local e as migrações versionadas estão documentados no [guia de banco de dados](docs/BANCO-DE-DADOS-E-MIGRACOES.md). Com `DATABASE_URL` carregada, use `npm.cmd run db:migrate` e `npm.cmd run validate:database`.
 
 Para exportar os feedbacks do MPV em CSV, configure o mesmo `MPV_EXPORT_TOKEN` da API e execute `npm.cmd run export:mpv-feedback`. O procedimento e os limites desta versão estão no [guia do feedback controlado](docs/FEEDBACK-MPV-CONTROLADO.md).
 
