@@ -1,8 +1,8 @@
 # Escopo do MPV de validação de formato — Conectadois
 
-**Versão:** 1.1
-**Data:** 16/09/2026
-**Status:** escopo congelado
+**Versão:** 1.2
+**Data:** 17/09/2026
+**Status:** escopo ampliado por decisão da Product Owner
 
 ## Relação com o plano completo
 
@@ -12,7 +12,7 @@ Ao final do teste, os aprendizados serão registrados como insumo. Qualquer muda
 
 ## Objetivo
 
-Validar, com o menor investimento possível, se um casal entende, conclui e deseja repetir jogos curtos de conexão no mesmo celular.
+Validar, com o menor investimento possível, se um casal entende, conclui e deseja repetir jogos curtos de conexão no mesmo celular, incluindo uma amostra individual de preferências ao receber carinho.
 
 Este MPV não tenta validar cadastro, pareamento remoto, retenção de longo prazo, monetização ou a plataforma completa. A pesquisa não é pré-requisito desta trilha: o protótipo será colocado diretamente em uso e a decisão sobre o formato será tomada pelos sinais coletados no próprio fluxo.
 
@@ -26,8 +26,10 @@ Casais conseguem jogar sem mediação, percebem descoberta ou conexão e demonst
 - uso presencial em um único celular no modelo passa-e-joga;
 - entrada direta, sem conta e sem onboarding longo;
 - experiência neutra, sem exibir o nome do aplicativo em título, cabeçalho, metadados ou rodapé;
-- dois jogos com três rodadas por sessão;
+- dois jogos com três rodadas por sessão e uma amostra individual com cinco perguntas;
 - seis cartas leves por jogo, doze no total;
+- escolha visual de cartas fechadas antes de revelar cada pergunta;
+- seis situações autorais na amostra de carinho, com cinco sorteadas por sessão;
 - opção de pular uma carta;
 - fechamento curto com três sinais e sugestão aberta opcional;
 - nenhum nome, contato, resposta de rodada ou escolha íntima armazenado; os sinais e a sugestão opcional são centralizados para análise do teste.
@@ -45,6 +47,12 @@ O formato valida se perguntas guiadas geram conversa e descoberta com fricção 
 Uma pessoa escolhe em segredo uma opção sobre si, passa o aparelho e a outra tenta adivinhar. O app revela a escolha, convida a uma conversa curta e alterna os papéis.
 
 O formato valida se a dinâmica de palpite e revelação torna a experiência mais divertida e repetível.
+
+### 3. Seu jeito de receber carinho
+
+Uma pessoa escolhe cinco cartas fechadas, responde a situações cotidianas e recebe um resultado indicativo com as duas preferências mais fortes entre palavras que valorizam, presença de verdade, gestos que ajudam, lembranças com significado e proximidade e toque consentido.
+
+As perguntas, opções, rótulos e explicações são autorais. A experiência não reproduz questionários comerciais, não se apresenta como teste oficial e informa que o resultado serve somente para reflexão, sem caráter diagnóstico. Respostas e pontuação existem apenas na memória da sessão e não são enviadas ao servidor.
 
 ## Sinais coletados
 
@@ -78,7 +86,7 @@ Se os critérios não forem atingidos, ajustar somente regras, instruções ou c
 - backend, banco de dados, sincronização e respostas remotas;
 - painel administrativo, analytics de terceiros e notificações;
 - níveis, progressão, streak, conquistas e histórico;
-- testes de linguagens do amor, temperamentos ou compatibilidade;
+- testes oficiais, diagnósticos, temperamentos ou cálculos de compatibilidade;
 - assinatura, pagamento, landing page e lançamento público;
 - PWA instalável, modo offline completo e lojas de aplicativos;
 - catálogo amplo, CMS e produção de dezenas de atividades;
@@ -90,8 +98,10 @@ Esses itens continuam pertencendo ao plano completo quando já previstos nele; a
 
 O MPV está pronto para decisão quando:
 
-- os dois jogos funcionarem de ponta a ponta em celular;
+- os dois jogos e a amostra autoral funcionarem de ponta a ponta em celular;
 - cada jogo tiver seis cartas leves e três rodadas por sessão;
+- a amostra apresentar cinco perguntas, resultado indicativo e aviso de caráter autoral e não diagnóstico;
+- as três experiências permitirem escolher cartas fechadas antes de revelar as perguntas;
 - pular, reiniciar e trocar de jogo funcionarem;
 - o feedback de três sinais e a sugestão opcional estiverem disponíveis;
 - o fluxo crítico passar por QA mobile e acessibilidade básica;
@@ -101,4 +111,4 @@ O MPV está pronto para decisão quando:
 
 ## Regra de proteção do escopo
 
-Nenhuma funcionalidade entra na trilha do MPV antes da decisão sobre o formato. Qualquer inclusão nesse teste exige remover outro item de esforço equivalente e demonstrar que ela é indispensável para a validação. Essa regra não cancela nem altera o backlog do aplicativo completo.
+Nenhuma funcionalidade entra na trilha do MPV sem decisão explícita de produto. Em 17/09/2026, a Product Owner autorizou a amostra de preferências afetivas e o novo baralho visual como exceção consciente ao congelamento anterior. A ampliação exige nova validação automatizada, nova passagem física no Chrome e análise separada do feedback por experiência. Essa decisão não cancela nem altera automaticamente o backlog do aplicativo completo.

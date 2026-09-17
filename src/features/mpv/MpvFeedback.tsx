@@ -1,6 +1,6 @@
 import { FormEvent, useState } from 'react'
 
-type GameId = 'discovery-together' | 'guess-about-me'
+type GameId = 'discovery-together' | 'guess-about-me' | 'love-style-sample'
 type SignalValue = 'yes' | 'no'
 
 type FeedbackAnswers = {
@@ -15,7 +15,7 @@ type MpvFeedbackProps = {
   onFinish: () => void
 }
 
-const questions: {
+const coupleQuestions: {
   key: keyof FeedbackAnswers
   label: string
 }[] = [
@@ -25,6 +25,15 @@ const questions: {
     label: 'Vocês descobriram algo ou se sentiram mais conectados?',
   },
   { key: 'replayIntent', label: 'Jogariam novamente?' },
+]
+
+const individualQuestions: typeof coupleQuestions = [
+  { key: 'clarity', label: 'Foi fácil entender esta experiência?' },
+  {
+    key: 'connection',
+    label: 'O resultado ajudou você a refletir sobre como recebe carinho?',
+  },
+  { key: 'replayIntent', label: 'Você faria esta experiência novamente?' },
 ]
 
 const initialAnswers: FeedbackAnswers = {
@@ -46,6 +55,8 @@ export default function MpvFeedback({ gameId, onPlayAgain, onFinish }: MpvFeedba
   const [error, setError] = useState('')
 
   const isComplete = Object.values(answers).every(Boolean)
+  const isIndividual = gameId === 'love-style-sample'
+  const feedbackQuestions = isIndividual ? individualQuestions : coupleQuestions
 
   function updateAnswer(key: keyof FeedbackAnswers, value: SignalValue) {
     setAnswers((currentAnswers) => ({ ...currentAnswers, [key]: value }))
@@ -96,12 +107,15 @@ export default function MpvFeedback({ gameId, onPlayAgain, onFinish }: MpvFeedba
         <span aria-hidden="true">✓</span>
         <div>
           <h2 id="feedback-success-title">Obrigado pelo feedback!</h2>
-          <p>O feedback foi enviado sem nomes ou respostas das rodadas.</p>
+          <p>
+            O feedback foi enviado sem nomes nem respostas{' '}
+            {isIndividual ? 'da amostra' : 'das rodadas'}.
+          </p>
         </div>
 
         <div className="mpv-complete-actions">
           <button className="mpv-primary-button" type="button" onClick={onPlayAgain}>
-            Jogar novamente
+            {isIndividual ? 'Fazer novamente' : 'Jogar novamente'}
           </button>
           <button className="mpv-secondary-button" type="button" onClick={onFinish}>
             Encerrar
@@ -115,12 +129,16 @@ export default function MpvFeedback({ gameId, onPlayAgain, onFinish }: MpvFeedba
     <form className="mpv-feedback-form" onSubmit={submitFeedback}>
       <div className="mpv-feedback-heading">
         <p className="mpv-eyebrow">TRÊS SINAIS RÁPIDOS</p>
-        <h2>Como foi jogar juntos?</h2>
-        <p>O conteúdo da conversa não faz parte deste feedback.</p>
+        <h2>{isIndividual ? 'Como foi esta experiência?' : 'Como foi jogar juntos?'}</h2>
+        <p>
+          {isIndividual
+            ? 'Suas escolhas e seu resultado não fazem parte deste feedback.'
+            : 'O conteúdo da conversa não faz parte deste feedback.'}
+        </p>
       </div>
 
       <div className="mpv-feedback-questions">
-        {questions.map((question, index) => (
+        {feedbackQuestions.map((question, index) => (
           <fieldset key={question.key}>
             <legend>
               <span>{index + 1}</span>

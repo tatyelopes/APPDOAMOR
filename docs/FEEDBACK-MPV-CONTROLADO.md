@@ -2,7 +2,7 @@
 
 **Versão:** 1.0
 **Data:** 16/09/2026
-**Status:** publicado no ambiente gratuito controlado em 16/09/2026; passagem física no Chrome aprovada com ressalva, Safari adiado e ainda não validado.
+**Status:** publicado no ambiente gratuito controlado em 16/09/2026; a versão ampliada de 17/09/2026 aceita feedback das três experiências e aguarda nova passagem física no Chrome. Safari continua adiado e não validado.
 
 ## Objetivo
 
@@ -38,7 +38,7 @@ Não exige conta. Corpo JSON:
 
 Regras:
 
-- `gameId`: `discovery-together` ou `guess-about-me`;
+- `gameId`: `discovery-together`, `guess-about-me` ou `love-style-sample`;
 - os três sinais: `yes` ou `no`;
 - `suggestion`: opcional, texto com até 500 caracteres;
 - `submissionId`: idempotência; o mesmo valor não cria outro registro;

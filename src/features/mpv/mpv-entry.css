@@ -176,6 +176,7 @@
 .mpv-complete-card h1:focus-visible,
 .mpv-handoff-card h1:focus-visible,
 .mpv-option-button:focus-visible,
+.mpv-facedown-card:focus-visible,
 .mpv-feedback-skip:focus-visible {
   outline: 3px solid var(--mpv-champagne);
   outline-offset: 4px;
@@ -191,6 +192,12 @@
   background:
     radial-gradient(circle at 95% 0, #a8c3a025, transparent 34%),
     linear-gradient(135deg, #3f3f42, #2d2531);
+}
+
+.mpv-game-love-style-sample {
+  background:
+    radial-gradient(circle at 95% 0, #d79ab02b, transparent 36%),
+    linear-gradient(135deg, #563044, #302135);
 }
 
 .mpv-game-symbol {
@@ -437,6 +444,167 @@
   border-radius: inherit;
   background: linear-gradient(90deg, var(--mpv-gold), var(--mpv-champagne));
   transition: width 240ms ease;
+}
+
+.mpv-deck-picker {
+  min-width: 0;
+  padding: clamp(30px, 6vw, 56px) clamp(18px, 4vw, 40px);
+  border: 1px solid #e8c39e55;
+  border-radius: 28px;
+  background:
+    radial-gradient(circle at 50% 12%, #d4a94e1c, transparent 33%),
+    linear-gradient(145deg, #47243f, #281526);
+  box-shadow: 0 30px 90px #14071388;
+  text-align: center;
+}
+
+.mpv-deck-picker h1 {
+  margin: 12px 0 8px;
+  color: var(--mpv-cream);
+  font-family: var(--font-display);
+  font-size: clamp(36px, 6vw, 54px);
+  font-weight: 600;
+  line-height: 1.08;
+}
+
+.mpv-deck-hint {
+  max-width: 460px;
+  margin: 0 auto;
+  color: #cdbfc9;
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.mpv-card-deck {
+  width: min(100%, 560px);
+  display: grid;
+  grid-template-columns: repeat(var(--deck-count, 3), minmax(44px, 1fr));
+  align-items: center;
+  gap: clamp(7px, 1.8vw, 16px);
+  margin: 34px auto 22px;
+  perspective: 900px;
+}
+
+.mpv-card-deck-1 {
+  --deck-count: 1;
+  width: min(118px, 42%);
+}
+
+.mpv-card-deck-2 {
+  --deck-count: 2;
+  width: min(260px, 72%);
+}
+
+.mpv-card-deck-3 {
+  --deck-count: 3;
+}
+
+.mpv-card-deck-4 {
+  --deck-count: 4;
+}
+
+.mpv-card-deck-5 {
+  --deck-count: 5;
+}
+
+.mpv-facedown-card {
+  min-width: 44px;
+  min-height: 112px;
+  aspect-ratio: 2 / 3;
+  padding: 5px;
+  border: 1px solid #f1d9aecc;
+  border-radius: 13px;
+  color: var(--mpv-champagne);
+  background:
+    linear-gradient(135deg, #ffffff12 25%, transparent 25%) 0 0 / 14px 14px,
+    linear-gradient(315deg, #ffffff0b 25%, transparent 25%) 0 0 / 14px 14px,
+    linear-gradient(145deg, #6e365a, #32182f);
+  box-shadow:
+    0 16px 28px #13071270,
+    inset 0 0 0 2px #24112399;
+  transform: translateY(0) rotateY(0);
+  transform-style: preserve-3d;
+  transition:
+    transform 360ms ease,
+    filter 180ms ease,
+    box-shadow 180ms ease;
+}
+
+.mpv-facedown-card:hover {
+  filter: brightness(1.08);
+  box-shadow:
+    0 20px 32px #13071288,
+    0 0 0 2px #e8c39e33,
+    inset 0 0 0 2px #24112399;
+  transform: translateY(-7px);
+}
+
+.mpv-facedown-card:disabled {
+  cursor: default;
+}
+
+.mpv-facedown-card.is-opening {
+  filter: brightness(1.18);
+  transform: translateY(-8px) rotateY(88deg);
+}
+
+.mpv-card-back-frame {
+  width: 100%;
+  height: 100%;
+  display: grid;
+  place-items: center;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid #e8c39e70;
+  border-radius: 9px;
+  background: radial-gradient(circle, #d4a94e16 0 2px, transparent 3px) 0 0 / 15px 15px;
+}
+
+.mpv-card-back-orbit {
+  width: 58%;
+  aspect-ratio: 1;
+  position: absolute;
+  border: 1px solid #e8c39e88;
+  transform: rotate(45deg);
+}
+
+.mpv-card-back-orbit::before,
+.mpv-card-back-orbit::after {
+  content: '';
+  position: absolute;
+  inset: 12%;
+  border: 1px solid #e8c39e55;
+  border-radius: 50%;
+}
+
+.mpv-card-back-orbit::after {
+  inset: 28%;
+  border-radius: 0;
+}
+
+.mpv-card-back-heart {
+  position: relative;
+  z-index: 1;
+  font-family: var(--font-display);
+  font-size: clamp(24px, 5vw, 38px);
+  text-shadow: 0 2px 12px #170a16;
+}
+
+.mpv-card-back-stars {
+  position: absolute;
+  bottom: 9%;
+  color: #e8c39eaa;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+.mpv-deck-progress {
+  margin: 0;
+  color: #aa98a5;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
 }
 
 .mpv-question-card,
@@ -961,6 +1129,92 @@
   width: 100%;
 }
 
+.mpv-love-options {
+  display: grid;
+  gap: 10px;
+}
+
+.mpv-love-options .mpv-option-button {
+  min-height: 62px;
+}
+
+.mpv-love-secondary {
+  max-width: 520px;
+  margin: 24px auto 0;
+  padding: 18px;
+  border: 1px solid #e8c39e42;
+  border-radius: 15px;
+  background: #ffffff09;
+}
+
+.mpv-love-secondary small,
+.mpv-love-secondary strong {
+  display: block;
+}
+
+.mpv-love-secondary small {
+  color: var(--mpv-gold);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+}
+
+.mpv-love-secondary strong {
+  margin: 7px 0;
+  color: var(--mpv-cream);
+  font-family: var(--font-display);
+  font-size: 22px;
+}
+
+.mpv-love-secondary p {
+  margin: 0;
+}
+
+.mpv-love-score-list {
+  display: grid;
+  gap: 11px;
+  max-width: 520px;
+  margin: 26px auto 0;
+  text-align: left;
+}
+
+.mpv-love-score > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 5px;
+  color: #d7c8d2;
+  font-size: 11px;
+}
+
+.mpv-love-score > div strong {
+  color: var(--mpv-champagne);
+}
+
+.mpv-love-score > span {
+  height: 7px;
+  display: block;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #ffffff14;
+}
+
+.mpv-love-score i {
+  height: 100%;
+  display: block;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #d79ab0, var(--mpv-champagne));
+}
+
+.mpv-love-disclaimer {
+  max-width: 520px;
+  margin-top: 24px !important;
+  padding-top: 18px;
+  border-top: 1px solid #ffffff17;
+  color: #aa98a5 !important;
+  font-size: 11px !important;
+}
+
 .mpv-entry-footer {
   width: min(1120px, calc(100% - 40px));
   margin: 0 auto;
@@ -1083,7 +1337,8 @@
 
   .mpv-question-card,
   .mpv-complete-card,
-  .mpv-handoff-card {
+  .mpv-handoff-card,
+  .mpv-deck-picker {
     padding: 28px 22px;
     border-radius: 22px;
   }
@@ -1102,6 +1357,21 @@
     min-height: 62px;
   }
 
+  .mpv-card-deck {
+    gap: 6px;
+    margin-top: 28px;
+  }
+
+  .mpv-facedown-card {
+    min-height: 96px;
+    padding: 3px;
+    border-radius: 10px;
+  }
+
+  .mpv-card-back-frame {
+    border-radius: 7px;
+  }
+
   .mpv-signal-options label {
     min-width: 0;
   }
@@ -1109,7 +1379,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .mpv-game-card,
-  .mpv-progress-track span {
+  .mpv-progress-track span,
+  .mpv-facedown-card {
     transition: none;
   }
 }

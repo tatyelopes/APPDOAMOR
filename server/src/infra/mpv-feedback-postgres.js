@@ -30,11 +30,15 @@ async function ensureSchema() {
         replay_intent varchar(3) NOT NULL,
         suggestion varchar(500) NOT NULL DEFAULT '',
         created_at timestamptz NOT NULL DEFAULT now(),
-        CONSTRAINT mpv_feedback_game CHECK (game_id IN ('discovery-together', 'guess-about-me')),
+        CONSTRAINT mpv_feedback_game CHECK (game_id IN ('discovery-together', 'guess-about-me', 'love-style-sample')),
         CONSTRAINT mpv_feedback_clarity CHECK (clarity IN ('yes', 'no')),
         CONSTRAINT mpv_feedback_connection CHECK (connection IN ('yes', 'no')),
         CONSTRAINT mpv_feedback_replay CHECK (replay_intent IN ('yes', 'no'))
-      )
+      );
+      ALTER TABLE mpv_feedback DROP CONSTRAINT IF EXISTS mpv_feedback_game;
+      ALTER TABLE mpv_feedback
+        ADD CONSTRAINT mpv_feedback_game
+        CHECK (game_id IN ('discovery-together', 'guess-about-me', 'love-style-sample'))
     `,
     )
     .catch((error) => {

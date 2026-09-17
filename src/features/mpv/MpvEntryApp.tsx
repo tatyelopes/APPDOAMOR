@@ -1,10 +1,11 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import cardBank from '../game/mpv-cards.json'
 import DiscoveryTogetherGame from './DiscoveryTogetherGame'
 import GuessAboutMeGame from './GuessAboutMeGame'
+import LoveStyleSample from './LoveStyleSample'
 import './mpv-entry.css'
 
-type GameId = 'discovery-together' | 'guess-about-me'
+type GameId = 'discovery-together' | 'guess-about-me' | 'love-style-sample'
 
 type GamePresentation = {
   id: GameId
@@ -16,6 +17,7 @@ type GamePresentation = {
   duration: string
   symbol: string
   steps: string[]
+  selectionSummary: string
 }
 
 const games: GamePresentation[] = [
@@ -33,6 +35,7 @@ const games: GamePresentation[] = [
       'Cada pessoa responde em voz alta.',
       'Conversem e avancem quando quiserem.',
     ],
+    selectionSummary: '3 perguntas sorteadas entre 6 cartas leves.',
   },
   {
     id: 'guess-about-me',
@@ -48,6 +51,24 @@ const games: GamePresentation[] = [
       'Passem o celular para a outra pessoa adivinhar.',
       'Revelem a resposta e alternem os papéis.',
     ],
+    selectionSummary: '3 rodadas sorteadas entre 6 cartas leves.',
+  },
+  {
+    id: 'love-style-sample',
+    slug: 'jeito-de-receber-carinho',
+    eyebrow: 'AMOSTRA INDIVIDUAL',
+    title: 'Seu jeito de receber carinho',
+    description:
+      'Responda situações rápidas e veja quais formas de carinho mais combinam com você.',
+    promise: 'Escolha o gesto que mais faria diferença para você em cada situação.',
+    duration: '5 perguntas · cerca de 3 min',
+    symbol: '♡',
+    steps: [
+      'Escolha uma carta fechada para revelar a situação.',
+      'Marque a opção que mais combina com você hoje.',
+      'Veja suas duas preferências mais fortes no final.',
+    ],
+    selectionSummary: '5 perguntas sorteadas entre 6 situações autorais.',
   },
 ]
 
@@ -55,15 +76,6 @@ export default function MpvEntryApp() {
   const [selectedGame, setSelectedGame] = useState<GamePresentation | null>(null)
   const [activeGame, setActiveGame] = useState<GameId | null>(null)
   const [sessionInProgress, setSessionInProgress] = useState(false)
-
-  const cardCounts = useMemo(
-    () =>
-      Object.fromEntries(cardBank.games.map((game) => [game.id, game.cards.length])) as Record<
-        GameId,
-        number
-      >,
-    [],
-  )
 
   useEffect(() => {
     document.title = 'Um momento a dois'
@@ -150,6 +162,13 @@ export default function MpvEntryApp() {
           onSessionComplete={() => setSessionInProgress(false)}
           onSessionRestart={() => setSessionInProgress(true)}
         />
+      ) : selectedGame?.id === 'love-style-sample' && activeGame === 'love-style-sample' ? (
+        <LoveStyleSample
+          onBack={returnToInstructions}
+          onChooseAnother={returnToGames}
+          onSessionComplete={() => setSessionInProgress(false)}
+          onSessionRestart={() => setSessionInProgress(true)}
+        />
       ) : selectedGame ? (
         <main className="mpv-instructions" aria-labelledby="selected-game-title">
           <button className="mpv-back-button" type="button" onClick={returnToGames}>
@@ -177,10 +196,7 @@ export default function MpvEntryApp() {
               <span aria-hidden="true">✓</span>
               <div>
                 <strong>Jogo selecionado</strong>
-                <p>
-                  {cardBank.roundsPerSession} rodadas sorteadas entre {cardCounts[selectedGame.id]}{' '}
-                  cartas leves.
-                </p>
+                <p>{selectedGame.selectionSummary}</p>
               </div>
             </div>
 
@@ -203,15 +219,15 @@ export default function MpvEntryApp() {
               <em> Descubram algo novo.</em>
             </h1>
             <p>
-              Dois jogos rápidos para conversar, rir e se conhecer um pouco mais — juntos no mesmo
-              celular.
+              Três experiências rápidas para conversar, rir e se conhecer um pouco mais — juntos no
+              mesmo celular.
             </p>
             <ul className="mpv-benefits" aria-label="Como funciona">
               <li>
                 <span aria-hidden="true">✓</span> Sem cadastro
               </li>
               <li>
-                <span aria-hidden="true">✓</span> Apenas 3 rodadas
+                <span aria-hidden="true">✓</span> Cartas para revelar
               </li>
               <li>
                 <span aria-hidden="true">✓</span> Vocês podem pular

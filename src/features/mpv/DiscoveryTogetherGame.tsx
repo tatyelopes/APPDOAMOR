@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import CardDeckPicker from './CardDeckPicker'
 import MpvFeedback from './MpvFeedback'
 
 type DiscoveryCard = {
@@ -35,17 +36,24 @@ export default function DiscoveryTogetherGame({
   onSessionComplete,
   onSessionRestart,
 }: DiscoveryTogetherGameProps) {
-  const [sessionCards, setSessionCards] = useState(() => drawCards(cards, rounds))
+  const [remainingCards, setRemainingCards] = useState(() => drawCards(cards, rounds))
+  const [currentCard, setCurrentCard] = useState<DiscoveryCard | null>(null)
   const [roundIndex, setRoundIndex] = useState(0)
   const [completed, setCompleted] = useState(false)
   const headingRef = useRef<HTMLHeadingElement>(null)
 
-  const currentCard = sessionCards[roundIndex]
-  const isLastRound = roundIndex === sessionCards.length - 1
+  const totalRounds = Math.min(rounds, cards.length)
+  const isLastRound = roundIndex === totalRounds - 1
 
   useEffect(() => {
-    headingRef.current?.focus()
-  }, [completed, roundIndex])
+    if (currentCard || completed) headingRef.current?.focus()
+  }, [completed, currentCard])
+
+  function revealCard(index: number) {
+    const selectedCard = remainingCards[index]
+    setRemainingCards((current) => current.filter((_, itemIndex) => itemIndex !== index))
+    setCurrentCard(selectedCard)
+  }
 
   function advanceRound() {
     if (isLastRound) {
@@ -55,10 +63,12 @@ export default function DiscoveryTogetherGame({
     }
 
     setRoundIndex((currentRound) => currentRound + 1)
+    setCurrentCard(null)
   }
 
   function playAgain() {
-    setSessionCards(drawCards(cards, rounds))
+    setRemainingCards(drawCards(cards, rounds))
+    setCurrentCard(null)
     setRoundIndex(0)
     setCompleted(false)
     onSessionRestart()
@@ -90,11 +100,38 @@ export default function DiscoveryTogetherGame({
     )
   }
 
-  if (!currentCard) {
-    return null
-  }
+  const progress = (roundIndex / totalRounds) * 100
 
-  const progress = ((roundIndex + 1) / sessionCards.length) * 100
+  if (!currentCard) {
+    return (
+      <main className="mpv-play" aria-labelledby="mpv-deck-title">
+        <div className="mpv-play-topbar">
+          <button className="mpv-back-button" type="button" onClick={onBack}>
+            <span aria-hidden="true">←</span> Voltar às instruções
+          </button>
+          <p>
+            Pergunta {roundIndex + 1} de {totalRounds}
+          </p>
+        </div>
+        <div
+          className="mpv-progress-track"
+          role="progressbar"
+          aria-label="Progresso do jogo"
+          aria-valuemin={0}
+          aria-valuemax={totalRounds}
+          aria-valuenow={roundIndex}
+        >
+          <span style={{ width: `${progress}%` }} />
+        </div>
+        <CardDeckPicker
+          availableCards={remainingCards.length}
+          round={roundIndex + 1}
+          totalRounds={totalRounds}
+          onChoose={revealCard}
+        />
+      </main>
+    )
+  }
 
   return (
     <main className="mpv-play" aria-labelledby="discovery-question-title">
@@ -103,7 +140,7 @@ export default function DiscoveryTogetherGame({
           <span aria-hidden="true">←</span> Voltar às instruções
         </button>
         <p aria-live="polite">
-          Pergunta {roundIndex + 1} de {sessionCards.length}
+          Pergunta {roundIndex + 1} de {totalRounds}
         </p>
       </div>
 
@@ -112,10 +149,10 @@ export default function DiscoveryTogetherGame({
         role="progressbar"
         aria-label="Progresso do jogo"
         aria-valuemin={1}
-        aria-valuemax={sessionCards.length}
+        aria-valuemax={totalRounds}
         aria-valuenow={roundIndex + 1}
       >
-        <span style={{ width: `${progress}%` }} />
+        <span style={{ width: `${((roundIndex + 1) / totalRounds) * 100}%` }} />
       </div>
 
       <article className="mpv-question-card mpv-game-discovery-together">
@@ -137,7 +174,7 @@ export default function DiscoveryTogetherGame({
 
         <div className="mpv-question-actions">
           <button className="mpv-primary-button" type="button" onClick={advanceRound}>
-            {isLastRound ? 'Concluir jogo' : 'Próxima pergunta'}
+            {isLastRound ? 'Concluir jogo' : 'Escolher próxima carta'}
             <span aria-hidden="true">→</span>
           </button>
           <button className="mpv-skip-button" type="button" onClick={advanceRound}>

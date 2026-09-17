@@ -1,16 +1,19 @@
 # Revalidação mobile do MPV — 14/09/2026
 
-**Resultado:** matriz emulada aprovada e passagem física no Chrome aceita com ressalva em 16/09/2026; Safari permanece adiado e sem cobertura física.
+**Resultado:** versão ampliada aprovada na matriz emulada em 17/09/2026; a passagem física no Chrome de 16/09 cobre somente a versão anterior e precisa ser repetida. Safari permanece adiado e sem cobertura física.
 
 **Atualização de 16/09/2026:** a matriz foi repetida após incluir a sugestão aberta opcional e permaneceu aprovada nos 95 estados. O roteiro abaixo incorpora a passagem física que encerra a tarefa 132.
+
+**Atualização de 17/09/2026:** após a decisão de incluir a amostra autoral de preferências afetivas e o baralho visual, a matriz passou a inspecionar 185 estados. As três experiências, a escolha de cartas fechadas, cinco perguntas da amostra, resultado, reinício e feedback foram aprovados nos cinco viewports. A tarefa 142 registra a nova passagem física necessária no Chrome.
 
 ## Escopo executado
 
 - build de produção concluído sem erro;
 - Microsoft Edge 152.0.4191.62, motor Chromium, em modo headless e com emulação móvel;
 - viewports `320 × 568`, `360 × 800`, `390 × 844`, `412 × 915` e `667 × 375`;
-- 95 estados de tela inspecionados pelo validador `scripts/validate-mobile-mpv.mjs`;
-- fluxos completos de **Descoberta a Dois** e **Adivinhe de Mim** em todos os viewports;
+- 185 estados de tela inspecionados pelo validador `scripts/validate-mobile-mpv.mjs`;
+- fluxos completos de **Descoberta a Dois**, **Adivinhe de Mim** e **Seu jeito de receber carinho** em todos os viewports;
+- escolha acessível de cartas fechadas antes de cada pergunta, com redução correta do baralho;
 - seleção por evento real de toque, três rodadas, pulo antes e depois da passagem do aparelho, revelação, feedback, reinício e encerramento;
 - rotação durante a tela protegida de passagem do aparelho;
 - cancelamento de saída preservando rodada e escolha, seguido de confirmação encerrando a sessão;
@@ -23,11 +26,13 @@
 | Critério | Resultado | Evidência |
 |---|---|---|
 | Build de produção | Aprovado | TypeScript e Vite concluídos sem erro |
-| Layout sem rolagem horizontal | Aprovado | Nenhum overflow nos 95 estados e cinco viewports |
+| Layout sem rolagem horizontal | Aprovado | Nenhum overflow nos 185 estados e cinco viewports |
 | Entrada e seleção por toque | Aprovado | Toque abriu **Descoberta a Dois** nos cinco viewports |
 | Descoberta a Dois | Aprovado | Três rodadas, avanço, pulo, feedback e reinício concluídos em toda a matriz |
 | Sugestão de melhoria | Aprovado | Campo opcional aceita até 500 caracteres, envia ao servidor quando preenchido e permite envio vazio |
 | Adivinhe de Mim | Aprovado | Pulo na escolha secreta e no palpite avançou, limpou escolhas e não revelou conteúdo |
+| Baralho visual | Aprovado | Cartas fechadas funcionaram por toque, reduziram a cada escolha e mantiveram alvos mínimos de 44 px |
+| Amostra de carinho | Aprovado | Cinco perguntas, pontuação local, duas preferências principais, aviso autoral, reinício e feedback concluídos |
 | Rotação | Aprovado | A passagem protegida permaneceu ativa após rotação em toda a matriz |
 | Saída de sessão ativa | Aprovado | Cancelar preservou o estado e confirmar encerrou a sessão pelo botão voltar e pelo logotipo |
 | Alvos de ação | Aprovado | Nenhum alvo visível abaixo de 44 px |
@@ -113,9 +118,13 @@ A tarefa 132 só pode mudar para **Concluído sem ressalvas** quando as 12 etapa
 
 **Aceite:** aprovado com ressalva para um teste controlado orientado ao Chrome. Qualquer participação pelo Safari deve ser tratada como plataforma ainda não validada; antes de declarar compatibilidade com Safari, executar o roteiro físico correspondente e registrar aparelho, sistema e versão.
 
+### Impacto da ampliação de 17/09/2026
+
+O aceite físico acima permanece como evidência histórica da versão com dois jogos, mas não cobre o baralho visual nem a nova amostra. A versão ampliada está aprovada automaticamente, porém não deve herdar o aceite físico anterior. Repetir no Chrome pelo menos: entrada, escolha das três experiências, abertura de cartas, um fluxo completo de cada experiência, resultado da amostra, feedback e reinício. O Safari continua fora do escopo físico atual.
+
 ## Decisão
 
-A estrutura responsiva, o caminho feliz e as regressões MOB-01, MOB-02 e MOB-03 estão aprovados na matriz emulada. A tarefa 132 foi encerrada com ressalva para o escopo atual orientado ao Chrome, por decisão da Product Owner em 16/09/2026. Safari continua explicitamente não validado e deve ser retomado antes de afirmar suporte a essa plataforma.
+A estrutura responsiva, os três fluxos, o baralho visual e as regressões MOB-01, MOB-02 e MOB-03 estão aprovados na matriz emulada. A tarefa 132 preserva o aceite da versão anterior. A tarefa 142 permanece em andamento até repetir a passagem física da versão ampliada no Chrome. Safari continua explicitamente não validado e deve ser retomado antes de afirmar suporte a essa plataforma.
 
 ## Reproduzir
 

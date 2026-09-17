@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import CardDeckPicker from './CardDeckPicker'
 import MpvFeedback from './MpvFeedback'
 
 type GuessCard = {
@@ -17,7 +18,7 @@ type GuessAboutMeGameProps = {
   onSessionRestart: () => void
 }
 
-type GuessPhase = 'secret' | 'handoff' | 'guess' | 'reveal' | 'complete'
+type GuessPhase = 'deck' | 'secret' | 'handoff' | 'guess' | 'reveal' | 'complete'
 
 function drawCards(cards: GuessCard[], rounds: number) {
   const shuffled = [...cards]
@@ -38,38 +39,39 @@ export default function GuessAboutMeGame({
   onSessionComplete,
   onSessionRestart,
 }: GuessAboutMeGameProps) {
-  const [sessionCards, setSessionCards] = useState(() => drawCards(cards, rounds))
+  const [remainingCards, setRemainingCards] = useState(() => drawCards(cards, rounds))
+  const [currentCard, setCurrentCard] = useState<GuessCard | null>(null)
   const [roundIndex, setRoundIndex] = useState(0)
-  const [phase, setPhase] = useState<GuessPhase>('secret')
+  const [phase, setPhase] = useState<GuessPhase>('deck')
   const [secretChoice, setSecretChoice] = useState<number | null>(null)
   const [guessChoice, setGuessChoice] = useState<number | null>(null)
   const [matches, setMatches] = useState(0)
   const headingRef = useRef<HTMLHeadingElement>(null)
 
-  const currentCard = sessionCards[roundIndex]
+  const totalRounds = Math.min(rounds, cards.length)
   const chooser = roundIndex % 2 === 0 ? 'Pessoa 1' : 'Pessoa 2'
   const guesser = roundIndex % 2 === 0 ? 'Pessoa 2' : 'Pessoa 1'
-  const isLastRound = roundIndex === sessionCards.length - 1
+  const isLastRound = roundIndex === totalRounds - 1
   const isMatch = secretChoice !== null && guessChoice === secretChoice
 
   useEffect(() => {
-    headingRef.current?.focus()
+    if (phase !== 'deck') headingRef.current?.focus()
   }, [phase, roundIndex])
 
+  function revealCard(index: number) {
+    const selectedCard = remainingCards[index]
+    setRemainingCards((current) => current.filter((_, itemIndex) => itemIndex !== index))
+    setCurrentCard(selectedCard)
+    setPhase('secret')
+  }
+
   function confirmSecretChoice() {
-    if (secretChoice !== null) {
-      setPhase('handoff')
-    }
+    if (secretChoice !== null) setPhase('handoff')
   }
 
   function revealAnswer() {
-    if (guessChoice === null) {
-      return
-    }
-
-    if (guessChoice === secretChoice) {
-      setMatches((currentMatches) => currentMatches + 1)
-    }
+    if (guessChoice === null) return
+    if (guessChoice === secretChoice) setMatches((currentMatches) => currentMatches + 1)
     setPhase('reveal')
   }
 
@@ -77,6 +79,7 @@ export default function GuessAboutMeGame({
     if (isLastRound) {
       setSecretChoice(null)
       setGuessChoice(null)
+      setCurrentCard(null)
       setPhase('complete')
       onSessionComplete()
       return
@@ -85,16 +88,18 @@ export default function GuessAboutMeGame({
     setRoundIndex((currentRound) => currentRound + 1)
     setSecretChoice(null)
     setGuessChoice(null)
-    setPhase('secret')
+    setCurrentCard(null)
+    setPhase('deck')
   }
 
   function playAgain() {
-    setSessionCards(drawCards(cards, rounds))
+    setRemainingCards(drawCards(cards, rounds))
+    setCurrentCard(null)
     setRoundIndex(0)
     setSecretChoice(null)
     setGuessChoice(null)
     setMatches(0)
-    setPhase('secret')
+    setPhase('deck')
     onSessionRestart()
   }
 
@@ -107,7 +112,7 @@ export default function GuessAboutMeGame({
           </div>
           <p className="mpv-eyebrow">JOGO CONCLUÍDO</p>
           <h1 id="guess-complete-title" ref={headingRef} tabIndex={-1}>
-            Vocês acertaram {matches} de {sessionCards.length} palpites.
+            Vocês acertaram {matches} de {totalRounds} palpites.
           </h1>
           <p>
             Mais importante que acertar foi descobrir as respostas. Nenhuma escolha foi salva pelo
@@ -120,11 +125,40 @@ export default function GuessAboutMeGame({
     )
   }
 
-  if (!currentCard) {
-    return null
+  const progress = (roundIndex / totalRounds) * 100
+
+  if (phase === 'deck' || !currentCard) {
+    return (
+      <main className="mpv-play" aria-labelledby="mpv-deck-title">
+        <div className="mpv-play-topbar">
+          <button className="mpv-back-button" type="button" onClick={onBack}>
+            <span aria-hidden="true">←</span> Voltar às instruções
+          </button>
+          <p>
+            Rodada {roundIndex + 1} de {totalRounds}
+          </p>
+        </div>
+        <div
+          className="mpv-progress-track"
+          role="progressbar"
+          aria-label="Progresso do jogo"
+          aria-valuemin={0}
+          aria-valuemax={totalRounds}
+          aria-valuenow={roundIndex}
+        >
+          <span style={{ width: `${progress}%` }} />
+        </div>
+        <CardDeckPicker
+          availableCards={remainingCards.length}
+          round={roundIndex + 1}
+          totalRounds={totalRounds}
+          onChoose={revealCard}
+        />
+      </main>
+    )
   }
 
-  const progress = ((roundIndex + 1) / sessionCards.length) * 100
+  const currentProgress = ((roundIndex + 1) / totalRounds) * 100
 
   if (phase === 'handoff') {
     return (
@@ -134,7 +168,7 @@ export default function GuessAboutMeGame({
             <span aria-hidden="true">←</span> Sair do jogo
           </button>
           <p>
-            Rodada {roundIndex + 1} de {sessionCards.length}
+            Rodada {roundIndex + 1} de {totalRounds}
           </p>
         </div>
 
@@ -143,10 +177,10 @@ export default function GuessAboutMeGame({
           role="progressbar"
           aria-label="Progresso do jogo"
           aria-valuemin={1}
-          aria-valuemax={sessionCards.length}
+          aria-valuemax={totalRounds}
           aria-valuenow={roundIndex + 1}
         >
-          <span style={{ width: `${progress}%` }} />
+          <span style={{ width: `${currentProgress}%` }} />
         </div>
 
         <section className="mpv-handoff-card mpv-game-guess-about-me">
@@ -178,7 +212,7 @@ export default function GuessAboutMeGame({
           <span aria-hidden="true">←</span> Voltar às instruções
         </button>
         <p aria-live="polite">
-          Rodada {roundIndex + 1} de {sessionCards.length}
+          Rodada {roundIndex + 1} de {totalRounds}
         </p>
       </div>
 
@@ -187,10 +221,10 @@ export default function GuessAboutMeGame({
         role="progressbar"
         aria-label="Progresso do jogo"
         aria-valuemin={1}
-        aria-valuemax={sessionCards.length}
+        aria-valuemax={totalRounds}
         aria-valuenow={roundIndex + 1}
       >
-        <span style={{ width: `${progress}%` }} />
+        <span style={{ width: `${currentProgress}%` }} />
       </div>
 
       <article className="mpv-question-card mpv-game-guess-about-me">
@@ -231,7 +265,7 @@ export default function GuessAboutMeGame({
             </dl>
 
             <button className="mpv-primary-button" type="button" onClick={advanceRound}>
-              {isLastRound ? 'Concluir jogo' : 'Próxima rodada'}
+              {isLastRound ? 'Concluir jogo' : 'Escolher próxima carta'}
               <span aria-hidden="true">→</span>
             </button>
           </div>

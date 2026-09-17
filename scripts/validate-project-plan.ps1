@@ -10,9 +10,9 @@ $mpvCsv = $mpvMatch.Groups[1].Value
 $csv = $appCsv.TrimEnd() + [Environment]::NewLine + (($mpvCsv -split '\r?\n' | Select-Object -Skip 1) -join [Environment]::NewLine)
 foreach($line in $csv -split '\r?\n'){if(($line -split ';').Count -ne 13){throw "CSV deve ter 13 campos: $line"}}
 $tasks = @($csv | ConvertFrom-Csv -Delimiter ';')
-if($tasks.Count -ne 139){throw "O plano combinado deve ter 139 tarefas; encontrado: $($tasks.Count)"}
+if($tasks.Count -ne 142){throw "O plano combinado deve ter 142 tarefas; encontrado: $($tasks.Count)"}
 $mpvTasks = @($tasks | Where-Object Fase -eq 'MPV de teste')
-if($mpvTasks.Count -ne 16){throw "A trilha do MPV deve ter exatamente 16 tarefas; encontrado: $($mpvTasks.Count)"}
+if($mpvTasks.Count -ne 19){throw "A trilha do MPV deve ter exatamente 19 tarefas; encontrado: $($mpvTasks.Count)"}
 $ids = @{}; $deps = @{}
 foreach($task in $tasks){
   $id = [int]$task.ID

@@ -15,7 +15,7 @@ import {
 } from './src/shared/security.js'
 import { buildMetrics, clientEventNames, recordEvent } from './src/analytics.js'
 
-const feedbackGames = new Set(['discovery-together', 'guess-about-me'])
+const feedbackGames = new Set(['discovery-together', 'guess-about-me', 'love-style-sample'])
 const feedbackSignals = new Set(['yes', 'no'])
 const feedbackRateWindows = new Map()
 

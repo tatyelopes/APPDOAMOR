@@ -1,12 +1,12 @@
-# Fluxo do MPV — dois jogos no mesmo celular
+# Fluxo do MPV — jogos e amostra no mesmo celular
 
-**Versão:** 1.1
-**Data:** 16/09/2026
-**Status:** aprovado para implementação
+**Versão:** 1.2
+**Data:** 17/09/2026
+**Status:** implementado e em revalidação física
 
 ## Resultado esperado
 
-Uma pessoa abre o link, escolhe um dos dois jogos e o casal conclui três rodadas no mesmo celular sem criar conta, informar nomes ou receber mediação. Ao final, o casal responde três perguntas objetivas e pode escrever uma sugestão de melhoria.
+Uma pessoa abre o link e escolhe entre dois jogos para o casal e uma amostra individual de preferências afetivas. Antes de cada pergunta, escolhe uma carta fechada para revelar. Não há conta, nomes ou mediação. Ao final, o casal ou a pessoa responde três sinais objetivos e pode escrever uma sugestão de melhoria.
 
 ## Jornada principal
 
@@ -15,12 +15,19 @@ flowchart TD
     A[Entrada direta] --> B{Escolher jogo}
     B --> C[Descoberta a Dois]
     B --> D[Adivinhe de Mim]
+    B --> L[Seu jeito de receber carinho]
     C --> E[Instrução curta]
     D --> F[Instrução curta]
-    E --> G[Três rodadas]
-    F --> H[Escolha secreta, palpite e revelação por três rodadas]
+    L --> M[Instrução e aviso autoral]
+    E --> N[Escolher carta fechada]
+    F --> O[Escolher carta fechada]
+    M --> P[Escolher carta fechada]
+    N --> G[Três perguntas]
+    O --> H[Escolha secreta, palpite e revelação por três rodadas]
+    P --> Q[Cinco situações e resultado indicativo]
     G --> I[Fechamento]
     H --> I
+    Q --> I
     I --> J[Três sinais e sugestão opcional]
     J --> K[Jogar novamente ou encerrar]
 ```
@@ -29,18 +36,21 @@ flowchart TD
 
 | Estado | Conteúdo obrigatório | Ações | Próximo estado |
 |---|---|---|---|
-| MPV-01 Entrada | proposta em uma frase, dois cartões de jogo, duração aproximada | escolher jogo | MPV-02 |
+| MPV-01 Entrada | proposta em uma frase, três cartões de experiência, duração aproximada | escolher experiência | MPV-02 |
 | MPV-02 Instrução | regra em até três passos, aviso para passar o celular quando aplicável | começar, voltar | MPV-03 ou MPV-04 |
-| MPV-03 Descoberta | pergunta, rodada `1 de 3`, lembrete para ambos responderem em voz alta | próxima, pular, sair | próxima rodada ou MPV-06 |
+| MPV-02A Baralho | cartas fechadas restantes, rodada e instrução de toque | escolher carta, sair | pergunta da experiência |
+| MPV-03 Descoberta | pergunta revelada, rodada `1 de 3`, lembrete para ambos responderem em voz alta | próxima carta, pular, sair | MPV-02A ou MPV-06 |
 | MPV-04 Escolha secreta | pergunta e opções para quem responde sobre si | confirmar escolha, pular, sair | MPV-05 |
 | MPV-05 Palpite e revelação | bloqueio “passe o celular”, palpite da outra pessoa e comparação final | revelar, próxima, pular, sair | alternar papel ou MPV-06 |
+| MPV-05A Amostra de carinho | situação revelada e cinco gestos autorais | escolher gesto, próxima carta | resultado após cinco respostas |
+| MPV-05B Resultado indicativo | duas preferências mais fortes, distribuição e aviso não diagnóstico | enviar feedback, refazer, encerrar | MPV-06 ou MPV-01 |
 | MPV-06 Fechamento | conclusão, três perguntas de feedback e sugestão opcional | escrever, enviar, jogar novamente, encerrar | MPV-01 ou fim |
 
 ## Fluxo 1 — Descoberta a Dois
 
 1. O casal escolhe **Descoberta a Dois**.
 2. A instrução informa: “Leiam a pergunta, respondam em voz alta e conversem sem pressa”.
-3. O app exibe uma carta por vez.
+3. O app mostra as cartas fechadas restantes e o casal escolhe qual revelar.
 4. O casal toca em **Próxima** quando ambos terminarem ou em **Pular** se não quiser responder.
 5. Após três cartas exibidas ou puladas, o app abre o fechamento.
 
@@ -70,6 +80,15 @@ Regras:
 - a tela de passagem não mostra pergunta, opções ou escolha;
 - não usar ranking, vencedor, compatibilidade ou avaliação da pessoa parceira;
 - pular limpa escolha e palpite antes de avançar.
+
+## Fluxo 3 — Seu jeito de receber carinho
+
+1. A pessoa lê o aviso de que a amostra é autoral, indicativa e não oficial.
+2. Escolhe uma das cartas fechadas restantes para revelar uma situação.
+3. Seleciona, entre cinco gestos, aquele que mais combina com ela hoje.
+4. Repete o fluxo por cinco perguntas sorteadas entre seis situações.
+5. O app soma localmente as escolhas e mostra as duas preferências mais fortes e a distribuição completa.
+6. A pontuação e as respostas são descartadas ao atualizar, sair ou refazer; somente o feedback final opcional pode chegar ao servidor.
 
 ## Fechamento e feedback
 
@@ -105,11 +124,13 @@ Na versão controlada, cada envio é encaminhado a `POST /api/mpv/feedback` e ar
 
 ## Critérios de aceite
 
-- a entrada apresenta somente os dois jogos do MPV;
+- a entrada apresenta os dois jogos e a amostra autoral aprovados para o MPV;
 - título da aba, metadados, cabeçalho e rodapé não exibem o nome do aplicativo;
 - o primeiro jogo começa em no máximo dois toques;
 - nenhum estado exige cadastro, nome, e-mail, convite ou pareamento;
 - cada sessão tem exatamente três rodadas;
+- a amostra individual tem exatamente cinco perguntas e não é descrita como teste oficial ou diagnóstico;
+- cada pergunta começa com uma escolha acessível entre cartas fechadas;
 - ambos os jogos permitem pular e sair;
 - Adivinhe de Mim alterna os papéis e protege a escolha na passagem do aparelho;
 - Descoberta a Dois não apresenta campo de resposta;

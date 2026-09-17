@@ -1,14 +1,18 @@
 # Lote de conteúdo do MPV
 
-**Versão:** 1.0  
-**Data:** 12/09/2026  
-**Status:** selecionado para implementação
+**Versão:** 1.1
+
+**Data:** 17/09/2026
+
+**Status:** lote ampliado por decisão da Product Owner
 
 ## Composição
 
 O MPV usa doze cartas, seis para cada jogo. Cada sessão sorteia três cartas do jogo escolhido, sem repetição.
 
 A fonte estruturada para implementação está em [`src/features/game/mpv-cards.json`](../src/features/game/mpv-cards.json).
+
+Em 17/09/2026, foi adicionada uma amostra individual com seis situações autorais e cinco perguntas por sessão. Sua fonte está em [`src/features/game/love-style-sample.json`](../src/features/game/love-style-sample.json). As três experiências usam um baralho visual de cartas fechadas antes de revelar cada pergunta.
 
 ## Critérios de seleção
 
@@ -57,6 +61,20 @@ As alternativas completas e a rastreabilidade até os IDs `DES-*` estão no JSON
 - não armazenar escolhas, palpites ou conversas após sair ou reiniciar;
 - qualquer troca de carta deve manter o mesmo nível de leveza e ser registrada neste documento e no JSON.
 
+## Amostra autoral — Seu jeito de receber carinho
+
+A amostra usa situações cotidianas e cinco famílias de preferência com nomes próprios: **Palavras que valorizam**, **Presença de verdade**, **Gestos que ajudam**, **Lembranças com significado** e **Proximidade e toque**. Contato físico aparece sempre com linguagem de consentimento.
+
+Regras específicas:
+
+- não copiar perguntas, estrutura de pontuação, interface ou textos de testes oficiais ou comerciais;
+- não usar “teste oficial”, “diagnóstico”, “perfil definitivo” ou promessa de precisão;
+- mostrar cinco perguntas sorteadas entre seis situações;
+- oferecer uma opção de cada família em todas as situações, com ordem editorial variada;
+- calcular tudo somente na memória do navegador;
+- mostrar as duas preferências mais fortes e a distribuição completa, sem avaliar compatibilidade;
+- lembrar no resultado que preferências podem variar com contexto e momento.
+
 ## Aceite do lote
 
 - doze IDs únicos;
@@ -65,3 +83,5 @@ As alternativas completas e a rastreabilidade até os IDs `DES-*` estão no JSON
 - nenhuma alternativa vazia ou repetida na mesma carta;
 - todas as cartas possuem referência ao conteúdo de origem;
 - conteúdo compatível com o fluxo definido em [`docs/FLUXO-MPV.md`](FLUXO-MPV.md).
+- seis situações autorais na amostra, cinco opções distintas por situação e cinco perguntas por sessão;
+- nenhum texto copiado de questionários oficiais e aviso de caráter indicativo presente no resultado.

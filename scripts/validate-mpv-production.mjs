@@ -93,7 +93,7 @@ try {
     headers: { 'Content-Type': 'application/json', Origin: baseUrl },
     body: JSON.stringify({
       submissionId: 'feedback-production-000001',
-      gameId: 'discovery-together',
+      gameId: 'love-style-sample',
       clarity: 'yes',
       connection: 'yes',
       replayIntent: 'yes',

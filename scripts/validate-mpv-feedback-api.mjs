@@ -81,6 +81,18 @@ try {
     'Reenvio idempotente deveria retornar o registro existente.',
   )
 
+  const loveStyleCreated = await api('/api/mpv/feedback', {
+    method: 'POST',
+    headers: { Origin: 'https://teste.example' },
+    body: JSON.stringify({
+      ...payload,
+      submissionId: 'feedback-test-000000000006',
+      gameId: 'love-style-sample',
+      suggestion: 'Amostra autoral validada.',
+    }),
+  })
+  expect(loveStyleCreated.status === 201, 'A nova amostra deveria aceitar feedback.')
+
   const invalidGame = await api('/api/mpv/feedback', {
     method: 'POST',
     body: JSON.stringify({ ...payload, submissionId: 'feedback-test-000000000002', gameId: 'x' }),
@@ -128,9 +140,10 @@ try {
     'Exportação deveria retornar CSV.',
   )
   expect(csv.includes("'=2+2"), 'Exportação deveria neutralizar fórmulas de planilha.')
+  expect(csv.includes('love-style-sample'), 'Exportação deveria incluir a nova amostra.')
 
   const database = JSON.parse(await readFile(databaseFile, 'utf8'))
-  expect(database.mpvFeedback.length === 1, 'Idempotência deveria manter um único registro.')
+  expect(database.mpvFeedback.length === 2, 'Deveriam existir dois registros válidos.')
   expect(!('ip' in database.mpvFeedback[0]), 'Endereço IP não deve ser persistido.')
   expect(processIssues.length === 0, `API registrou erros: ${processIssues.join(' | ')}`)
 
@@ -142,6 +155,7 @@ try {
           anonymousSubmission: true,
           idempotency: true,
           gameAndSignalValidation: true,
+          loveStyleSampleAccepted: true,
           suggestionLimit: true,
           originRestriction: true,
           protectedCsvExport: true,

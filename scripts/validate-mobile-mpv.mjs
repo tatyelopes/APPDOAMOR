@@ -357,6 +357,11 @@ try {
     await waitForExpression(`document.querySelector('.mpv-feedback-success') !== null`)
   }
 
+  async function openFacedownCard() {
+    await clickSelector('.mpv-facedown-card')
+    await waitForExpression(`document.querySelector('.mpv-question-card') !== null`)
+  }
+
   const snapshots = []
   const journeys = []
 
@@ -373,13 +378,25 @@ try {
     )
     snapshots.push(await snapshot(viewport.name, 'Instruções de Descoberta a Dois'))
     await clickText('Começar Descoberta a Dois')
+    snapshots.push(await snapshot(viewport.name, 'Descoberta — baralho 1'))
+    const discoveryDeckStarted = await evaluate(
+      `document.querySelectorAll('.mpv-facedown-card').length === 3`,
+    )
+    await openFacedownCard()
     snapshots.push(await snapshot(viewport.name, 'Descoberta — rodada 1'))
     const discoveryHasSkip = await evaluate(
       `[...document.querySelectorAll('button')].some((button) => button.textContent.includes('Pular esta pergunta'))`,
     )
-    await clickText('Próxima pergunta')
+    await clickText('Escolher próxima carta')
+    const discoveryDeckReduced = await evaluate(
+      `document.querySelectorAll('.mpv-facedown-card').length === 2`,
+    )
+    snapshots.push(await snapshot(viewport.name, 'Descoberta — baralho 2'))
+    await openFacedownCard()
     snapshots.push(await snapshot(viewport.name, 'Descoberta — rodada 2'))
     await clickText('Pular esta pergunta')
+    snapshots.push(await snapshot(viewport.name, 'Descoberta — baralho 3 após pulo'))
+    await openFacedownCard()
     snapshots.push(await snapshot(viewport.name, 'Descoberta — rodada 3 após pulo'))
     await clickText('Concluir jogo')
     await waitForExpression(`document.querySelector('.mpv-feedback-form') !== null`)
@@ -387,11 +404,12 @@ try {
     await submitFeedback(`Mais exemplos de perguntas para ${viewport.name}.`)
     snapshots.push(await snapshot(viewport.name, 'Descoberta — feedback enviado'))
     await clickText('Jogar novamente')
-    await waitForExpression(`document.querySelector('.mpv-question-card') !== null`)
+    await waitForExpression(`document.querySelector('.mpv-deck-picker') !== null`)
     const discoveryRestarted = await evaluate(
-      `document.querySelector('.mpv-play-topbar p')?.textContent.includes('1 de 3')`,
+      `document.querySelector('.mpv-play-topbar p')?.textContent.includes('1 de 3') && document.querySelectorAll('.mpv-facedown-card').length === 3`,
     )
     snapshots.push(await snapshot(viewport.name, 'Descoberta — reinício'))
+    await openFacedownCard()
     await clickText('Voltar às instruções')
     const discoveryCancellationPreservedState = await evaluate(
       `Boolean(document.querySelector('.mpv-question-card')) && document.querySelector('.mpv-play-topbar p')?.textContent.includes('1 de 3')`,
@@ -408,6 +426,11 @@ try {
     await clickText('Adivinhe de Mim')
     snapshots.push(await snapshot(viewport.name, 'Instruções de Adivinhe de Mim'))
     await clickText('Começar Adivinhe de Mim')
+    snapshots.push(await snapshot(viewport.name, 'Adivinhe — baralho 1'))
+    const guessDeckStarted = await evaluate(
+      `document.querySelectorAll('.mpv-facedown-card').length === 3`,
+    )
+    await openFacedownCard()
     snapshots.push(await snapshot(viewport.name, 'Adivinhe — escolha secreta 1'))
     const guessHasSkip = await evaluate(
       `[...document.querySelectorAll('button')].some((button) => button.textContent.toLowerCase().includes('pular'))`,
@@ -415,9 +438,10 @@ try {
     await clickSelector('.mpv-option-button')
     await clickText('Pular esta rodada')
     const guessSecretSkipAdvancedAndCleared = await evaluate(
-      `document.querySelector('.mpv-play-topbar p')?.textContent.includes('2 de 3') && !document.querySelector('.mpv-option-button.is-selected') && !document.querySelector('.mpv-reveal')`,
+      `document.querySelector('.mpv-play-topbar p')?.textContent.includes('2 de 3') && document.querySelectorAll('.mpv-facedown-card').length === 2 && !document.querySelector('.mpv-option-button.is-selected') && !document.querySelector('.mpv-reveal')`,
     )
     snapshots.push(await snapshot(viewport.name, 'Adivinhe — rodada 2 após pulo secreto'))
+    await openFacedownCard()
     await clickSelector('.mpv-option-button')
     await clickText('Ocultar e passar o celular')
     await waitForExpression(`document.querySelector('.mpv-handoff-card') !== null`)
@@ -440,9 +464,10 @@ try {
     await clickSelector('.mpv-option-button')
     await clickText('Pular esta rodada')
     const guessGuessSkipAdvancedAndCleared = await evaluate(
-      `document.querySelector('.mpv-play-topbar p')?.textContent.includes('3 de 3') && !document.querySelector('.mpv-option-button.is-selected') && !document.querySelector('.mpv-reveal')`,
+      `document.querySelector('.mpv-play-topbar p')?.textContent.includes('3 de 3') && document.querySelectorAll('.mpv-facedown-card').length === 1 && !document.querySelector('.mpv-option-button.is-selected') && !document.querySelector('.mpv-reveal')`,
     )
     snapshots.push(await snapshot(viewport.name, 'Adivinhe — rodada 3 após pulo do palpite'))
+    await openFacedownCard()
     await clickSelector('.mpv-option-button')
     await clickText('Ocultar e passar o celular')
     await waitForExpression(`document.querySelector('.mpv-handoff-card') !== null`)
@@ -456,11 +481,12 @@ try {
     await submitFeedback()
     snapshots.push(await snapshot(viewport.name, 'Adivinhe — feedback enviado'))
     await clickText('Jogar novamente')
-    await waitForExpression(`document.querySelector('.mpv-question-card') !== null`)
+    await waitForExpression(`document.querySelector('.mpv-deck-picker') !== null`)
     const guessRestarted = await evaluate(
-      `document.querySelector('.mpv-play-topbar p')?.textContent.includes('1 de 3')`,
+      `document.querySelector('.mpv-play-topbar p')?.textContent.includes('1 de 3') && document.querySelectorAll('.mpv-facedown-card').length === 3`,
     )
     snapshots.push(await snapshot(viewport.name, 'Adivinhe — reinício'))
+    await openFacedownCard()
     await clickSelector('.mpv-option-button')
     await evaluate(`window.__mpvConfirmResult = false`)
     await clickSelector('.mpv-logo-button')
@@ -475,19 +501,56 @@ try {
       messages: [...window.__mpvConfirmCalls],
     })`)
 
+    await clickText('Seu jeito de receber carinho')
+    snapshots.push(await snapshot(viewport.name, 'Instruções da amostra de carinho'))
+    await clickText('Começar Seu jeito de receber carinho')
+    const loveDeckStarted = await evaluate(
+      `document.querySelectorAll('.mpv-facedown-card').length === 5`,
+    )
+    snapshots.push(await snapshot(viewport.name, 'Amostra — baralho 1'))
+    for (let loveRound = 0; loveRound < 5; loveRound += 1) {
+      await openFacedownCard()
+      snapshots.push(await snapshot(viewport.name, `Amostra — pergunta ${loveRound + 1}`))
+      await clickSelector('.mpv-love-options .mpv-option-button')
+      await clickText(loveRound === 4 ? 'Ver meu resultado' : 'Escolher próxima carta')
+      if (loveRound < 4) {
+        await waitForExpression(`document.querySelector('.mpv-deck-picker') !== null`)
+        snapshots.push(await snapshot(viewport.name, `Amostra — baralho ${loveRound + 2}`))
+      }
+    }
+    await waitForExpression(`document.querySelector('.mpv-love-score-list') !== null`)
+    const loveResultRendered = await evaluate(
+      `document.querySelectorAll('.mpv-love-score').length === 5 && document.body.textContent.includes('amostra autoral')`,
+    )
+    snapshots.push(await snapshot(viewport.name, 'Amostra — resultado'))
+    await submitFeedback(`Amostra de carinho validada em ${viewport.name}.`)
+    snapshots.push(await snapshot(viewport.name, 'Amostra — feedback enviado'))
+    await clickText('Fazer novamente')
+    await waitForExpression(`document.querySelector('.mpv-deck-picker') !== null`)
+    const loveRestarted = await evaluate(
+      `document.querySelector('.mpv-play-topbar p')?.textContent.includes('1 de 5') && document.querySelectorAll('.mpv-facedown-card').length === 5`,
+    )
+    snapshots.push(await snapshot(viewport.name, 'Amostra — reinício'))
+
     journeys.push({
       viewport: viewport.name,
       size: [viewport.width, viewport.height],
       touchOpenedDiscovery,
+      discoveryDeckStarted,
+      discoveryDeckReduced,
       discoveryHasSkip,
       discoveryRestarted,
       discoveryExit,
       guessHasSkip,
+      guessDeckStarted,
       guessSecretSkipAdvancedAndCleared,
       guessGuessSkipAdvancedAndCleared,
       handoffPreservedAfterRotation,
       guessRestarted,
       logoExit,
+      loveDeckStarted,
+      loveResultRendered,
+      loveRestarted,
     })
   }
 
@@ -496,11 +559,11 @@ try {
     ? feedbackDatabase.mpvFeedback
     : []
   const feedbackSuggestionValid =
-    feedbackRecords.length === viewports.length * 2 &&
+    feedbackRecords.length === viewports.length * 3 &&
     feedbackRecords.every(
       (record) => typeof record.suggestion === 'string' && record.suggestion.length <= 500,
     ) &&
-    feedbackRecords.filter((record) => record.suggestion.length > 0).length === viewports.length
+    feedbackRecords.filter((record) => record.suggestion.length > 0).length === viewports.length * 2
   const overflowSnapshots = snapshots.filter(
     (item) => item.horizontalOverflow || item.overflowElements.length > 0,
   )
@@ -542,16 +605,22 @@ try {
   const functionalChecksPassed = journeys.every(
     (journey) =>
       journey.touchOpenedDiscovery &&
+      journey.discoveryDeckStarted &&
+      journey.discoveryDeckReduced &&
       journey.discoveryHasSkip &&
       journey.discoveryRestarted &&
       journey.guessSecretSkipAdvancedAndCleared &&
+      journey.guessDeckStarted &&
       journey.guessGuessSkipAdvancedAndCleared &&
       journey.handoffPreservedAfterRotation &&
       journey.guessRestarted &&
       journey.discoveryExit.cancellationPreservedState &&
       journey.discoveryExit.confirmationExited &&
       journey.logoExit.cancellationPreservedState &&
-      journey.logoExit.confirmationExited,
+      journey.logoExit.confirmationExited &&
+      journey.loveDeckStarted &&
+      journey.loveResultRendered &&
+      journey.loveRestarted,
   )
 
   console.log(
@@ -583,7 +652,18 @@ try {
             (journey) => journey.handoffPreservedAfterRotation,
           ),
           restartWorkedInAllViewports: journeys.every(
-            (journey) => journey.discoveryRestarted && journey.guessRestarted,
+            (journey) =>
+              journey.discoveryRestarted && journey.guessRestarted && journey.loveRestarted,
+          ),
+          facedownCardChoiceWorkedInAllViewports: journeys.every(
+            (journey) =>
+              journey.discoveryDeckStarted &&
+              journey.discoveryDeckReduced &&
+              journey.guessDeckStarted &&
+              journey.loveDeckStarted,
+          ),
+          loveStyleSampleWorkedInAllViewports: journeys.every(
+            (journey) => journey.loveResultRendered,
           ),
           discoverySkipAvailableInAllViewports: journeys.every(
             (journey) => journey.discoveryHasSkip,

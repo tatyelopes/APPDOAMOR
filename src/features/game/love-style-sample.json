@@ -1,0 +1,103 @@
+{
+  "version": 1,
+  "selectedAt": "2026-09-17",
+  "questionsPerSession": 5,
+  "categories": [
+    {
+      "id": "words",
+      "label": "Palavras que valorizam",
+      "shortDescription": "Você tende a perceber carinho em elogios sinceros, reconhecimento e mensagens cuidadosas."
+    },
+    {
+      "id": "time",
+      "label": "Presença de verdade",
+      "shortDescription": "Atenção sem distrações e tempo compartilhado costumam ter um peso especial para você."
+    },
+    {
+      "id": "care",
+      "label": "Gestos que ajudam",
+      "shortDescription": "Atitudes práticas e apoio no dia a dia podem fazer você se sentir lembrada ou lembrado."
+    },
+    {
+      "id": "gifts",
+      "label": "Lembranças com significado",
+      "shortDescription": "Pequenas surpresas e objetos simbólicos podem comunicar atenção e intenção."
+    },
+    {
+      "id": "touch",
+      "label": "Proximidade e toque",
+      "shortDescription": "Contato físico consentido, como abraço ou mãos dadas, pode transmitir acolhimento."
+    }
+  ],
+  "questions": [
+    {
+      "id": "CAR-001",
+      "prompt": "Depois de uma semana cansativa, qual gesto faria você se sentir mais acolhida ou acolhido?",
+      "options": [
+        { "categoryId": "words", "label": "Ouvir um reconhecimento sincero pelo meu esforço" },
+        { "categoryId": "time", "label": "Ter uma hora juntos, sem telas ou interrupções" },
+        { "categoryId": "care", "label": "Receber ajuda espontânea em uma tarefa cansativa" },
+        {
+          "categoryId": "gifts",
+          "label": "Ganhar uma pequena lembrança escolhida pensando em mim"
+        },
+        { "categoryId": "touch", "label": "Receber um abraço demorado, se eu estiver à vontade" }
+      ]
+    },
+    {
+      "id": "CAR-002",
+      "prompt": "Em um dia comum, o que mais faria você perceber que alguém pensou em você?",
+      "options": [
+        { "categoryId": "care", "label": "Resolver uma pendência que estava pesando para mim" },
+        { "categoryId": "gifts", "label": "Trazer meu lanche favorito como surpresa" },
+        { "categoryId": "touch", "label": "Sentar perto e oferecer carinho com meu consentimento" },
+        { "categoryId": "words", "label": "Enviar uma mensagem dizendo por que sou importante" },
+        { "categoryId": "time", "label": "Reservar um momento só para conversarmos" }
+      ]
+    },
+    {
+      "id": "CAR-003",
+      "prompt": "Depois de um desentendimento leve, o que mais ajudaria você a se reconectar?",
+      "options": [
+        { "categoryId": "time", "label": "Conversar com calma e atenção até nos entendermos" },
+        { "categoryId": "words", "label": "Ouvir palavras honestas de cuidado e reparação" },
+        { "categoryId": "touch", "label": "Segurar as mãos ou abraçar, se ambos quiserem" },
+        { "categoryId": "care", "label": "Perceber uma atitude concreta para melhorar a situação" },
+        { "categoryId": "gifts", "label": "Receber um bilhete ou símbolo de recomeço" }
+      ]
+    },
+    {
+      "id": "CAR-004",
+      "prompt": "Qual surpresa simples teria mais significado para você?",
+      "options": [
+        { "categoryId": "gifts", "label": "Um objeto pequeno ligado a uma lembrança nossa" },
+        { "categoryId": "care", "label": "Encontrar uma tarefa chata já resolvida" },
+        { "categoryId": "time", "label": "Um passeio planejado para fazermos juntos" },
+        { "categoryId": "touch", "label": "Um momento tranquilo de proximidade e carinho" },
+        { "categoryId": "words", "label": "Uma carta contando o que a pessoa admira em mim" }
+      ]
+    },
+    {
+      "id": "CAR-005",
+      "prompt": "Quando você conquista algo importante, como prefere comemorar?",
+      "options": [
+        { "categoryId": "touch", "label": "Com um abraço entusiasmado e consentido" },
+        { "categoryId": "words", "label": "Ouvindo palavras específicas de orgulho e incentivo" },
+        { "categoryId": "gifts", "label": "Guardando uma lembrança simbólica da conquista" },
+        { "categoryId": "time", "label": "Fazendo um programa especial juntos" },
+        { "categoryId": "care", "label": "Recebendo ajuda para poder descansar e aproveitar" }
+      ]
+    },
+    {
+      "id": "CAR-006",
+      "prompt": "Num fim de semana simples, qual atitude faria você se sentir mais próxima ou próximo?",
+      "options": [
+        { "categoryId": "time", "label": "Cozinhar ou passear juntos com atenção um no outro" },
+        { "categoryId": "care", "label": "Dividir as tarefas sem que eu precise pedir" },
+        { "categoryId": "words", "label": "Conversar sobre o que apreciamos na relação" },
+        { "categoryId": "touch", "label": "Ficar de mãos dadas ou abraçados, se for confortável" },
+        { "categoryId": "gifts", "label": "Trocar uma lembrança pequena escolhida com intenção" }
+      ]
+    }
+  ]
+}
