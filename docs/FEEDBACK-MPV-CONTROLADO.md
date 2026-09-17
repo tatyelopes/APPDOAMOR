@@ -104,7 +104,7 @@ O provisionamento sem custo está declarado em `render.yaml`: Web Service gratui
 - feedback real exige transparência, retenção aplicada, canal de direitos e acesso restrito;
 - esta rota é temporária em `/api`; o contrato estável deve ser incorporado a `/api/v1` antes de produção.
 
-O serviço HTTPS, o envio e a exportação foram verificados em 16/09/2026, e o registro sintético usado na validação foi removido. A base ficou vazia para iniciar o teste. O endereço permanece sem indexação, mas isso não equivale a controle de acesso.
+O serviço HTTPS, o envio e a exportação foram verificados em 16/09/2026, e o registro sintético usado na validação foi removido. Em 17/09/2026, depois da rotação do token e do novo deploy, a migração automática e a exportação protegida foram confirmadas novamente no serviço publicado. O CSV continha apenas o cabeçalho, confirmando que a base estava vazia para iniciar a coleta real. O endereço permanece sem indexação, mas isso não equivale a controle de acesso.
 
 Antes de ampliar o compartilhamento além do teste controlado, ainda são necessários banco durável, backup, monitoramento e aprovação dos gates registrados no inventário LGPD.
 
