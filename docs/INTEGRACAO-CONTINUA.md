@@ -39,8 +39,9 @@ Uma alteração só fica verde quando todos estes passos passam:
 10. validação do schema, da integridade e da idempotência das migrações;
 11. validação da API e da exportação de feedback;
 12. validação da execução com configuração de produção;
-13. validação automatizada da experiência móvel em cinco tamanhos de tela;
-14. validação da estrutura, das dependências e das fórmulas do plano operacional.
+13. validação dos logs, sondas, métricas protegidas e workflow de alertas;
+14. validação automatizada da experiência móvel em cinco tamanhos de tela;
+15. validação da estrutura, das dependências e das fórmulas do plano operacional.
 
 A validação móvel usa o navegador Chrome já presente na imagem padrão do runner. O script também preserva compatibilidade local com Edge, Chrome e Chromium em Windows, Linux e macOS.
 
@@ -62,6 +63,7 @@ npm.cmd run validate:threat-model
 npm.cmd run validate:lgpd
 npm.cmd run validate:mpv-feedback
 npm.cmd run validate:mpv-production
+npm.cmd run validate:observability
 node scripts/validate-mobile-mpv.mjs
 powershell -NoProfile -ExecutionPolicy Bypass -File scripts/validate-project-plan.ps1
 ```

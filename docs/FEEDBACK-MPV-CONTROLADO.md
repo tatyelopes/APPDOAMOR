@@ -83,7 +83,7 @@ npm.cmd run build
 npm.cmd start
 ```
 
-O provedor deve executar o build, iniciar `npm.cmd start`, encaminhar HTTPS para a porta definida em `PORT`, verificar `GET /api/health` e montar armazenamento persistente no caminho configurado em `DATABASE_FILE`. `APP_ORIGIN` precisa ser exatamente o endereço HTTPS entregue aos participantes. O serviço envia `noindex`, também inclui `robots.txt` e não usa o nome do aplicativo na página do teste.
+O provedor deve executar o build, iniciar `npm.cmd start`, encaminhar HTTPS para a porta definida em `PORT`, verificar `GET /api/health` e manter o armazenamento pronto em `GET /api/ready`. `APP_ORIGIN` precisa ser exatamente o endereço HTTPS entregue aos participantes. O serviço envia `noindex`, também inclui `robots.txt` e não usa o nome do aplicativo na página do teste.
 
 Para exportar de um serviço remoto:
 

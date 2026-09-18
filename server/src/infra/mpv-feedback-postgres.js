@@ -92,3 +92,8 @@ export async function listPostgresFeedback() {
       record.createdAt instanceof Date ? record.createdAt.toISOString() : String(record.createdAt),
   }))
 }
+
+export async function checkPostgresFeedbackReadiness() {
+  await ensureSchema()
+  await pool.query('SELECT 1')
+}

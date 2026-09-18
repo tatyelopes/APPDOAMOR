@@ -2,14 +2,27 @@ import { createServer } from 'node:http'
 import { randomBytes, randomUUID, timingSafeEqual } from 'node:crypto'
 import { createReadStream, existsSync, statSync } from 'node:fs'
 import { extname, resolve, sep } from 'node:path'
+import { performance } from 'node:perf_hooks'
 import { config } from './src/config.js'
-import { loadDatabase as loadDb, saveDatabase as saveDb } from './src/infra/database.js'
+import {
+  checkJsonDatabaseReadiness,
+  loadDatabase as loadDb,
+  saveDatabase as saveDb,
+} from './src/infra/database.js'
 import { applyMigrations } from './src/infra/migrations.js'
 import {
+  checkPostgresFeedbackReadiness,
   listPostgresFeedback,
   storePostgresFeedback,
   usesPostgresFeedback,
 } from './src/infra/mpv-feedback-postgres.js'
+import {
+  logError,
+  logEvent,
+  observeRequest,
+  operationalMetricsSnapshot,
+  recordReadiness,
+} from './src/observability.js'
 import {
   hashPassword as passwordHash,
   matchesPassword as passwordMatches,
@@ -172,6 +185,11 @@ function validExportToken(req) {
   )
 }
 
+async function checkStorageReadiness() {
+  if (usesPostgresFeedback()) await checkPostgresFeedbackReadiness()
+  else checkJsonDatabaseReadiness()
+}
+
 function csvCell(value) {
   let text = String(value ?? '')
   if (/^[=+\-@]/.test(text)) text = `'${text}`
@@ -193,6 +211,7 @@ function feedbackCsv(records) {
 }
 
 const server = createServer(async (req, res) => {
+  const requestId = observeRequest(req, res)
   let pathname
   try {
     pathname = new URL(req.url || '/', 'http://localhost').pathname
@@ -212,6 +231,22 @@ const server = createServer(async (req, res) => {
   }
   if (req.method === 'GET' && pathname === '/api/health')
     return send(req, res, 200, { status: 'ok' })
+  if (req.method === 'GET' && pathname === '/api/ready') {
+    const started = performance.now()
+    try {
+      await checkStorageReadiness()
+      recordReadiness(true, performance.now() - started)
+      return send(req, res, 200, { status: 'ready' })
+    } catch (error) {
+      recordReadiness(false, performance.now() - started)
+      logError('storage_readiness_failed', error, { requestId })
+      return send(req, res, 503, { status: 'not_ready', requestId })
+    }
+  }
+  if (req.method === 'GET' && pathname === '/api/ops/metrics') {
+    if (!validExportToken(req)) return send(req, res, 403, { error: 'Acesso negado.' })
+    return send(req, res, 200, operationalMetricsSnapshot())
+  }
 
   try {
     const db = loadDb()
@@ -432,20 +467,27 @@ const server = createServer(async (req, res) => {
     }
     send(req, res, 404, { error: 'Rota não encontrada.' })
   } catch (error) {
-    send(req, res, 500, { error: error instanceof Error ? error.message : 'Erro interno.' })
+    logError('request_failed', error, { requestId })
+    send(req, res, 500, { error: 'Erro interno.', requestId })
   }
 })
 
 if (config.databaseUrl) {
   try {
-    await applyMigrations({ connectionString: config.databaseUrl, logger: console.log })
+    await applyMigrations({
+      connectionString: config.databaseUrl,
+      logger: (result) => logEvent('info', 'database_migration', { result }),
+    })
   } catch (error) {
-    const code = error && typeof error === 'object' && 'code' in error ? error.code : 'unknown'
-    console.error(`Falha ao preparar o PostgreSQL (${code}).`)
+    logError('database_startup_failed', error)
     process.exit(1)
   }
 }
 
 server.listen(config.port, config.host, () => {
-  console.log(`Aplicação disponível em http://${config.host}:${config.port}`)
+  logEvent('info', 'service_started', {
+    host: config.host,
+    port: config.port,
+    storage: usesPostgresFeedback() ? 'postgresql' : 'json',
+  })
 })

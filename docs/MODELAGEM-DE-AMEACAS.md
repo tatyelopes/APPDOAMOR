@@ -144,7 +144,7 @@ Esses controles reduzem risco, mas não compensam os bloqueadores abaixo.
 | T07 | T/R · lógica | Responder, corrigir, pular ou concluir em paralelo cria duas revelações, sobrescreve resposta ou duplica progresso. JSON não fornece transação ou lock. | 4 | 5 | 20 crítico | Mitigar: SEC-10, SEC-11, SEC-12, SEC-27; tarefas 41, 53–55 e 81 | Aberta |
 | T08 | T/D/R | Escritas concorrentes ou processo interrompido corrompem `database.json`; falha de leitura retorna banco vazio e uma gravação posterior pode substituir dados. | 4 | 5 | 20 crítico | Eliminar JSON: SEC-12, SEC-16, SEC-26; tarefas 41, 81, 93 e 118 | Aberta |
 | T09 | I | Respostas, tokens, e-mails e vínculos ficam em texto no mesmo arquivo e podem vazar em disco, cópia ou backup. | 4 | 5 | 20 crítico | Mitigar: SEC-04, SEC-13, SEC-14, SEC-16; tarefas 37, 41, 42 e 118 | Aberta |
-| T10 | I/R | Stack, mensagem interna, log, métrica ou painel inclui token, convite, ID correlacionável ou texto íntimo. O `500` atual devolve `error.message`. | 4 | 5 | 20 crítico | Mitigar: SEC-09, SEC-15, SEC-22, SEC-25; tarefas 43, 84 e 106 | Aberta |
+| T10 | I/R | Stack, mensagem interna, log, métrica ou painel inclui token, convite, ID correlacionável ou texto íntimo. O `500` agora é genérico e a observabilidade básica possui teste com canário privado, mas auditoria e destinos definitivos ainda não existem. | 4 | 5 | 20 crítico | Mitigação parcial: SEC-09, SEC-15, SEC-22, SEC-25; tarefas 84 e 106 | Aberta |
 | T11 | T/S/I · injeção | XSS por conteúdo editorial, dependência ou futura renderização rica executa no mesmo contexto e lê sessão/respostas. | 3 | 5 | 15 alto | Mitigar: SEC-02, SEC-03, SEC-17, SEC-28; tarefas 59, 74 e 83 | Aberta |
 | T12 | I/S · configuração | Produção sem HTTPS/HSTS, CORS `*`, ausência de CSP e cache inseguro ampliam interceptação, origens hostis e retenção no navegador. | 4 | 5 | 20 crítico | Mitigar: SEC-01, SEC-02, SEC-19, SEC-20; tarefas 38, 73, 92 e 119 | Aberta |
 | T13 | D · recursos | Rajada de login, eventos, respostas ou consultas consome CPU, memória, disco e conexões; não há quotas, timeout ou backpressure. | 4 | 4 | 16 alto | Mitigar: SEC-05, SEC-17, SEC-18, SEC-26; tarefas 43, 83 e 85 | Aberta |
@@ -177,7 +177,7 @@ Esses controles reduzem risco, mas não compensam os bloqueadores abaixo.
 | SEC-12 | Migrar para PostgreSQL com escrita atômica; falha de leitura ou gravação fecha a operação e preserva o último estado confirmado. | Ausente | 41, 81, 93 |
 | SEC-13 | Cifrar volumes e backups; cifrar em nível de aplicação os valores S4 com envelope/KMS e separar chaves por ambiente; plaintext existe apenas durante a operação autorizada. | Ausente | 37, 41, 42, 93 |
 | SEC-14 | Manter segredos em cofre, com privilégio mínimo, rotação, inventário, separação por ambiente e bloqueio de commit; já há inventário, geração local, injeção no Render, runtime, pre-commit e CI, com cofres definitivos e rotação pendentes. | Parcial | 40, 42 |
-| SEC-15 | Logar request ID, decisão e resultado sem corpo S4; auditoria append-only para login, sessão, convite, vínculo, publicação, admin e exclusão; relógio UTC confiável. | Ausente | 43, 59, 84 |
+| SEC-15 | Logar request ID, decisão e resultado sem corpo S4; auditoria append-only para login, sessão, convite, vínculo, publicação, admin e exclusão; relógio UTC confiável. | Parcial | 59, 84 — logs HTTP estruturados sem corpo implementados; auditoria de domínio pendente |
 | SEC-16 | Backup cifrado, acesso restrito, retenção definida, teste de restauração e impedimento de sobrescrita por banco vazio. | Ausente | 37, 93, 118 |
 | SEC-17 | Validar schema, tipo de conteúdo, tamanho, Unicode e limites no servidor; rejeitar campos desconhecidos e upload não previsto. | Parcial | 35, 52, 79, 81 |
 | SEC-18 | Aplicar quotas, timeout e backpressure por operação; proteger fluxos sensíveis contra automação sem bloquear o casal legítimo. | Ausente | 43, 83, 85 |
@@ -214,7 +214,7 @@ Esses controles reduzem risco, mas não compensam os bloqueadores abaixo.
 | ST-14 | Enviar corpo acima do limite, tipo incorreto, campos extras e Unicode inválido. | 400/413/415/422 estável; processo continua responsivo. | 79, 81, 85 |
 | ST-15 | Cliente envia evento financeiro, texto íntimo, data futura ou replay. | Rejeitado ou descartado; métricas oficiais inalteradas. | 81, 106 |
 | ST-16 | Simular falha de banco no meio de pareamento, resposta e resolução. | Sem sucesso falso; transação revertida; reenvio seguro. | 41, 81 |
-| ST-17 | Varrer logs, traces, métricas e erros com canários S4. | Nenhum canário encontrado; somente IDs de correlação permitidos. | 43, 84 |
+| ST-17 | Varrer logs, traces, métricas e erros com canários S4. | Teste automatizado da observabilidade básica não encontra o canário; repetir nos destinos definitivos. | 84, 123 |
 | ST-18 | Restaurar backup e recalcular progresso. | Integridade comprovada, tokens antigos inutilizáveis e projeção equivalente. | 93, 118 |
 | ST-19 | Abrir PWA offline, voltar/avançar e sair em aparelho compartilhado. | Nenhuma resposta ou resultado S4 em cache/histórico após logout. | 82, 86, 119 |
 | ST-20 | Comprometer ou remover dependência crítica em ambiente de teste. | CI detecta lock/SBOM/vulnerabilidade e impede promoção. | 40, 83 |

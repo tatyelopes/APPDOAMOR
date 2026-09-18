@@ -28,3 +28,11 @@ export function saveDatabase(database) {
   mkdirSync(dirname(config.dataFile), { recursive: true })
   writeFileSync(config.dataFile, JSON.stringify(database, null, 2))
 }
+
+export function checkJsonDatabaseReadiness() {
+  if (!existsSync(config.dataFile)) return
+  const parsed = JSON.parse(readFileSync(config.dataFile, 'utf8'))
+  if (!parsed || typeof parsed !== 'object' || Array.isArray(parsed)) {
+    throw new Error('O armazenamento JSON não contém um objeto válido.')
+  }
+}

@@ -95,6 +95,9 @@ jobs:
       - name: Validar execução de produção
         run: npm run validate:mpv-production
 
+      - name: Validar observabilidade e alertas
+        run: npm run validate:observability
+
       - name: Validar matriz móvel do MPV
         run: node scripts/validate-mobile-mpv.mjs
 
