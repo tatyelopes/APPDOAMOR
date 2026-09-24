@@ -6,6 +6,7 @@ export type Screen =
   | 'temperament'
   | 'temperamentResult'
   | 'profile'
+  | 'mail'
   | 'private'
   | 'admin'
 
@@ -78,6 +79,15 @@ export type RemoteAnswer = {
   complete: boolean
   mine: string
   answers: { name: string; text: string }[]
+}
+
+export type LoveNote = {
+  id: string
+  text: string
+  senderName: string
+  recipientName: string
+  createdAt: string
+  mine: boolean
 }
 
 export type Temperament = 'Colérico' | 'Sanguíneo' | 'Fleumático' | 'Melancólico'

@@ -13,6 +13,7 @@ const knownApiRoutes = new Set([
   '/api/events',
   '/api/couples/create',
   '/api/couples/join',
+  '/api/love-notes',
   '/api/mpv/feedback',
   '/api/mpv/feedback/export',
 ])

@@ -162,7 +162,8 @@ button:disabled {
   margin-bottom: 25px;
 }
 .connect-options .or {
-  font-size: 10px;
+  font-size: 20px;
+  font-weight: 700;
   color: #aaa;
   text-align: center;
 }
@@ -1149,6 +1150,66 @@ h1 em {
 .concept-cozy .lead {
   color: var(--soft-text);
 }
+.concept-cozy .streak {
+  position: relative;
+  width: 176px;
+  height: 82px;
+  flex: 0 0 176px;
+  flex-direction: row;
+  gap: 12px;
+  padding: 13px 19px 13px 13px;
+  overflow: hidden;
+  border: 1px solid #d4a94e70;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #e8c39e24, #8f6f9129 58%, #2d172c66);
+  box-shadow:
+    inset 0 1px 0 #ffffff24,
+    0 16px 42px #160a155c,
+    0 0 0 5px #d4a94e08;
+  backdrop-filter: blur(14px);
+}
+.concept-cozy .streak::after {
+  content: '';
+  position: absolute;
+  width: 70px;
+  height: 70px;
+  right: -30px;
+  top: -38px;
+  border-radius: 50%;
+  background: #e8c39e1c;
+  filter: blur(2px);
+}
+.concept-cozy .streak > span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 42px;
+  flex: 0 0 32px;
+  color: var(--gold);
+  font-size: 22px;
+}
+.concept-cozy .streak-copy {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 1px;
+  text-align: left;
+}
+.concept-cozy .streak b,
+.concept-cozy .streak small {
+  color: var(--brand-cream);
+}
+.concept-cozy .streak b {
+  font-size: 20px;
+  line-height: 1.05;
+}
+.concept-cozy .streak small {
+  color: var(--champagne);
+  font-size: 10px;
+  letter-spacing: 0.35px;
+}
 .concept-cozy h1 {
   letter-spacing: -1.5px;
 }
@@ -1479,8 +1540,9 @@ h1 em {
   position: absolute;
   right: 24px;
   top: 18px;
-  color: #d4a94e55;
+  color: var(--gold);
   font-size: 45px;
+  text-shadow: 0 0 18px #d4a94e66;
 }
 .concept-cozy .auth-card > p,
 .concept-cozy .connect-card > p,
@@ -1845,7 +1907,7 @@ h1 em {
   border-radius: 0;
   font-size: 0 !important;
   color: transparent !important;
-  background-image: url('../Identidade visual/logo-transparente.png');
+  background-image: url('../Identidade visual/logo-conectadois-dourado-transparente.png');
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;
@@ -1892,6 +1954,9 @@ h1 em {
 /* Módulo 2 — teste situacional dos quatro temperamentos */
 .concept-cozy .feature-grid {
   grid-template-columns: repeat(2, 1fr);
+}
+.concept-cozy .feature-grid + .daily-card {
+  margin-top: 30px;
 }
 .concept-cozy .feature.gold {
   background: linear-gradient(145deg, #503b2c, #33231e);
@@ -2285,6 +2350,10 @@ h1 em {
   font-family: 'Baloo 2', sans-serif;
   font-weight: 600;
 }
+.concept-cozy .streak b,
+.concept-cozy .streak small {
+  font-weight: 700;
+}
 .concept-cozy .brand-name b,
 .concept-cozy .auth-brand > span:last-child::before {
   font-family: 'Fraunces', serif;
@@ -2294,6 +2363,30 @@ h1 em {
   font-family: 'Baloo 2', sans-serif;
   font-weight: 700;
   font-size: 15px;
+}
+@media (max-width: 760px) {
+  .concept-cozy .welcome {
+    gap: 12px;
+  }
+  .concept-cozy .streak {
+    width: 126px;
+    height: 66px;
+    flex-basis: 126px;
+    gap: 8px;
+    padding: 10px 12px 10px 10px;
+  }
+  .concept-cozy .streak > span {
+    width: 26px;
+    height: 32px;
+    flex-basis: 26px;
+    font-size: 18px;
+  }
+  .concept-cozy .streak b {
+    font-size: 16px;
+  }
+  .concept-cozy .streak small {
+    font-size: 9px;
+  }
 }
 .concept-cozy .feature {
   position: relative;
@@ -2310,6 +2403,33 @@ h1 em {
 .concept-cozy .feature-icon {
   box-shadow: inset 0 0 0 1px #ffffff0b;
 }
+.conversation-mouth-icon {
+  width: 23px;
+  height: 23px;
+  overflow: visible;
+}
+.conversation-mouth-icon .mouth-shape {
+  fill: currentColor;
+  stroke: currentColor;
+  stroke-width: 0.8;
+  stroke-linejoin: round;
+}
+.conversation-mouth-icon .mouth-detail {
+  fill: none;
+  stroke: var(--plum);
+  stroke-width: 1.45;
+  stroke-linecap: round;
+}
+.feature-shield-icon {
+  width: 22px;
+  height: 22px;
+  overflow: visible;
+  fill: #d4a94e12;
+  stroke: currentColor;
+  stroke-width: 1.75;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
 
 /* Fluxo de entrada */
 .onboarding-shell {
@@ -2317,7 +2437,8 @@ h1 em {
   display: flex;
   flex-direction: column;
   padding: 34px clamp(22px, 5vw, 72px);
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
   background:
     radial-gradient(circle at 12% 15%, #6b354d 0, transparent 28%),
     radial-gradient(circle at 90% 88%, #5b3d31 0, transparent 26%),
@@ -2327,14 +2448,15 @@ h1 em {
 .onboarding-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
+  gap: 16px;
+  flex: 0 0 auto;
   position: relative;
   z-index: 2;
 }
-.onboarding-header .auth-brand {
-  margin: 0;
-}
 .onboarding-login {
+  flex: 0 0 auto;
+  min-height: 44px;
   border: 1px solid #e8c39e55;
   border-radius: 999px;
   padding: 11px 18px;
@@ -2343,18 +2465,32 @@ h1 em {
   font-size: 12px;
   font-weight: 600;
 }
+.login-label-short {
+  display: none;
+}
 .onboarding-stage {
   width: min(1100px, 100%);
   margin: auto;
+  min-height: 0;
+  flex: 1 1 auto;
   display: grid;
-  grid-template-columns: minmax(300px, 0.9fr) minmax(360px, 1.1fr);
+  grid-template-columns: minmax(280px, 0.82fr) minmax(360px, 1.18fr);
   align-items: center;
-  gap: clamp(45px, 8vw, 110px);
-  padding: 60px 0;
+  gap: clamp(32px, 5vw, 72px);
+  padding: clamp(32px, 6vh, 60px) 0;
 }
 .onboarding-copy h1 {
   font-size: clamp(48px, 6vw, 76px);
+  line-height: 1.05;
   margin: 14px 0 24px;
+}
+.onboarding-copy .eyebrow {
+  font-size: 20px;
+  line-height: 1.35;
+  letter-spacing: 2.4px;
+}
+.onboarding-copy {
+  min-width: 0;
 }
 .onboarding-copy > p {
   max-width: 610px;
@@ -2382,12 +2518,16 @@ h1 em {
 }
 .onboarding-visual {
   position: relative;
+  width: min(88%, 460px);
+  justify-self: center;
   aspect-ratio: 1;
   display: grid;
   place-items: center;
   border-radius: 50%;
   background: radial-gradient(circle, #6c3c63 0, #42223f 43%, #2b152a 70%);
   box-shadow:
+    0 0 75px #d9ac4b33,
+    0 0 150px #d9ac4b1a,
     0 40px 100px #140713aa,
     inset 0 0 70px #d4a94e10;
 }
@@ -2395,9 +2535,26 @@ h1 em {
   position: relative;
   z-index: 2;
   font-family: 'Fraunces';
-  font-size: clamp(85px, 12vw, 155px);
+  font-size: clamp(96px, 13vw, 170px);
   font-weight: 500;
   color: var(--champagne);
+}
+.onboarding-visual-logo {
+  position: relative;
+  z-index: 2;
+  width: 68%;
+  height: 68%;
+  object-fit: contain;
+  filter: drop-shadow(0 18px 30px #16091580);
+}
+.onboarding-board-piece {
+  position: relative;
+  z-index: 2;
+  width: 50%;
+  height: 50%;
+  overflow: visible;
+  color: var(--champagne);
+  fill: currentColor;
 }
 .onboarding-visual small {
   position: absolute;
@@ -2439,19 +2596,29 @@ h1 em {
   gap: 8px;
 }
 .onboarding-dots button {
-  width: 8px;
-  height: 8px;
+  width: 44px;
+  height: 44px;
   padding: 0;
   border: 0;
+  border-radius: 999px;
+  display: grid;
+  place-items: center;
+  background: transparent;
+}
+.onboarding-dots button::before {
+  content: '';
+  width: 8px;
+  height: 8px;
   border-radius: 999px;
   background: #e8c39e42;
   transition: 0.25s;
 }
-.onboarding-dots button.active {
+.onboarding-dots button.active::before {
   width: 28px;
   background: var(--gold);
 }
 .onboarding-footer {
+  flex: 0 0 auto;
   text-align: center;
   color: #927f8e;
   font-size: 10px;
@@ -2468,14 +2635,30 @@ h1 em {
     padding: 40px 0;
   }
   .onboarding-visual {
-    width: min(300px, 78vw);
+    width: min(264px, 70vw);
     margin: auto;
   }
   .onboarding-copy {
+    width: 100%;
+    min-width: 0;
     text-align: center;
   }
+  .onboarding-copy h1 {
+    max-width: 100%;
+    font-size: clamp(40px, 11vw, 48px);
+    overflow-wrap: anywhere;
+  }
+  .onboarding-copy .eyebrow {
+    max-width: 100%;
+    font-size: 16px;
+    line-height: 1.35;
+    letter-spacing: 2px;
+  }
   .onboarding-copy > p {
+    width: 100%;
+    max-width: 100%;
     font-size: 15px;
+    overflow-wrap: anywhere;
   }
   .onboarding-highlight {
     justify-content: center;
@@ -2486,13 +2669,14 @@ h1 em {
   .onboarding-actions .primary {
     width: 100%;
   }
-  .onboarding-header .auth-brand .brand-mark {
-    width: 55px;
-    height: 55px;
-    flex-basis: 55px;
-  }
   .onboarding-login {
     padding: 10px 13px;
+  }
+  .login-label-full {
+    display: none;
+  }
+  .login-label-short {
+    display: inline;
   }
   .onboarding-footer {
     display: none;
@@ -2563,12 +2747,19 @@ h1 em {
 .pairing-steps article span {
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  width: 38px;
+  height: 38px;
   margin: auto;
   border-radius: 50%;
-  background: #d4a94e1f;
-  color: var(--gold);
+  background: #d4a94e2e;
+  border: 1px solid #e2b9588f;
+  box-shadow:
+    0 0 14px #d4a94e66,
+    0 0 28px #d4a94e2e;
+  color: #f2c963;
+  font-size: 17px;
+  font-weight: 700;
+  text-shadow: 0 0 9px #e6ba55b3;
 }
 .pairing-steps p {
   margin: 8px 0 0;
@@ -2605,19 +2796,252 @@ h1 em {
 }
 .concept-cozy .auth-brand > .brand-wordmark {
   font-family: var(--font-display);
-  font-size: 22px;
+  font-size: 22px !important;
   font-weight: 600;
   color: var(--brand-cream);
 }
 .concept-cozy .auth-brand > .brand-wordmark::before,
 .concept-cozy .auth-brand > .brand-wordmark::after {
-  content: none;
+  content: none !important;
 }
 .brand-name-accent {
   color: var(--gold);
+}
+.concept-cozy .auth-brand .brand-name-accent {
+  color: var(--gold) !important;
 }
 .concept-cozy .brand-name b {
   display: inline;
   font-family: var(--font-display);
   color: var(--brand-cream);
+}
+
+.love-mail {
+  max-width: 980px;
+}
+.love-mail-intro {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 34px;
+}
+.love-mail-intro h1 {
+  margin: 8px 0 14px;
+  font-size: clamp(42px, 6vw, 72px);
+  line-height: 0.98;
+}
+.love-mail-intro h1 em {
+  color: var(--gold);
+  font-style: italic;
+}
+.love-mail-intro p {
+  max-width: 560px;
+  color: var(--brand-cream);
+  opacity: 0.82;
+}
+.love-mail-mark {
+  display: grid;
+  width: 118px;
+  height: 118px;
+  flex: 0 0 118px;
+  place-items: center;
+  border: 1px solid #d4a94e70;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #d4a94e36, #ffffff08 58%, transparent 70%);
+  color: var(--gold);
+  font-family: Georgia, serif;
+  font-size: 64px;
+  box-shadow: 0 18px 50px #160a154f;
+}
+.love-mail-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 18px;
+  align-items: start;
+}
+.love-note-composer,
+.love-note-inbox {
+  border: 1px solid #e8c39e35;
+  border-radius: 22px;
+  background: linear-gradient(145deg, #ffffff0c, #ffffff04);
+  box-shadow: 0 20px 55px #160a1538;
+}
+.love-note-composer {
+  padding: 24px;
+}
+.love-note-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 22px;
+}
+.love-note-heading span,
+.love-note-inbox-head span {
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+.love-note-heading b {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 26px;
+}
+.love-note-composer label {
+  display: block;
+  margin-bottom: 9px;
+  font-size: 13px;
+  font-weight: 700;
+}
+.love-note-composer textarea {
+  width: 100%;
+  min-height: 172px;
+  resize: vertical;
+  border: 1px solid #e8c39e42;
+  border-radius: 16px;
+  padding: 16px;
+  background: #160b174d;
+  color: var(--brand-cream);
+  font: inherit;
+  line-height: 1.55;
+}
+.love-note-composer textarea::placeholder {
+  color: #f5ead58c;
+}
+.love-note-composer textarea:focus {
+  border-color: var(--gold);
+  outline: 2px solid #d4a94e2e;
+}
+.love-note-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 14px;
+}
+.love-note-actions small {
+  color: #f5ead599;
+}
+.love-note-actions .primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+.love-note-actions .primary span {
+  font-size: 16px;
+}
+.love-mail-status {
+  margin: 15px 0 0;
+  color: var(--champagne);
+  font-size: 13px;
+}
+.love-note-inbox {
+  overflow: hidden;
+}
+.love-note-inbox-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 22px 24px;
+  border-bottom: 1px solid #e8c39e24;
+}
+.love-note-inbox-head h2 {
+  margin: 5px 0 0;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 28px;
+}
+.mail-refresh {
+  min-height: 44px;
+  border: 1px solid #e8c39e42;
+  border-radius: 999px;
+  padding: 9px 15px;
+  background: transparent;
+  color: var(--brand-cream);
+}
+.love-note-list {
+  display: grid;
+  gap: 12px;
+  max-height: 440px;
+  overflow-y: auto;
+  padding: 18px;
+}
+.love-note-list article {
+  width: min(88%, 420px);
+  padding: 14px 16px;
+  border: 1px solid #e8c39e2e;
+  border-radius: 7px 16px 16px;
+  background: #ffffff0a;
+}
+.love-note-list article.mine {
+  margin-left: auto;
+  border-color: #d4a94e66;
+  border-radius: 16px 7px 16px 16px;
+  background: #d4a94e18;
+}
+.love-note-list article > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  color: var(--gold);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+}
+.love-note-list article time {
+  color: #f5ead58a;
+  font-weight: 400;
+  white-space: nowrap;
+}
+.love-note-list article p {
+  margin: 10px 0 0;
+  color: var(--brand-cream);
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.love-note-empty {
+  display: grid;
+  min-height: 220px;
+  place-items: center;
+  align-content: center;
+  gap: 8px;
+  padding: 30px;
+  color: #f5ead5a8;
+  text-align: center;
+}
+.love-note-empty span {
+  color: var(--gold);
+  font-size: 40px;
+}
+
+@media (max-width: 760px) {
+  .love-mail-intro {
+    align-items: flex-end;
+    gap: 14px;
+  }
+  .love-mail-intro h1 {
+    font-size: clamp(42px, 13vw, 58px);
+  }
+  .love-mail-mark {
+    width: 72px;
+    height: 72px;
+    flex-basis: 72px;
+    font-size: 40px;
+  }
+  .love-mail-grid {
+    grid-template-columns: 1fr;
+  }
+  .love-note-composer {
+    padding: 20px;
+  }
+  .love-note-actions {
+    align-items: flex-end;
+  }
+  .love-note-actions .primary {
+    min-height: 48px;
+  }
+  .love-note-inbox-head {
+    padding: 20px;
+  }
 }

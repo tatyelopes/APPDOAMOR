@@ -228,15 +228,21 @@ Canal de suporte e procedimentos para conta, cobrança, conteúdo e segurança.
 
 ## 5. Should have — alta prioridade após os Must
 
+Os identificadores S01, S02 e o recorte semanal de S05 são preservados nesta seção para manter a rastreabilidade histórica, mas a decisão de 21/09/2026 os promoveu a requisitos de lançamento reunidos na tarefa 143. A contagem-resumo abaixo continua representando a classificação original desta versão do MoSCoW.
+
 ### S01 — Teste educativo de formas de afeto
 
 Escolhas forçadas para explorar como cada pessoa demonstra e prefere receber carinho, com nomenclatura e propriedade intelectual revisadas.
+
+**Decisão de fase:** fora do primeiro piloto, mas obrigatório antes do lançamento por meio da tarefa 143.
 
 **Alternativa temporária:** atividades de preferências de carinho sem apresentar uma metodologia proprietária.
 
 ### S02 — Comparação consentida de resultados
 
 Mostrar convergências e diferenças sem “gap”, desperdício ou nota de compatibilidade.
+
+**Decisão de fase:** fora do primeiro piloto, mas obrigatório antes do lançamento por meio da tarefa 143.
 
 **Alternativa temporária:** cada pessoa vê o próprio resultado e escolhe o que compartilhar.
 
@@ -255,6 +261,8 @@ Recomendar atividades para relação recente, coabitação, filhos, distância, 
 ### S05 — Notificações neutras e configuráveis
 
 Lembrar sem revelar conteúdo ou acusar a pessoa que não respondeu.
+
+**Decisão de fase:** o lembrete semanal derivado do resultado bilateral fica fora do primeiro piloto e é obrigatório antes do lançamento por meio da tarefa 143.
 
 **Alternativa temporária:** retorno voluntário ao app e lembretes operacionais mínimos.
 

@@ -133,10 +133,12 @@ O momento de valor ocorre quando o casal conclui a primeira experiência e pelo 
 
 - uma pessoa responde sobre si;
 - a outra tenta adivinhar;
+- uma variação pode usar gestos ou desafios que a primeira pessoa gostaria de receber;
 - inversão de papéis na mesma sessão ou na seguinte;
 - comparação com linguagem positiva;
 - pontos apenas como diversão opcional;
-- pergunta final: “O que te surpreendeu?”.
+- pergunta final: “O que te surpreendeu?”;
+- depois da revelação, o desafio só vira convite de ação mediante aceite bilateral, com opções de adaptar, trocar ou pular.
 
 ### 5.6 Mecânica C — escolham juntos
 
@@ -149,6 +151,8 @@ O momento de valor ocorre quando o casal conclui a primeira experiência e pelo 
 ### 5.7 Conteúdo e progressão
 
 - três níveis: leve, médio e profundo;
+- escolha explícita do nível antes de selecionar as cartas da sessão;
+- desafios disponíveis como formato próprio, modo misto e variação controlada da adivinhação;
 - conteúdo íntimo excluído do primeiro ciclo público do MVP, podendo existir apenas em teste moderado específico;
 - temas iniciais: gostos e preferências, histórias e memórias, carinho e conexão, sonhos e futuro;
 - indicação de tema, duração e nível antes de começar;
@@ -220,7 +224,7 @@ O protótipo atual contém recursos que podem ser apresentados a uma subamostra,
 
 ### Teste de formas de afeto
 
-Pode permanecer atrás de sinalização “experimental” se houver revisão editorial e jurídica. O MVP não depende da marca “Cinco Linguagens do Amor” nem de uma análise definitiva do casal.
+Pode permanecer atrás de sinalização “experimental” no primeiro piloto se houver revisão editorial e jurídica. O MVP não depende da marca “Cinco Linguagens do Amor” nem de uma análise definitiva do casal. O resultado bilateral e os lembretes semanais ficam fora do primeiro piloto, mas são obrigatórios na iteração seguinte antes do lançamento, conforme a tarefa 143. O resumo conjunto exige duas conclusões compatíveis e compartilhamento explícito, apresenta forças, complementaridades, oportunidades de cuidado e sugestões práticas sem nota de compatibilidade. Lembretes derivados dessas sugestões são opt-in individual.
 
 ### Teste dos quatro temperamentos
 

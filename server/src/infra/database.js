@@ -7,6 +7,11 @@ const emptyDatabase = {
   couples: [],
   sessions: [],
   answers: [],
+  loveNotes: [],
+  gameSessions: [],
+  sessionParticipants: [],
+  sessionRounds: [],
+  gameAnswers: [],
   analyticsEvents: [],
   mpvFeedback: [],
 }

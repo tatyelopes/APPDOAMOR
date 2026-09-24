@@ -5,6 +5,7 @@ import { readJson, storageKeys, writeJson } from './shared/storage/local-storage
 import type {
   ApiUser,
   Language,
+  LoveNote,
   Member,
   RemoteAnswer,
   Screen,
@@ -520,9 +521,16 @@ function Auth({ onSuccess }: { onSuccess: (token: string, user: ApiUser) => void
         </span>
       </div>
       <section className="auth-card fade-in">
-        <div className="eyebrow">SEU ESPAÇO SEGURO</div>
         <h1>
-          {mode === 'register' ? 'Comece uma história a dois.' : 'Que bom ter você de volta.'}
+          {mode === 'register' ? (
+            <>
+              Comece uma
+              <br />
+              história a dois.
+            </>
+          ) : (
+            'Que bom ter você de volta.'
+          )}
         </h1>
         <p>
           {mode === 'register'
@@ -575,6 +583,233 @@ function Auth({ onSuccess }: { onSuccess: (token: string, user: ApiUser) => void
           {mode === 'register' ? 'Já tenho conta' : 'Quero criar uma conta'}
         </button>
       </section>
+    </div>
+  )
+}
+
+export function RegistrationWireframe() {
+  return (
+    <div className="concept concept-cozy">
+      <Auth onSuccess={() => undefined} />
+    </div>
+  )
+}
+
+export function ConnectionWireframe() {
+  const previewUser: ApiUser = {
+    id: 'wireframe-user',
+    name: 'Tatyele',
+    email: 'tatyele@example.test',
+    couple: null,
+  }
+
+  return (
+    <div className="concept concept-cozy">
+      <Connect
+        token="wireframe-token"
+        user={previewUser}
+        onConnected={() => undefined}
+        onLogout={() => window.location.assign('/wireframes/cadastro')}
+      />
+    </div>
+  )
+}
+
+export function PairingWaitingWireframe() {
+  const previewUser: ApiUser = {
+    id: 'wireframe-user',
+    name: 'Tatyele',
+    email: 'tatyele@example.test',
+    couple: {
+      id: 'wireframe-couple',
+      code: 'AMOR-2026',
+      anniversary: '',
+      partner: null,
+    },
+  }
+
+  return (
+    <div className="concept concept-cozy">
+      <PairingWaitingPage
+        token="wireframe-token"
+        user={previewUser}
+        onUpdate={() => undefined}
+        onLogout={() => window.location.assign('/wireframes/conectar')}
+      />
+    </div>
+  )
+}
+
+export function HomeWireframe() {
+  const previewUser: ApiUser = {
+    id: 'wireframe-user',
+    name: 'Tatyele',
+    email: 'tatyele@example.test',
+    couple: {
+      id: 'wireframe-couple',
+      code: 'AMOR-2026',
+      anniversary: '2024-06-12',
+      partner: {
+        id: 'wireframe-partner',
+        name: 'Alex',
+      },
+    },
+  }
+
+  return (
+    <div className="concept concept-cozy">
+      <Experience
+        token="wireframe-token"
+        user={previewUser}
+        onUser={() => undefined}
+        onLogout={() => window.location.assign('/wireframes/convite')}
+      />
+    </div>
+  )
+}
+
+export function QuestionsWireframe() {
+  const previewUser: ApiUser = {
+    id: 'wireframe-user',
+    name: 'Tatyele',
+    email: 'tatyele@example.test',
+    couple: {
+      id: 'wireframe-couple',
+      code: 'AMOR-2026',
+      anniversary: '2024-06-12',
+      partner: {
+        id: 'wireframe-partner',
+        name: 'Alex',
+      },
+    },
+  }
+
+  return (
+    <div className="concept concept-cozy">
+      <Experience
+        token="wireframe-token"
+        user={previewUser}
+        onUser={() => undefined}
+        onLogout={() => window.location.assign('/wireframes/home')}
+        initialScreen="questions"
+      />
+    </div>
+  )
+}
+
+export function QuestionRoundWireframe() {
+  const previewUser: ApiUser = {
+    id: 'wireframe-user',
+    name: 'Tatyele',
+    email: 'tatyele@example.test',
+    couple: {
+      id: 'wireframe-couple',
+      code: 'AMOR-2026',
+      anniversary: '2024-06-12',
+      partner: {
+        id: 'wireframe-partner',
+        name: 'Alex',
+      },
+    },
+  }
+
+  return (
+    <div className="concept concept-cozy">
+      <Experience
+        token="wireframe-token"
+        user={previewUser}
+        onUser={() => undefined}
+        onLogout={() => window.location.assign('/wireframes/perguntas')}
+        initialScreen="questions"
+        initialGameStarted
+      />
+    </div>
+  )
+}
+
+export function LoveMailWireframe() {
+  const previewUser: ApiUser = {
+    id: 'wireframe-user',
+    name: 'Tatyele',
+    email: 'tatyele@example.test',
+    couple: {
+      id: 'wireframe-couple',
+      code: 'AMOR-2026',
+      anniversary: '2024-06-12',
+      partner: {
+        id: 'wireframe-partner',
+        name: 'Alex',
+      },
+    },
+  }
+
+  return (
+    <div className="concept concept-cozy">
+      <Experience
+        token="wireframe-token"
+        user={previewUser}
+        onUser={() => undefined}
+        onLogout={() => window.location.assign('/wireframes/home')}
+        initialScreen="mail"
+      />
+    </div>
+  )
+}
+
+export function ProfileWireframe() {
+  const previewUser: ApiUser = {
+    id: 'wireframe-user',
+    name: 'Tatyele',
+    email: 'tatyele@example.test',
+    couple: {
+      id: 'wireframe-couple',
+      code: 'AMOR-2026',
+      anniversary: '2024-06-12',
+      partner: {
+        id: 'wireframe-partner',
+        name: 'Alex',
+      },
+    },
+  }
+
+  return (
+    <div className="concept concept-cozy">
+      <Experience
+        token="wireframe-token"
+        user={previewUser}
+        onUser={() => undefined}
+        onLogout={() => window.location.assign('/wireframes/home')}
+        initialScreen="profile"
+      />
+    </div>
+  )
+}
+
+export function LoveLanguageWireframe() {
+  const previewUser: ApiUser = {
+    id: 'wireframe-user',
+    name: 'Tatyele',
+    email: 'tatyele@example.test',
+    couple: {
+      id: 'wireframe-couple',
+      code: 'AMOR-2026',
+      anniversary: '2024-06-12',
+      partner: {
+        id: 'wireframe-partner',
+        name: 'Alex',
+      },
+    },
+  }
+
+  return (
+    <div className="concept concept-cozy">
+      <Experience
+        token="wireframe-token"
+        user={previewUser}
+        onUser={() => undefined}
+        onLogout={() => window.location.assign('/wireframes/home')}
+        initialScreen="test"
+      />
     </div>
   )
 }
@@ -666,13 +901,17 @@ function Experience({
   user,
   onUser,
   onLogout,
+  initialScreen = 'home',
+  initialGameStarted = false,
 }: {
   token: string
   user: ApiUser
   onUser: (user: ApiUser) => void
   onLogout: () => void
+  initialScreen?: Screen
+  initialGameStarted?: boolean
 }) {
-  const [screen, setScreen] = useState<Screen>('home')
+  const [screen, setScreen] = useState<Screen>(initialScreen)
   const [member] = useState<Member>('owner')
   const [answerDraft, setAnswerDraft] = useState('')
   const [quizIndex, setQuizIndex] = useState(0)
@@ -684,6 +923,23 @@ function Experience({
   const [streak, setStreak] = useState(() => Number(localStorage.getItem(storageKeys.streak) || 3))
   const [copied, setCopied] = useState(false)
   const [remote, setRemote] = useState<RemoteAnswer>({ complete: false, mine: '', answers: [] })
+  const [loveNoteDraft, setLoveNoteDraft] = useState('')
+  const [loveNotes, setLoveNotes] = useState<LoveNote[]>(() =>
+    token === 'wireframe-token'
+      ? [
+          {
+            id: 'preview-note',
+            text: 'Passei só para lembrar que meu dia fica mais bonito quando divido as pequenas coisas com você.',
+            senderName: user.couple?.partner?.name || 'Seu amor',
+            recipientName: user.name,
+            createdAt: new Date().toISOString(),
+            mine: false,
+          },
+        ]
+      : [],
+  )
+  const [mailStatus, setMailStatus] = useState('')
+  const [mailLoading, setMailLoading] = useState(false)
 
   useEffect(() => localStorage.setItem(storageKeys.member, member), [member])
   useEffect(() => localStorage.setItem(storageKeys.streak, String(streak)), [streak])
@@ -745,6 +1001,53 @@ function Experience({
   function openPrivate() {
     setScreen('private')
     void refreshAnswers()
+  }
+  async function refreshLoveNotes() {
+    setScreen('mail')
+    if (token === 'wireframe-token') return
+    try {
+      setMailLoading(true)
+      setMailStatus('')
+      const data = await request<{ notes: LoveNote[] }>('/love-notes', {}, token)
+      setLoveNotes(data.notes)
+    } catch {
+      setMailStatus('Não foi possível atualizar os recados agora.')
+    } finally {
+      setMailLoading(false)
+    }
+  }
+  async function sendLoveNote(event: React.FormEvent) {
+    event.preventDefault()
+    const text = loveNoteDraft.trim()
+    if (!text) return
+    try {
+      setMailLoading(true)
+      setMailStatus('')
+      const note =
+        token === 'wireframe-token'
+          ? {
+              id: crypto.randomUUID(),
+              text,
+              senderName: currentName,
+              recipientName: otherName,
+              createdAt: new Date().toISOString(),
+              mine: true,
+            }
+          : (
+              await request<{ note: LoveNote }>(
+                '/love-notes',
+                { method: 'POST', body: JSON.stringify({ text }) },
+                token,
+              )
+            ).note
+      setLoveNotes((previous) => [note, ...previous])
+      setLoveNoteDraft('')
+      setMailStatus(`Recado enviado para ${otherName}.`)
+    } catch {
+      setMailStatus('Não foi possível enviar o recado. Tente novamente.')
+    } finally {
+      setMailLoading(false)
+    }
   }
   function savePrivate(event: React.FormEvent) {
     event.preventDefault()
@@ -855,6 +1158,98 @@ function Experience({
 
         {screen === 'admin' && <AdminDashboard token={token} onBack={() => setScreen('home')} />}
 
+        {screen === 'mail' && (
+          <section className="page love-mail fade-in">
+            <div className="love-mail-intro">
+              <div>
+                <div className="eyebrow">CORREIO DO AMOR</div>
+                <h1>
+                  Um recado só
+                  <br />
+                  <em>de vocês.</em>
+                </h1>
+                <p>Escreva algo carinhoso agora. {otherName} verá ao entrar no espaço do casal.</p>
+              </div>
+              <span className="love-mail-mark" aria-hidden="true">
+                ♡
+              </span>
+            </div>
+            <div className="love-mail-grid">
+              <form className="love-note-composer" onSubmit={sendLoveNote}>
+                <div className="love-note-heading">
+                  <span>PARA {otherName.toUpperCase()}</span>
+                  <b>Escreva com carinho</b>
+                </div>
+                <label htmlFor="love-note">Seu recado</label>
+                <textarea
+                  id="love-note"
+                  value={loveNoteDraft}
+                  onChange={(event) => setLoveNoteDraft(event.target.value)}
+                  maxLength={280}
+                  placeholder="Uma lembrança, um agradecimento ou só um ‘estou pensando em você’…"
+                  required
+                />
+                <div className="love-note-actions">
+                  <small>{loveNoteDraft.length}/280</small>
+                  <button className="primary" disabled={!loveNoteDraft.trim() || mailLoading}>
+                    {mailLoading ? 'Enviando…' : 'Enviar recado'} <span>♥</span>
+                  </button>
+                </div>
+                {mailStatus && (
+                  <p className="love-mail-status" aria-live="polite">
+                    {mailStatus}
+                  </p>
+                )}
+              </form>
+              <section className="love-note-inbox" aria-label="Recados do casal">
+                <div className="love-note-inbox-head">
+                  <div>
+                    <span>ENTRE VOCÊS</span>
+                    <h2>Recados do casal</h2>
+                  </div>
+                  <button
+                    type="button"
+                    className="mail-refresh"
+                    onClick={() => void refreshLoveNotes()}
+                    disabled={mailLoading}
+                  >
+                    Atualizar
+                  </button>
+                </div>
+                <div className="love-note-list">
+                  {loveNotes.length ? (
+                    loveNotes.map((note) => (
+                      <article className={note.mine ? 'mine' : ''} key={note.id}>
+                        <div>
+                          <span>
+                            {note.mine
+                              ? `Você → ${note.recipientName}`
+                              : `${note.senderName} → Você`}
+                          </span>
+                          <time dateTime={note.createdAt}>
+                            {new Intl.DateTimeFormat('pt-BR', {
+                              day: '2-digit',
+                              month: 'short',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                            }).format(new Date(note.createdAt))}
+                          </time>
+                        </div>
+                        <p>{note.text}</p>
+                      </article>
+                    ))
+                  ) : (
+                    <div className="love-note-empty">
+                      <span>♡</span>
+                      <p>O primeiro recado de vocês pode começar aqui.</p>
+                    </div>
+                  )}
+                </div>
+              </section>
+            </div>
+          </section>
+        )}
+
         {screen === 'home' && (
           <section className="page home fade-in">
             <div className="welcome">
@@ -868,32 +1263,12 @@ function Experience({
               </div>
               <div className="streak">
                 <span>✦</span>
-                <b>{streak} dias</b>
-                <small>de conexão</small>
+                <div className="streak-copy">
+                  <b>{streak} dias</b>
+                  <small>de conexão</small>
+                </div>
               </div>
             </div>
-            <article className="daily-card">
-              <div className="card-copy">
-                <span className="pill light">RESPOSTA PRIVADA</span>
-                <h2>{privateQuestion.text}</h2>
-                <p>
-                  {bothAnswered
-                    ? 'As duas respostas estão prontas para serem descobertas.'
-                    : responses[member]
-                      ? `Sua resposta está guardada. Falta ${otherName} responder.`
-                      : 'Sua resposta fica em segredo até que os dois participem.'}
-                </p>
-                <button onClick={openPrivate}>
-                  {bothAnswered
-                    ? 'Revelar respostas'
-                    : responses[member]
-                      ? 'Acompanhar resposta'
-                      : 'Responder em segredo'}{' '}
-                  <span>→</span>
-                </button>
-              </div>
-              <div className="orb">♡</div>
-            </article>
             <div className="section-title">
               <span>EXPLOREM JUNTOS</span>
               <h2>Escolham o momento de hoje</h2>
@@ -905,7 +1280,15 @@ function Experience({
                   setScreen('questions')
                 }}
               >
-                <span className="feature-icon">?</span>
+                <span className="feature-icon">
+                  <svg className="conversation-mouth-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path
+                      className="mouth-shape"
+                      d="M2.8 12c2.8-1.5 4.7-4.2 7.5-3.1L12 10.2l1.7-1.3c2.8-1.1 4.7 1.6 7.5 3.1-2.5 3.5-5.6 5.1-9.2 5.1S5.3 15.5 2.8 12Z"
+                    />
+                    <path className="mouth-detail" d="M4.2 12c5.2 1.1 10.4 1.1 15.6 0" />
+                  </svg>
+                </span>
                 <div>
                   <small>CONVERSAS</small>
                   <h3>Perguntas que aproximam</h3>
@@ -914,7 +1297,7 @@ function Experience({
                 <b>→</b>
               </button>
               <button
-                className="feature sage"
+                className="feature gold"
                 onClick={() => {
                   track('love_language_test_started')
                   setQuizIndex(0)
@@ -940,7 +1323,12 @@ function Experience({
                 <b>→</b>
               </button>
               <button className="feature lilac" onClick={openPrivate}>
-                <span className="feature-icon">◉</span>
+                <span className="feature-icon">
+                  <svg className="feature-shield-icon" viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M12 3 19 6v5.2c0 4.5-2.6 7.8-7 9.8-4.4-2-7-5.3-7-9.8V6l7-3Z" />
+                    <path d="m9 12 2 2 4-4" />
+                  </svg>
+                </span>
                 <div>
                   <small>ESPAÇO SEGURO</small>
                   <h3>Revelação mútua</h3>
@@ -949,21 +1337,24 @@ function Experience({
                 <b>→</b>
               </button>
             </div>
-            <div className="tip">
-              <span>✦</span>
-              <div>
-                <small>GESTO DE HOJE</small>
-                <p>{tips[result]}</p>
+            <article className="daily-card">
+              <div className="card-copy">
+                <span className="pill light">GESTO DE HOJE</span>
+                <h2>{tips[result]}</h2>
+                <p>
+                  Um convite simples para transformar intenção em presença. Façam no ritmo de vocês.
+                </p>
+                <button
+                  onClick={() => {
+                    track('daily_gesture_completed')
+                    setStreak((value) => value + 1)
+                  }}
+                >
+                  Concluir gesto <span>✓</span>
+                </button>
               </div>
-              <button
-                onClick={() => {
-                  track('daily_gesture_completed')
-                  setStreak((value) => value + 1)
-                }}
-              >
-                ✓
-              </button>
-            </div>
+              <div className="orb">✦</div>
+            </article>
           </section>
         )}
 
@@ -1050,6 +1441,7 @@ function Experience({
             players={[currentName, otherName]}
             onBack={() => setScreen('home')}
             track={track}
+            initialStarted={initialGameStarted}
           />
         )}
 
@@ -1263,10 +1655,8 @@ function Experience({
             <span>◌</span>Explorar
           </button>
           <button
-            className={
-              screen === 'private' || screen === 'test' || screen === 'result' ? 'active' : ''
-            }
-            onClick={openPrivate}
+            className={screen === 'mail' ? 'active' : ''}
+            onClick={() => void refreshLoveNotes()}
           >
             <span>♡</span>Nós
           </button>

@@ -83,6 +83,9 @@ jobs:
       - name: Validar contrato OpenAPI
         run: npm run validate:openapi
 
+      - name: Validar criação e isolamento de partidas
+        run: npm run validate:game-sessions
+
       - name: Validar modelagem de ameaças
         run: npm run validate:threat-model
 

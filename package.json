@@ -20,6 +20,7 @@
     "validate:mpv-production": "npm run build && node scripts/validate-mpv-production.mjs",
     "validate:database": "node scripts/validate-postgres-database.mjs",
     "validate:database-runtime": "node scripts/validate-postgres-runtime.mjs",
+    "validate:game-sessions": "node scripts/validate-game-sessions.mjs",
     "validate:observability": "node scripts/validate-observability.mjs",
     "validate:secret-config": "node scripts/validate-secret-controls.mjs",
     "validate:secrets": "npm run scan:secrets && npm run validate:secret-config",

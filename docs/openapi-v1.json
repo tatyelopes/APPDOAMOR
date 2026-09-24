@@ -590,6 +590,70 @@
         }
       }
     },
+    "/love-notes": {
+      "get": {
+        "tags": ["Couples"],
+        "summary": "Listar recados do casal",
+        "operationId": "listLoveNotes",
+        "x-implementation-status": "partial",
+        "x-legacy-path": "GET /api/love-notes",
+        "responses": {
+          "200": {
+            "description": "Recados visíveis somente aos integrantes vigentes do casal",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["notes"],
+                  "properties": {
+                    "notes": {
+                      "type": "array",
+                      "items": { "$ref": "#/components/schemas/LoveNote" }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      },
+      "post": {
+        "tags": ["Couples"],
+        "summary": "Enviar recado ao parceiro",
+        "operationId": "createLoveNote",
+        "x-implementation-status": "partial",
+        "x-legacy-path": "POST /api/love-notes",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/LoveNoteRequest" }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Recado enviado",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": ["note"],
+                  "properties": {
+                    "note": { "$ref": "#/components/schemas/LoveNote" }
+                  }
+                }
+              }
+            }
+          },
+          "400": { "$ref": "#/components/responses/BadRequest" },
+          "401": { "$ref": "#/components/responses/Unauthorized" },
+          "409": { "$ref": "#/components/responses/Conflict" }
+        }
+      }
+    },
     "/content/activities": {
       "get": {
         "tags": [
@@ -664,7 +728,7 @@
         ],
         "summary": "Criar partida bilateral com conteúdo congelado",
         "operationId": "createGameSession",
-        "x-implementation-status": "planned",
+        "x-implementation-status": "partial",
         "parameters": [
           {
             "$ref": "#/components/parameters/IdempotencyKey"
@@ -717,7 +781,7 @@
         ],
         "summary": "Retomar partida autorizada",
         "operationId": "getGameSession",
-        "x-implementation-status": "planned",
+        "x-implementation-status": "partial",
         "parameters": [
           {
             "$ref": "#/components/parameters/SessionId"
@@ -1973,6 +2037,38 @@
               "$ref": "#/components/schemas/RoundView"
             }
           }
+        }
+      },
+      "LoveNoteRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["text"],
+        "properties": {
+          "text": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 280
+          }
+        }
+      },
+      "LoveNote": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "text",
+          "senderName",
+          "recipientName",
+          "createdAt",
+          "mine"
+        ],
+        "properties": {
+          "id": { "type": "string", "format": "uuid" },
+          "text": { "type": "string", "minLength": 1, "maxLength": 280 },
+          "senderName": { "type": "string" },
+          "recipientName": { "type": "string" },
+          "createdAt": { "type": "string", "format": "date-time" },
+          "mine": { "type": "boolean" }
         }
       },
       "GameSessionResponse": {

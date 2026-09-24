@@ -19,6 +19,7 @@ Entradas: ação contextual da home, catálogo Explorar ou retomada de partida e
 | Controle | Comportamento |
 | --- | --- |
 | Tema | Seleção explícita entre os 11 temas atuais; Descontraído como sugestão inicial |
+| Nível | Leve, Médio ou Profundo, escolhido antes das cartas; Médio pode ser explicado como mais pessoal, sem equivaler a conteúdo Íntimo opt-in |
 | Formato | Perguntas, Desafios ou Misto |
 | Resposta das perguntas | Discursiva ou Múltipla escolha; oculto no modo apenas Desafios |
 | Contexto | Cada um na própria conta ou Juntos neste dispositivo |
@@ -28,6 +29,10 @@ Entradas: ação contextual da home, catálogo Explorar ou retomada de partida e
 O protótipo contém uma rodada por formato e duas no modo misto: pergunta seguida de desafio. O produto utilizará a quantidade, duração e intensidade reais do lote aprovado; o desenho não fixa o tamanho de todas as partidas. Os exemplos do protótipo são ilustrativos, não ampliam nem aprovam o banco editorial. A escolha de tema íntimo não autoriza sua publicação no piloto sem revisão.
 
 Depois de começar, tema, formato, contexto e conteúdo ficam congelados. Trocar essas escolhas exige encerrar a partida e iniciar outra; não perder uma resposta ao trocar um filtro. O protótipo usa “Recomeçar demonstração”, com confirmação, exclusivamente como ferramenta de revisão.
+
+### Variação de desafio na adivinhação
+
+Como evolução candidata da tarefa 113, uma pessoa pode escolher secretamente qual gesto ou desafio gostaria de receber e a outra tenta adivinhar. Palpite e revelação encerram o jogo; executar a ação é uma decisão posterior e separada. A interface oferece “Topamos”, “Adaptar”, “Trocar” e “Pular”, sem penalidade, prova obrigatória ou confirmação feita pelo parceiro. Essa variação não está implementada no protótipo atual e precisa de teste específico de compreensão e conforto.
 
 ## Telas e microtextos
 

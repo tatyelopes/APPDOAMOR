@@ -17,6 +17,20 @@ Dois percursos usam a mesma estrutura:
 
 As perguntas são originais e candidatas para revisão. Quantidade e tempo estimado se referem apenas a esta demonstração. Não constituem questionário validado, instrumento psicológico ou modelo de pontuação aprovado. Revisões editorial e especializada continuam nas tarefas 76 e 77; a revisão jurídica prevista no escopo permanece requisito de publicação. Temperamentos não entra no piloto sem a revisão prevista. Nenhum destes módulos bloqueia a conclusão do MVP.
 
+### Evolução orientada por feedback qualitativo
+
+O feedback registrado em [Feedback de produto — 21/09/2026](FEEDBACK-DE-PRODUTO-2026-09-21.md) propõe valor adicional depois que as duas pessoas concluem Formas de afeto: um “match” do casal, sugestões práticas e lembretes semanais. O termo “match” descreve a junção consentida de dois resumos, não compatibilidade ou avaliação do relacionamento.
+
+Essa evolução deve preservar o resultado individual atual e acrescentar um fluxo separado:
+
+1. cada pessoa conclui a mesma versão e mantém seu resultado privado;
+2. cada uma autoriza explicitamente o resumo que pode compor a visão bilateral;
+3. o sistema apresenta forças compartilhadas, formas complementares e oportunidades de cuidado;
+4. cada pessoa recebe sugestões pequenas e revisadas do que pode experimentar pela outra;
+5. cada participante decide individualmente se deseja um lembrete semanal neutro.
+
+Se só uma pessoa concluir, compartilhar ou mantiver a autorização, não existe visão bilateral. Revogação, nova versão incompatível ou desvinculação encerram seu acesso e cancelam lembretes derivados. O protótipo atual não implementa esse fluxo.
+
 ## Entradas e navegação
 
 Entrada por Explorar → Testes experimentais; a home pode oferecer um cartão contextual. Retomada pela mesma área. No produto futuro, Nós reúne os resultados próprios e resumos autorizados do vínculo atual. Meu resultado nunca depende de a outra pessoa responder. Compartilhar exige vínculo ativo, conclusão individual e confirmação explícita por teste e versão. Ler o resumo autorizado do par não exige fazer o mesmo teste.
@@ -77,8 +91,14 @@ Pergunta: nome do percurso → progresso → título → instrução → opçõe
 3. Nesta demonstração, cada dimensão tem uma situação. A barra mostra a escolha diretamente, sem inferência estatística ou normalização.
 4. Destaques são todas as dimensões com o maior valor observado, apenas se esse valor for 4 ou 5. Empates são apresentados juntos. Valores até 3 geram “Suas escolhas não destacaram uma preferência forte agora”. Ausência não participa do cálculo.
 5. Perguntas, dimensões, escala e cálculo precisam ser revistos em conjunto antes do serviço definitivo. Não estender esta regra para um banco maior sem revisão e versionamento.
-6. O resultado se refere às escolhas daquele momento. Não usar “seu parceiro precisa”, previsão de comportamento, diagnóstico, ranking ou nota de compatibilidade. O convite “O que destas escolhas faz sentido para você hoje?” é igual para todos, sem recomendação automatizada por perfil.
+6. O resultado se refere às escolhas daquele momento. Não usar “seu parceiro precisa”, previsão de comportamento, diagnóstico, ranking ou nota de compatibilidade. No resultado individual, o convite “O que destas escolhas faz sentido para você hoje?” permanece igual para todos. Sugestões personalizadas só entram na evolução bilateral consentida, a partir de conteúdo versionado e revisado, com linguagem de convite e possibilidade de adaptar ou ignorar.
 7. Nova tentativa não incrementa streak ou progresso bilateral. O protótipo substitui a anterior após confirmação; política de histórico real deve ser definida nas tarefas 56/57 antes da integração.
+
+### Mapeamento da implementação binária atual
+
+A planilha [mapeamento-linguagens-do-amor.xlsx](../Conteúdo/mapeamento-linguagens-do-amor.xlsx) registra as 32 combinações possíveis das cinco perguntas A/B atualmente implementadas em `src/App.tsx`, incluindo linguagem por alternativa, pontuação, empates e resultado exibido. O arquivo é reproduzível por `scripts/build-love-language-mapping.ps1` e validado por `scripts/validate-love-language-mapping.ps1`.
+
+Esse mapeamento evidenciou uma divergência a resolver: a implementação atual desempata escolhendo a primeira linguagem empatada encontrada na ordem Q1 a Q5, enquanto o desenho TR-11 orienta mostrar todos os destaques empatados sem desempate arbitrário. A planilha documenta o comportamento existente; não o promove como regra editorial aprovada.
 
 ## Privacidade, acesso e sincronização
 
@@ -111,6 +131,6 @@ Na tarefa 30, pedir a cada pessoa que encontre o teste, explique a privacidade, 
 
 ## Integração e acompanhamento
 
-Tarefa 26: desenho disponível, validação pendente. Tarefas 27 e 29: cobertura adicional de telas e protótipo. Tarefas 56/57 e 69/70: futuras integrações devem consumir as regras acima; os testes atuais de `src/App.tsx` continuam sendo a implementação anterior. Tarefas 76/77: revisar conteúdo e cálculo. A tarefa 30 segue pendente. Não criar tarefa nova: o escopo está contido na tarefa 26 existente.
+Tarefa 26: desenho-base disponível, validação pendente. Tarefas 27 e 29: cobertura adicional de telas e protótipo. Tarefas 56 e 69: implementar e apresentar o resultado individual e a evolução bilateral consentida. Tarefas 58 e 72: preferências e lembretes opt-in. Tarefas 76/77: revisar conteúdo, cálculo e sugestões. A tarefa 143 integra essas partes na iteração posterior ao primeiro piloto e é obrigatória antes da UAT e do lançamento. Os testes atuais de `src/App.tsx` continuam sendo a implementação anterior. A tarefa 30 segue pendente.
 
 Verificação técnica: `node scripts/validate-tests-prototype.mjs` exercita conclusão, pulos, empates, edição, retomada, falha, compartilhamento e revogação no modelo da demonstração. Não substitui teste em navegador, de API ou com casais.

@@ -1,5 +1,5 @@
 import { spawn } from 'node:child_process'
-import { mkdtemp, rm } from 'node:fs/promises'
+import { mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join, resolve } from 'node:path'
 
@@ -84,6 +84,7 @@ try {
   start(process.execPath, ['server/index.mjs'], {
     PORT: String(apiPort),
     HOST: '127.0.0.1',
+    APP_ORIGIN: `http://127.0.0.1:${appPort}`,
     DATABASE_FILE: join(temporaryRoot, 'database.json'),
   })
   start(process.execPath, [
@@ -178,16 +179,56 @@ try {
     deviceScaleFactor: 1,
     mobile: true,
   })
-  await cdp.send('Page.navigate', { url: `http://127.0.0.1:${appPort}` })
+  await cdp.send('Page.navigate', { url: `http://127.0.0.1:${appPort}/app` })
   await waitForExpression(`document.querySelector('.onboarding-shell') !== null`)
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    const screenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-entrada-mobile-preview.png'),
+      Buffer.from(screenshot.data, 'base64'),
+    )
+  }
   const snapshots = [await pageSnapshot('Onboarding mobile')]
   const firstFocus = await evaluate(
     `(() => { document.querySelector('button')?.focus(); return document.activeElement?.textContent.trim() })()`,
   )
   await clickText('Continuar')
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    const screenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-entrada-etapa-2-mobile-preview.png'),
+      Buffer.from(screenshot.data, 'base64'),
+    )
+  }
   await clickText('Continuar')
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    const screenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-entrada-etapa-3-mobile-preview.png'),
+      Buffer.from(screenshot.data, 'base64'),
+    )
+  }
   await clickText('Criar minha conta')
   await waitForExpression(`document.querySelector('.auth-card') !== null`)
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    const screenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-cadastro-mobile-preview.png'),
+      Buffer.from(screenshot.data, 'base64'),
+    )
+  }
   snapshots.push(await pageSnapshot('Cadastro mobile'))
 
   await type(`input:not([type='email']):not([type='password'])`, 'Pessoa A')
@@ -195,9 +236,29 @@ try {
   await type(`input[type='password']`, 'teste123')
   await evaluate(`document.querySelector('form').requestSubmit()`)
   await waitForExpression(`document.querySelector('.connect-card') !== null`)
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    const screenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-conectar-mobile-preview.png'),
+      Buffer.from(screenshot.data, 'base64'),
+    )
+  }
   snapshots.push(await pageSnapshot('Escolha de pareamento mobile'))
   await clickText('Criar e receber código')
   await waitForExpression(`document.querySelector('.pairing-waiting') !== null`)
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    const screenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-convite-mobile-preview.png'),
+      Buffer.from(screenshot.data, 'base64'),
+    )
+  }
   snapshots.push(await pageSnapshot('Espera do convite mobile'))
 
   const code = await evaluate(`document.querySelector('.pairing-code strong').textContent.trim()`)
@@ -217,9 +278,122 @@ try {
   })
   await clickText('Já usaram o código')
   await waitForExpression(`document.querySelector('.daily-card') !== null`)
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    const screenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-home-mobile-preview.png'),
+      Buffer.from(screenshot.data, 'base64'),
+    )
+  }
   snapshots.push(await pageSnapshot('Home pareada mobile'))
 
-  await clickText('Responder em segredo')
+  await clickText('Nós')
+  await waitForExpression(`document.querySelector('.love-mail') !== null`)
+  await type('#love-note', 'Só queria lembrar que amo construir nossos dias ao seu lado.')
+  await evaluate(`document.querySelector('.love-note-composer').requestSubmit()`)
+  await waitForExpression(`document.querySelector('.love-note-list article.mine') !== null`)
+  const partnerMail = await jsonRequest('/love-notes', {
+    headers: { Authorization: `Bearer ${partner.token}` },
+  })
+  if (!partnerMail.notes?.some((note) => !note.mine && note.text.includes('construir nossos dias')))
+    throw new Error('O recado não ficou disponível para a conta parceira')
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    const screenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-correio-mobile-preview.png'),
+      Buffer.from(screenshot.data, 'base64'),
+    )
+  }
+  snapshots.push(await pageSnapshot('Correio do Amor mobile'))
+  await clickText('Início')
+  await waitForExpression(`document.querySelector('.daily-card') !== null`)
+
+  await clickText('Perguntas que aproximam')
+  await waitForExpression(`document.querySelector('.game-setup') !== null`)
+  const selectedDeepIntensity = await evaluate(`(() => {
+    const input = document.querySelector('input[name="question-intensity"][value="deep"]')
+    if (!input) return false
+    input.click()
+    return input.checked
+  })()`)
+  if (!selectedDeepIntensity) throw new Error('Nível Profunda não encontrado')
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    await cdp.send('Emulation.setDeviceMetricsOverride', {
+      width: 1440,
+      height: 900,
+      deviceScaleFactor: 1,
+      mobile: false,
+    })
+    const desktopScreenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-perguntas-preview.png'),
+      Buffer.from(desktopScreenshot.data, 'base64'),
+    )
+    await cdp.send('Emulation.setDeviceMetricsOverride', {
+      width: 390,
+      height: 844,
+      deviceScaleFactor: 1,
+      mobile: true,
+    })
+    const screenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-perguntas-mobile-preview.png'),
+      Buffer.from(screenshot.data, 'base64'),
+    )
+  }
+  snapshots.push(await pageSnapshot('Configuração de perguntas mobile'))
+  await clickText('Começar jogo')
+  await waitForExpression(`document.querySelector('.question-card') !== null`)
+  await waitForExpression(
+    `document.querySelector('.question-card h2')?.textContent.includes('ter ou não ter filhos')`,
+  )
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    const screenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-pergunta-mobile-preview.png'),
+      Buffer.from(screenshot.data, 'base64'),
+    )
+  }
+  snapshots.push(await pageSnapshot('Primeira pergunta mobile'))
+  await clickText('Sair do jogo')
+  await waitForExpression(`document.querySelector('.daily-card') !== null`)
+
+  await clickText('Perguntas que aproximam')
+  await waitForExpression(`document.querySelector('.game-setup') !== null`)
+  const selectedMultipleChoice = await evaluate(`(() => {
+    const input = document.querySelector('input[name="game-mode"][value="multipleChoice"]')
+    if (!input) return false
+    input.click()
+    return input.checked
+  })()`)
+  if (!selectedMultipleChoice) throw new Error('Formato Múltipla escolha não encontrado')
+  await clickText('Começar jogo')
+  await waitForExpression(`document.querySelector('.choice-answer-grid') !== null`)
+  await clickText('Uma lembrança')
+  await clickText('Confirmar resposta')
+  await waitForExpression(
+    `document.querySelector('.answer-form h2')?.textContent.includes('Pessoa B')`,
+  )
+  snapshots.push(await pageSnapshot('Múltipla escolha mobile'))
+  await clickText('Sair do jogo')
+  await waitForExpression(`document.querySelector('.daily-card') !== null`)
+
+  await clickText('Revelação mútua')
   await waitForExpression(`document.querySelector('.answer-form textarea') !== null`)
   snapshots.push(await pageSnapshot('Resposta privada mobile'))
   await type('.answer-form textarea', 'Construir nossa vida juntos, com calma e parceria.')
@@ -255,9 +429,87 @@ try {
     deviceScaleFactor: 1,
     mobile: false,
   })
-  await cdp.send('Page.navigate', { url: `http://127.0.0.1:${appPort}` })
+  await cdp.send('Page.navigate', { url: `http://127.0.0.1:${appPort}/app` })
   await waitForExpression(`document.querySelector('.daily-card') !== null`)
   snapshots.push(await pageSnapshot('Home desktop'))
+  await cdp.send('Page.navigate', { url: `http://127.0.0.1:${appPort}/wireframes/correio` })
+  await waitForExpression(`document.querySelector('.love-mail') !== null`)
+  await new Promise((resolveWait) => setTimeout(resolveWait, 500))
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    const screenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-correio-preview.png'),
+      Buffer.from(screenshot.data, 'base64'),
+    )
+  }
+  snapshots.push(await pageSnapshot('Correio do Amor desktop'))
+  await cdp.send('Page.navigate', { url: `http://127.0.0.1:${appPort}/wireframes/perfil` })
+  await waitForExpression(`document.querySelector('.connection-card') !== null`)
+  await new Promise((resolveWait) => setTimeout(resolveWait, 500))
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    const desktopScreenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-perfil-preview.png'),
+      Buffer.from(desktopScreenshot.data, 'base64'),
+    )
+  }
+  snapshots.push(await pageSnapshot('Perfil desktop'))
+  await cdp.send('Emulation.setDeviceMetricsOverride', {
+    width: 390,
+    height: 844,
+    deviceScaleFactor: 1,
+    mobile: true,
+  })
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    const mobileScreenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-perfil-mobile-preview.png'),
+      Buffer.from(mobileScreenshot.data, 'base64'),
+    )
+  }
+  snapshots.push(await pageSnapshot('Perfil mobile'))
+  await cdp.send('Page.navigate', {
+    url: `http://127.0.0.1:${appPort}/wireframes/linguagens-do-amor`,
+  })
+  await waitForExpression(`document.querySelector('.quiz .choices') !== null`)
+  await new Promise((resolveWait) => setTimeout(resolveWait, 500))
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    const mobileScreenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-linguagens-do-amor-mobile-preview.png'),
+      Buffer.from(mobileScreenshot.data, 'base64'),
+    )
+  }
+  snapshots.push(await pageSnapshot('Linguagens do amor mobile'))
+  await cdp.send('Emulation.setDeviceMetricsOverride', {
+    width: 1440,
+    height: 900,
+    deviceScaleFactor: 1,
+    mobile: false,
+  })
+  if (process.env.CAPTURE_WIREFRAMES === '1') {
+    const desktopScreenshot = await cdp.send('Page.captureScreenshot', {
+      format: 'png',
+      captureBeyondViewport: false,
+    })
+    await writeFile(
+      resolve(projectRoot, 'docs/wireframe-linguagens-do-amor-preview.png'),
+      Buffer.from(desktopScreenshot.data, 'base64'),
+    )
+  }
+  snapshots.push(await pageSnapshot('Linguagens do amor desktop'))
 
   const responsePrivacy = await jsonRequest('/answers/question-3', {
     headers: { Authorization: `Bearer ${ownerToken}` },
@@ -270,6 +522,8 @@ try {
           onboarding: true,
           registration: true,
           pairing: true,
+          loveMail: true,
+          multipleChoice: true,
           privateAnswer: true,
           mutualReveal: true,
           loveLanguage: true,
@@ -279,6 +533,7 @@ try {
         privacy: {
           bothAnswersRequired: responsePrivacy.complete,
           returnedAnswers: responsePrivacy.answers.length,
+          loveNoteVisibleOnlyToCouple: partnerMail.notes.length === 1,
         },
         snapshots,
         browserConsoleOrProcessIssues: consoleIssues.filter(Boolean),

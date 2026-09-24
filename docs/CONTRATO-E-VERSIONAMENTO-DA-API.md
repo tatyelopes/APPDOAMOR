@@ -129,6 +129,8 @@ Eventos de analytics também têm catálogo controlado. Adicionar evento permiti
 | `POST /api/couples/join` | `POST /api/v1/couples/join` | Parcial: persistência JSON não garante a concorrência descrita |
 | `GET /api/answers/{questionId}` | `GET /api/v1/game-sessions/{sessionId}/rounds/{roundId}` | Legado de pergunta fixa; não possui partida ou rodada |
 | `POST /api/answers/{questionId}` | `PUT /api/v1/game-sessions/{sessionId}/rounds/{roundId}/answer` | Parcial: autoria existe, mas faltam ETag, tipos e transação de progresso |
+| — | `POST /api/v1/game-sessions` | Parcial: cria partida ativa idempotente, dois participantes e snapshots no armazenamento JSON atual; PostgreSQL e transação completa seguem pendentes |
+| — | `GET /api/v1/game-sessions/{sessionId}` | Parcial: retoma a partida somente para integrantes vigentes do casal e mantém respostas não reveladas |
 | `POST /api/events` | `POST /api/v1/analytics/events` | Parcial: catálogo e fonte financeira precisam ser corrigidos |
 | `GET /api/admin/metrics` | `GET /api/v1/admin/metrics` | Parcial: falta contrato detalhado das métricas e fontes confiáveis |
 

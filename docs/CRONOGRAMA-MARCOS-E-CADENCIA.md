@@ -1,6 +1,6 @@
 Definir responsáveis e matriz RACI# Cronograma, marcos e cadência — Conectadois
 
-**Versão:** 1.0 — 2 de setembro de 2026  
+**Versão:** 1.1 — atualizada em 21 de setembro de 2026
 **Início planejado:** 7 de setembro de 2026  
 **Fim do ciclo de MVP:** 5 de março de 2027  
 **Horizonte:** preparação, construção, piloto fechado de 6 semanas e decisão de avanço  
@@ -120,7 +120,7 @@ As fases se sobrepõem deliberadamente. Pesquisa, conteúdo, design e engenharia
 
 - ciclo 3: conta, convite, pareamento e desvinculação;
 - ciclo 4: catálogo, home, resposta guardada e revelação;
-- ciclo 5: adivinhação, escolhas coincidentes e fechamento;
+- ciclo 5: três níveis, desafios, adivinhação, escolhas coincidentes e fechamento;
 - ciclo 6: preferências, feedback, analytics e painel;
 - testes automatizados desenvolvidos junto com cada fluxo;
 - demonstração em dois dispositivos ao fim de cada ciclo.
@@ -152,16 +152,17 @@ As fases se sobrepõem deliberadamente. Pesquisa, conteúdo, design e engenharia
 - backup e restauração;
 - política de privacidade, termos e consentimentos;
 - suporte e resposta a incidentes;
+- tarefa 143: integrar resultado bilateral de formas de afeto, sugestões aprovadas e lembrete semanal opt-in;
 - QA exploratório completo.
 
-**Saída:** candidato tecnicamente apto para UAT.
+**Saída:** candidato tecnicamente apto para UAT, incluindo a integração pré-lançamento da tarefa 143.
 
 ### Fase 7 — estabilização e recrutamento
 
 **Período:** 7 de dezembro de 2026 a 8 de janeiro de 2027
 
 - recrutar e confirmar 40 a 60 casais;
-- realizar UAT antes do recesso;
+- realizar UAT antes do recesso somente após concluir a tarefa 143;
 - corrigir bloqueadores e congelar novas funcionalidades;
 - validar painel, alertas e exportação agregada;
 - treinar suporte e preparar mensagens do piloto;
@@ -205,9 +206,9 @@ As fases se sobrepõem deliberadamente. Pesquisa, conteúdo, design e engenharia
 | **MC2 — Personas e oportunidades validadas** | 02/10/2026 | 24 entrevistas analisadas e personas revisadas | confirmar público e conteúdo |
 | **MC3 — Mecânicas e padrão editorial aprovados** | 16/10/2026 | três protótipos testados e primeiro lote revisado | autorizar construção integral |
 | **MC4 — Fundação técnica pronta** | 23/10/2026 | PostgreSQL, ambientes, CI, backup e segurança-base | autorizar dados reais de teste |
-| **MC5 — MVP feature-complete** | 20/11/2026 | jornada completa em dois dispositivos e painel funcional | iniciar hardening |
+| **MC5 — MVP feature-complete** | 20/11/2026 | núcleo do primeiro piloto e integração 143 concluídos em dois dispositivos | iniciar hardening |
 | **MC6 — Conteúdo do piloto aprovado** | 27/11/2026 | 60 atividades com rastreabilidade e revisão | congelar catálogo inicial |
-| **MC7 — Release candidate** | 18/12/2026 | QA, segurança, acessibilidade, LGPD e UAT sem bloqueador | preparar go/no-go |
+| **MC7 — Release candidate** | 18/12/2026 | QA, segurança, acessibilidade, LGPD, tarefa 143 e UAT sem bloqueador | preparar go/no-go |
 | **MC8 — Go/no-go do piloto** | 08/01/2027 | coorte, suporte, métricas e release confirmados | liberar ou adiar piloto |
 | **MC9 — Piloto concluído** | 19/02/2027 | seis semanas, dados íntegros e entrevistas agendadas | encerrar coleta principal |
 | **MC10 — Decisão do MVP comercial** | 05/03/2027 | relatório e recomendação aprovados | prosseguir, iterar ou reconsiderar |

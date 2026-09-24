@@ -218,6 +218,8 @@ O primeiro valor acontece quando ambas as pessoas concluem uma experiência e ao
 - **Profunda:** valores, medos, mudanças, expectativas e conflitos.
 - **Íntima opt-in:** corpo, desejo, sexualidade e vulnerabilidades; exige aviso e participação consentida.
 
+Antes da seleção das cartas, o casal escolhe explicitamente Leve, Média ou Profunda. A interface pode explicar Média como uma conversa mais pessoal ou “um pouco mais íntima”, mas não deve misturá-la com a categoria Íntima opt-in.
+
 ### Anatomia obrigatória
 
 Cada atividade deve possuir objetivo, ocasião, convite, mecânica, estímulo, modo de participação, revelação, continuação, fechamento, etiquetas editoriais e cuidados de segurança.
@@ -285,9 +287,9 @@ Depois da participação de ambas, o sistema apresenta as respostas e uma orient
 ### RF-09 — Jogo de adivinhação
 
 **Prioridade:** Must  
-O casal deve poder responder e tentar adivinhar preferências da pessoa parceira.
+O casal deve poder responder e tentar adivinhar preferências da pessoa parceira. O catálogo pode incluir uma variação em que a pessoa escolhe um gesto ou desafio que gostaria de receber e a outra tenta adivinhar.
 
-**Aceite:** o resultado enfatiza descoberta e conversa; pontos opcionais nunca são apresentados como medida de amor ou compatibilidade.
+**Aceite:** o resultado enfatiza descoberta e conversa; pontos opcionais nunca são apresentados como medida de amor ou compatibilidade. Depois da revelação, realizar o desafio exige um aceite separado e bilateral, com opções de adaptar, trocar ou pular sem penalidade ou comprovação.
 
 ### RF-10 — Sessões e fechamento
 
@@ -298,10 +300,10 @@ Cada sessão precisa ter duração indicada e final claro.
 
 ### RF-11 — Teste de afeto
 
-**Prioridade:** Should  
-Oferecer escolhas forçadas para explorar como cada pessoa demonstra e prefere receber carinho.
+**Prioridade:** Must antes do lançamento; fora do primeiro piloto
+Oferecer escolhas forçadas para explorar como cada pessoa demonstra e prefere receber carinho. Quando ambas concluírem a mesma versão e autorizarem o compartilhamento, oferecer um resumo bilateral com forças compartilhadas, formas complementares e oportunidades de cuidado, acompanhado de sugestões concretas do que cada pessoa pode experimentar pela outra.
 
-**Aceite:** resultado é educativo, reconhece combinações, não emite diagnóstico e possui revisão de propriedade intelectual e conteúdo antes da publicação.
+**Aceite:** o resultado individual permanece privado por padrão; o resumo bilateral não usa nota de compatibilidade, não expõe respostas brutas e pode ser revogado. Resultado, combinações e sugestões são educativos, versionados e passam por revisão de propriedade intelectual, editorial e especializada antes da publicação.
 
 ### RF-12 — Temperamentos
 
@@ -319,10 +321,12 @@ O casal pode informar fase da relação, temas de interesse, assuntos a evitar, 
 
 ### RF-14 — Notificações
 
-**Prioridade:** Should  
-Lembretes devem ser neutros, configuráveis e silenciosos quando solicitado.
+**Prioridade:** Must antes do lançamento; fora do primeiro piloto
+Lembretes devem ser neutros, configuráveis e silenciosos quando solicitado. Depois de um resumo bilateral autorizado, cada pessoa pode optar por receber uma sugestão prática, com frequência inicial proposta de uma vez por semana.
 
-**Aceite:** tela bloqueada não revela pergunta, resposta ou tema íntimo; não acusa qual pessoa “falhou”.
+**Aceite:** lembretes não são ativados automaticamente; frequência, dia, horário, pausa e desligamento são individuais. A tela bloqueada não revela pergunta, resposta, resultado, desafio ou tema íntimo e não acusa qual pessoa “falhou”.
+
+O faseamento aprovado em 21/09/2026 mantém três níveis e desafios no primeiro piloto. Resultado bilateral e lembrete semanal entram juntos na iteração seguinte e bloqueiam UAT e lançamento enquanto a tarefa 143 estiver aberta.
 
 ### RF-15 — Progresso
 
@@ -628,11 +632,11 @@ O protótipo demonstra conceitos; não representa o MVP comercial concluído.
 ## 26. Questões abertas para aprovação
 
 1. O lançamento piloto terá quantos casais e por quanto tempo?
-2. O formato “eu respondo, você adivinha” entra no primeiro piloto ou no ciclo seguinte?
+2. **Resolvida em 21/09/2026:** “Eu respondo, você adivinha”, com variação segura de desafios, entra no primeiro piloto.
 3. O teste de temperamentos permanece no MVP piloto ou aguarda validação especializada?
 4. Qual nomenclatura será usada para o teste de formas de afeto após revisão jurídica?
 5. Quais três temas compõem o primeiro catálogo validado?
-6. Qual frequência padrão será testada: diária, três vezes por semana ou livre?
+6. **Resolvida parcialmente em 21/09/2026:** sugestões derivadas do resultado bilateral usarão frequência inicial semanal e opt-in; outras cadências continuam sujeitas a validação.
 7. O MVP piloto será web responsivo instalável ou aplicativo nativo?
 8. Quem aprova conteúdo profundo e íntimo?
 9. Qual será o prazo de retenção de respostas e eventos?

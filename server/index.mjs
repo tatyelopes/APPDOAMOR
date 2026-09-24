@@ -28,6 +28,7 @@ import {
   matchesPassword as passwordMatches,
 } from './src/shared/security.js'
 import { buildMetrics, clientEventNames, recordEvent } from './src/analytics.js'
+import { createGameSession, findGameSession, GameSessionError } from './src/game-sessions.js'
 
 const feedbackGames = new Set(['discovery-together', 'guess-about-me', 'love-style-sample'])
 const feedbackSignals = new Set(['yes', 'no'])
@@ -58,14 +59,16 @@ function corsHeaders(req) {
   return { 'Access-Control-Allow-Origin': origin, Vary: 'Origin' }
 }
 
-function send(req, res, status, body) {
+function send(req, res, status, body, additionalHeaders = {}) {
   res.writeHead(status, {
     'Content-Type': 'application/json; charset=utf-8',
     'Cache-Control': 'no-store',
-    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+    'Access-Control-Allow-Headers': 'Content-Type, Authorization, Idempotency-Key, If-Match',
     'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
+    'Access-Control-Expose-Headers': 'Location, ETag',
     'X-Content-Type-Options': 'nosniff',
     ...corsHeaders(req),
+    ...additionalHeaders,
   })
   res.end(JSON.stringify(body))
 }
@@ -370,6 +373,45 @@ const server = createServer(async (req, res) => {
       saveDb(db)
       return send(req, res, 202, { ok: true })
     }
+    if (req.method === 'POST' && pathname === '/api/v1/game-sessions') {
+      try {
+        const result = createGameSession(
+          db,
+          user,
+          await body(req),
+          String(req.headers['idempotency-key'] || ''),
+        )
+        if (!result.duplicate)
+          recordEvent(db, 'game_session_created', user, {
+            sessionId: result.session.id,
+            mode: result.session.mode,
+          })
+        saveDb(db)
+        return send(
+          req,
+          res,
+          201,
+          { data: result.session },
+          { Location: `/api/v1/game-sessions/${result.session.id}` },
+        )
+      } catch (error) {
+        if (error instanceof GameSessionError)
+          return send(req, res, error.status, { error: error.message })
+        throw error
+      }
+    }
+    const gameSessionMatch = pathname.match(/^\/api\/v1\/game-sessions\/([0-9a-f-]+)$/i)
+    if (req.method === 'GET' && gameSessionMatch) {
+      try {
+        return send(req, res, 200, {
+          data: findGameSession(db, user, gameSessionMatch[1]),
+        })
+      } catch (error) {
+        if (error instanceof GameSessionError)
+          return send(req, res, error.status, { error: error.message })
+        throw error
+      }
+    }
     if (req.method === 'POST' && req.url === '/api/couples/create') {
       if (user.coupleId) return send(req, res, 409, { error: 'Você já está em um casal.' })
       const input = await body(req)
@@ -407,6 +449,59 @@ const server = createServer(async (req, res) => {
       recordEvent(db, 'couple_paired', user)
       saveDb(db)
       return send(req, res, 200, { user: publicUser(user, db) })
+    }
+    if (req.method === 'GET' && pathname === '/api/love-notes') {
+      if (!user.coupleId) return send(req, res, 400, { error: 'Conecte-se ao seu amor primeiro.' })
+      const couple = db.couples.find((item) => item.id === user.coupleId)
+      const partnerId = couple?.members.find((id) => id !== user.id)
+      if (!partnerId)
+        return send(req, res, 409, { error: 'Aguarde seu amor entrar no espaço do casal.' })
+      const notes = db.loveNotes
+        .filter((item) => item.coupleId === user.coupleId)
+        .sort((a, b) => b.createdAt.localeCompare(a.createdAt))
+        .slice(0, 100)
+        .map((item) => ({
+          id: item.id,
+          text: item.text,
+          senderName: db.users.find((entry) => entry.id === item.senderId)?.name || 'Seu amor',
+          recipientName:
+            db.users.find((entry) => entry.id === item.recipientId)?.name || 'Seu amor',
+          createdAt: item.createdAt,
+          mine: item.senderId === user.id,
+        }))
+      return send(req, res, 200, { notes })
+    }
+    if (req.method === 'POST' && pathname === '/api/love-notes') {
+      if (!user.coupleId) return send(req, res, 400, { error: 'Conecte-se ao seu amor primeiro.' })
+      const couple = db.couples.find((item) => item.id === user.coupleId)
+      const partnerId = couple?.members.find((id) => id !== user.id)
+      if (!partnerId)
+        return send(req, res, 409, { error: 'Aguarde seu amor entrar no espaço do casal.' })
+      const input = await body(req)
+      const text = String(input.text || '').trim()
+      if (!text || text.length > 280)
+        return send(req, res, 400, { error: 'O recado deve ter entre 1 e 280 caracteres.' })
+      const note = {
+        id: randomUUID(),
+        coupleId: user.coupleId,
+        senderId: user.id,
+        recipientId: partnerId,
+        text,
+        createdAt: new Date().toISOString(),
+      }
+      db.loveNotes.push(note)
+      recordEvent(db, 'love_note_sent', user)
+      saveDb(db)
+      return send(req, res, 201, {
+        note: {
+          id: note.id,
+          text: note.text,
+          senderName: user.name,
+          recipientName: db.users.find((entry) => entry.id === partnerId)?.name || 'Seu amor',
+          createdAt: note.createdAt,
+          mine: true,
+        },
+      })
     }
     if (req.method === 'GET' && req.url?.startsWith('/api/answers/')) {
       if (!user.coupleId) return send(req, res, 400, { error: 'Conecte-se ao seu amor primeiro.' })
